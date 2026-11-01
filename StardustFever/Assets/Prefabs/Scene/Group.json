@@ -67,6 +67,10 @@
         {
             "key": "HudUpgrades",
             "value": "StardustFever/Assets/Prefabs/Hud/Upgrades/Prefab.json"
+        },
+        {
+            "key": "HudPrestige",
+            "value": "StardustFever/Assets/Prefabs/Hud/Prestige/Prefab.json"
         }
     ]
 }

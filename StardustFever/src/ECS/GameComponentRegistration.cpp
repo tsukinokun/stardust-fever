@@ -13,6 +13,7 @@
 #include <StardustFever/ECS/Component/LinkLineComponent.hpp>
 #include <StardustFever/ECS/Component/LotteryStateComponent.hpp>
 #include <StardustFever/ECS/Component/PinComponent.hpp>
+#include <StardustFever/ECS/Component/PrestigeStateComponent.hpp>
 #include <StardustFever/ECS/Component/ScoreMultiplierComponent.hpp>
 #include <StardustFever/ECS/Component/StarCollectionComponent.hpp>
 #include <StardustFever/ECS/Component/StarPinComponent.hpp>
@@ -32,6 +33,8 @@
 #include <StardustFever/ECS/Serialization/PayoutConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/PhysicsConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/PocketComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/PrestigeConfigComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/SaveConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/StarLinkConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/WalletComponentSerialization.hpp>
 
@@ -65,6 +68,7 @@ namespace StardustFever::ECS {
         factory.RegisterComponent<HudStateComponent>("HudStateComponent");
         factory.RegisterComponent<UpgradeLevelsComponent>("UpgradeLevelsComponent");
         factory.RegisterComponent<UpgradeModifiersComponent>("UpgradeModifiersComponent");
+        factory.RegisterComponent<PrestigeStateComponent>("PrestigeStateComponent");
 
         // 設定
         factory.RegisterComponent<LauncherConfigComponent>("LauncherConfigComponent");
@@ -74,6 +78,8 @@ namespace StardustFever::ECS {
         factory.RegisterComponent<PayoutConfigComponent>("PayoutConfigComponent");
         factory.RegisterComponent<HudConfigComponent>("HudConfigComponent");
         factory.RegisterComponent<PhysicsConfigComponent>("PhysicsConfigComponent");
+        factory.RegisterComponent<PrestigeConfigComponent>("PrestigeConfigComponent");
+        factory.RegisterComponent<SaveConfigComponent>("SaveConfigComponent");
     }
 
     //-------------------------------------------------------------
@@ -87,6 +93,8 @@ namespace StardustFever::ECS {
         reloadSystem.RegisterType<PayoutConfigComponent>("PayoutConfigComponent");
         reloadSystem.RegisterType<HudConfigComponent>("HudConfigComponent");
         reloadSystem.RegisterType<PhysicsConfigComponent>("PhysicsConfigComponent");
+        reloadSystem.RegisterType<PrestigeConfigComponent>("PrestigeConfigComponent");
+        reloadSystem.RegisterType<SaveConfigComponent>("SaveConfigComponent");
     }
 
 }    // namespace StardustFever::ECS

@@ -4,6 +4,7 @@
 //-------------------------------------------------------------
 #include <StardustFever/ECS/System/HudSystem.hpp>
 
+#include <StardustFever/Core/PrestigeFormula.hpp>
 #include <StardustFever/Core/TextUtility.hpp>
 #include <StardustFever/Data/GameDatabase.hpp>
 #include <StardustFever/ECS/Component/AutoFireComponent.hpp>
@@ -14,6 +15,8 @@
 #include <StardustFever/ECS/Component/LauncherComponent.hpp>
 #include <StardustFever/ECS/Component/LotteryConfigComponent.hpp>
 #include <StardustFever/ECS/Component/LotteryStateComponent.hpp>
+#include <StardustFever/ECS/Component/PrestigeConfigComponent.hpp>
+#include <StardustFever/ECS/Component/PrestigeStateComponent.hpp>
 #include <StardustFever/ECS/Component/ScoreMultiplierComponent.hpp>
 #include <StardustFever/ECS/Component/StarCollectionComponent.hpp>
 #include <StardustFever/ECS/Component/UpgradeLevelsComponent.hpp>
@@ -53,6 +56,25 @@ namespace StardustFever::ECS {
         std::string BuildMultiplierText(Tsukino::ECS::Registry& registry) {
             const ScoreMultiplierComponent* multiplier = FindSingleton<ScoreMultiplierComponent>(registry);
             return "全体倍率  " + (multiplier ? FormatMultiplier(multiplier->total) : std::string("-"));
+        }
+
+        std::string BuildPrestigeText(Tsukino::ECS::Registry& registry) {
+            const PrestigeStateComponent*  prestige = FindSingleton<PrestigeStateComponent>(registry);
+            const PrestigeConfigComponent* config   = FindSingleton<PrestigeConfigComponent>(registry);
+            if(!prestige || !config)
+                return {};
+
+            const Core::BigNumber multiplier = Core::PrestigeFormula::Multiplier(prestige->cosmicConstants, config->bonusPerConstant);
+            std::string           text       = "宇宙定数 Λ" + prestige->cosmicConstants.ToJapaneseString() + "（" + FormatMultiplier(multiplier) + "）";
+
+            const Core::BigNumber gain = Core::PrestigeFormula::GainOnBigBang(prestige->universeEarned, config->threshold, config->exponent);
+            if(gain.IsZero()) {
+                const Core::BigNumber needed  = Core::PrestigeFormula::EarnedForNextConstant(gain, config->threshold, config->exponent);
+                text                         += "  次の宇宙定数まで あと " + (needed - prestige->universeEarned).ToJapaneseString();
+            } else {
+                text += "  ビッグバンで +" + gain.ToJapaneseString() + "（B を2回）";
+            }
+            return text;
         }
 
         std::string BuildHandleText(Tsukino::ECS::Registry& registry, const HudConfigComponent& config) {
@@ -248,6 +270,9 @@ namespace StardustFever::ECS {
                 break;
             case HudTextKind::Collection:
                 text = BuildCollectionText(registry);
+                break;
+            case HudTextKind::Prestige:
+                text = BuildPrestigeText(registry);
                 break;
             case HudTextKind::Upgrades:
                 text = BuildUpgradesText(registry);

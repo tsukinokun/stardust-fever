@@ -1,0 +1,6 @@
+{
+    "SaveConfigComponent": {
+        "savePath": "Saves/save.json",
+        "autoSaveInterval": 30.0
+    }
+}

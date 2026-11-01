@@ -2,6 +2,6 @@
     "HudConfigComponent": {
         "messageDuration": 2.5,
         "handleGaugeSegments": 10,
-        "helpText": "Space 長押し→離して発射（離した瞬間の強さで打つ）    1〜7: 強化    A: 自動発射 ON/OFF    F5: 当たり判定"
+        "helpText": "Space 長押し→離して発射    1〜7: 強化    A: 自動発射 ON/OFF    B×2: ビッグバン    F5: 当たり判定"
     }
 }

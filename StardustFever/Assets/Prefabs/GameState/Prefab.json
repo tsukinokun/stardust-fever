@@ -31,6 +31,10 @@
         {
             "key": "UpgradeModifiersComponent",
             "value": "null"
+        },
+        {
+            "key": "PrestigeStateComponent",
+            "value": "null"
         }
     ]
 }

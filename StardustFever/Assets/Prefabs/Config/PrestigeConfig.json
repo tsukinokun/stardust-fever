@@ -1,0 +1,8 @@
+{
+    "PrestigeConfigComponent": {
+        "threshold": 1000000.0,
+        "exponent": 0.5,
+        "bonusPerConstant": 0.1,
+        "confirmWindow": 3.0
+    }
+}

@@ -6,6 +6,7 @@
 
 #include <StardustFever/ECS/Component/PayoutConfigComponent.hpp>
 #include <StardustFever/ECS/Component/PocketComponent.hpp>
+#include <StardustFever/ECS/Component/PrestigeStateComponent.hpp>
 #include <StardustFever/ECS/Component/ScoreMultiplierComponent.hpp>
 #include <StardustFever/ECS/Component/UpgradeModifiersComponent.hpp>
 #include <StardustFever/ECS/Component/WalletComponent.hpp>
@@ -52,7 +53,12 @@ namespace StardustFever::ECS {
             return;
 
         const ScoreMultiplierComponent* multiplier  = FindSingleton<ScoreMultiplierComponent>(registry);
-        wallet->stardust                           += multiplier ? baseTotal * multiplier->total : baseTotal;
+        const Core::BigNumber           credited    = multiplier ? baseTotal * multiplier->total : baseTotal;
+        wallet->stardust                           += credited;
+
+        // ビッグバンの獲得量は「この宇宙で稼いだ累計」で決まる。使っても減らないよう財布とは別に数える
+        if(PrestigeStateComponent* prestige = FindSingleton<PrestigeStateComponent>(registry))
+            prestige->universeEarned += credited;
     }
 
 }    // namespace StardustFever::ECS

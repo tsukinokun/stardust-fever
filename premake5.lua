@@ -73,6 +73,10 @@ project "StardustFever.Tests"
         "StardustFever/include/StardustFever/Core/**.hpp",
     }
 
+    -- セーブの中身を JSON に書いて読み戻すテストのため、ヘッダだけの cereal と
+    -- Tsukino.Core の公開ヘッダ（CerealOptional）を参照する。エンジンのライブラリはリンクしない
     includedirs {
         "StardustFever/include",
+        "External/TsukinoEngine/Tsukino.Core/include",
+        "External/TsukinoEngine/External/cereal/include",
     }

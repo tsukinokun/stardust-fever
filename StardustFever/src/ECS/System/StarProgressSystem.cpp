@@ -5,7 +5,6 @@
 #include <StardustFever/ECS/System/StarProgressSystem.hpp>
 
 #include <StardustFever/Data/GameDatabase.hpp>
-#include <StardustFever/ECS/Component/ScoreMultiplierComponent.hpp>
 #include <StardustFever/ECS/Component/StarCollectionComponent.hpp>
 #include <StardustFever/ECS/Component/StarLinkConfigComponent.hpp>
 #include <StardustFever/ECS/Event/HudMessageEvent.hpp>
@@ -32,29 +31,6 @@ namespace StardustFever::ECS {
             std::snprintf(buffer, sizeof(buffer), "×%g", value);
             return buffer;
         }
-
-        //-------------------------------------------------------------
-        //! @brief  集めた星と星座から全体倍率を計算する
-        //! @param  collection [in] 集めた星と星座
-        //! @return 全体倍率
-        //! @note   星は (1 + levelBonus × レベル) を、星座は completionMultiplier^完成回数 を掛け合わせる。
-        //!         どちらも掛け算で積み上がるので、集めるほど指数的に増える（インフレの源）
-        //-------------------------------------------------------------
-        Core::BigNumber ComputeMultiplier(const StarCollectionComponent& collection) {
-            const Data::StarTable&          stars          = Data::GetStarTable();
-            const Data::ConstellationTable& constellations = Data::GetConstellationTable();
-
-            Core::BigNumber total(1.0);
-            for(const auto& [starId, level] : collection.starLevels) {
-                if(const Data::StarDef* star = stars.Find(starId))
-                    total *= Core::BigNumber(1.0 + star->levelBonus * static_cast<double>(level));
-            }
-            for(const auto& [constellationId, count] : collection.constellationCompletions) {
-                if(const Data::ConstellationDef* constellation = constellations.Find(constellationId))
-                    total *= Core::BigNumber::Pow(constellation->completionMultiplier, static_cast<double>(count));
-            }
-            return total;
-        }
     }    // namespace
 
     StarProgressSystem::StarProgressSystem(Tsukino::ECS::EventBus& eventBus)
@@ -64,7 +40,7 @@ namespace StardustFever::ECS {
     }
 
     //-------------------------------------------------------------
-    // 記録を更新し、倍率を計算し直す
+    // 星のレベルと星座の完成回数を記録する
     //-------------------------------------------------------------
     void StarProgressSystem::Update(Tsukino::ECS::Registry& registry, float) {
         const auto                     linkedStars = m_linkedStars.Drain();
@@ -100,9 +76,6 @@ namespace StardustFever::ECS {
                 message += "\n一筆書きパーフェクト！ 完成ボーナス " + FormatMultiplier(config->perfectMultiplier);
             m_eventBus->Publish(HudMessageEvent{message});
         }
-
-        if(ScoreMultiplierComponent* multiplier = FindSingleton<ScoreMultiplierComponent>(registry))
-            multiplier->total = ComputeMultiplier(*collection);
     }
 
 }    // namespace StardustFever::ECS

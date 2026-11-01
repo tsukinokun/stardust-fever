@@ -6,6 +6,7 @@
 
 #include <StardustFever/ECS/GameComponentRegistration.hpp>
 #include <StardustFever/ECS/System/BallEventSystem.hpp>
+#include <StardustFever/ECS/System/BigBangSystem.hpp>
 #include <StardustFever/ECS/System/BoardBuildSystem.hpp>
 #include <StardustFever/ECS/System/ConfigReloadSystem.hpp>
 #include <StardustFever/ECS/System/FeverSystem.hpp>
@@ -15,6 +16,8 @@
 #include <StardustFever/ECS/System/LotterySystem.hpp>
 #include <StardustFever/ECS/System/PayoutSystem.hpp>
 #include <StardustFever/ECS/System/PhysicsStepSystem.hpp>
+#include <StardustFever/ECS/System/SaveSystem.hpp>
+#include <StardustFever/ECS/System/ScoreMultiplierSystem.hpp>
 #include <StardustFever/ECS/System/StarLinkSystem.hpp>
 #include <StardustFever/ECS/System/StarProgressSystem.hpp>
 #include <StardustFever/ECS/System/UpgradeEffectSystem.hpp>
@@ -54,18 +57,21 @@ namespace StardustFever::Scene {
         //-------------------------------------------------------------
         enum class SystemOrder : int {
             ConfigReload = 0,    // 設定を読み直してから、そのフレームの処理を始める
+            Save,                // 最初のフレームでセーブを読み、他の System が見る前に進行を戻す
             BoardBuild,
             LauncherInput,
+            BigBang,
             UpgradeShop,
             UpgradeEffect,    // 購入 → 効果。効果を使う System（発射・払い出し・抽選など）より前に計算する
             Launch,
             Physics,
-            BallEvent,       // 衝突 → 釘・入賞・アウト・星
-            Lottery,         // 入賞 → 抽選結果
-            Fever,           // 抽選結果 → 星釘を並べる
-            StarLink,        // 星に触れた → つないだ・完成
-            StarProgress,    // つないだ・完成 → レベル・倍率・完成ボーナス
-            Payout,          // 全ての獲得 → 財布
+            BallEvent,          // 衝突 → 釘・入賞・アウト・星
+            Lottery,            // 入賞 → 抽選結果
+            Fever,              // 抽選結果 → 星釘を並べる
+            StarLink,           // 星に触れた → つないだ・完成
+            StarProgress,       // つないだ・完成 → レベル・完成ボーナス
+            ScoreMultiplier,    // 星・星座・宇宙定数 → 全体倍率（払い出しより前に計算する）
+            Payout,             // 全ての獲得 → 財布
             Hud,
             Transform,
             Light,
@@ -100,8 +106,11 @@ namespace StardustFever::Scene {
         ECS::RegisterConfigReloadTypes(*configReload);
 
         m_scene.AddSystem(configReload, Order(SystemOrder::ConfigReload));
+        m_saveSystem = std::make_shared<ECS::SaveSystem>(eventBus);
+        m_scene.AddSystem(m_saveSystem, Order(SystemOrder::Save));
         m_scene.AddSystem(std::make_shared<ECS::BoardBuildSystem>(), Order(SystemOrder::BoardBuild));
         m_scene.AddSystem(std::make_shared<ECS::LauncherInputSystem>(eventBus), Order(SystemOrder::LauncherInput));
+        m_scene.AddSystem(std::make_shared<ECS::BigBangSystem>(eventBus), Order(SystemOrder::BigBang));
         m_scene.AddSystem(std::make_shared<ECS::UpgradeShopSystem>(eventBus), Order(SystemOrder::UpgradeShop));
         m_scene.AddSystem(std::make_shared<ECS::UpgradeEffectSystem>(), Order(SystemOrder::UpgradeEffect));
         m_scene.AddSystem(std::make_shared<ECS::LaunchSystem>(), Order(SystemOrder::Launch));
@@ -111,6 +120,7 @@ namespace StardustFever::Scene {
         m_scene.AddSystem(std::make_shared<ECS::FeverSystem>(eventBus), Order(SystemOrder::Fever));
         m_scene.AddSystem(std::make_shared<ECS::StarLinkSystem>(eventBus), Order(SystemOrder::StarLink));
         m_scene.AddSystem(std::make_shared<ECS::StarProgressSystem>(eventBus), Order(SystemOrder::StarProgress));
+        m_scene.AddSystem(std::make_shared<ECS::ScoreMultiplierSystem>(), Order(SystemOrder::ScoreMultiplier));
         m_scene.AddSystem(std::make_shared<ECS::PayoutSystem>(eventBus), Order(SystemOrder::Payout));
         m_scene.AddSystem(std::make_shared<ECS::HudSystem>(eventBus), Order(SystemOrder::Hud));
 
@@ -149,6 +159,9 @@ namespace StardustFever::Scene {
     // シーンの終了処理
     //-------------------------------------------------------------
     void PachinkoScene::OnExit() {
+        // 自動保存の間隔のあいだに稼いだ分を失わないよう、終了の直前に保存する（エンティティはまだ残っている）
+        if(m_saveSystem)
+            m_saveSystem->SaveNow(m_scene.GetRegistry());
     }
 
 }    // namespace StardustFever::Scene

@@ -35,3 +35,6 @@ Logs/
 # Asset import cache (the engine converts .obj / .fbx into Cache/**/*.tsm on first load)
 Cache/
 *.tsm
+
+# Save data (written by SaveSystem)
+Saves/

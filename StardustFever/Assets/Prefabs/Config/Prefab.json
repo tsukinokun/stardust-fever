@@ -27,6 +27,14 @@
         {
             "key": "PhysicsConfigComponent",
             "value": "StardustFever/Assets/Prefabs/Config/PhysicsConfig.json"
+        },
+        {
+            "key": "PrestigeConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/PrestigeConfig.json"
+        },
+        {
+            "key": "SaveConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/SaveConfig.json"
         }
     ]
 }

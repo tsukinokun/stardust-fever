@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
 //! @file   StarProgressSystem.hpp
-//! @brief  星のレベルと星座の完成回数を記録し、全体倍率を計算する System
+//! @brief  星のレベルと星座の完成回数を記録する System
 //-------------------------------------------------------------
 #pragma once
 #include <StardustFever/ECS/Event/ConstellationCompletedEvent.hpp>
@@ -13,10 +13,8 @@
 namespace StardustFever::ECS {
     //-------------------------------------------------------------
     //! @class  StarProgressSystem
-    //! @brief  つないだ星のレベルを上げ、完成した星座を数え、完成ボーナスを出す。
-    //!         毎フレーム ScoreMultiplierComponent を計算し直す
-    //! @note   倍率を毎フレーム計算し直すのは、Stars.json / Constellations.json の
-    //!         ボーナス値をホットリロードしたときに、すぐ倍率へ反映させるため
+    //! @brief  つないだ星のレベルを上げ、完成した星座を数え、完成ボーナスを出す
+    //! @note   全体倍率の計算は ScoreMultiplierSystem が行う（記録と計算を分けてある）
     //-------------------------------------------------------------
     class StarProgressSystem final : public Tsukino::ECS::ISystem {
     public:
@@ -27,7 +25,7 @@ namespace StardustFever::ECS {
         explicit StarProgressSystem(Tsukino::ECS::EventBus& eventBus);
 
         //-------------------------------------------------------------
-        //! @brief  記録を更新し、倍率を計算し直す
+        //! @brief  記録を更新する
         //! @param  registry  [in] レジストリ
         //! @param  deltaTime [in] 経過時間（秒）
         //-------------------------------------------------------------
