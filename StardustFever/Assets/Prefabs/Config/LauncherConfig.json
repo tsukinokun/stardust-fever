@@ -1,0 +1,12 @@
+{
+    "LauncherConfigComponent": {
+        "minSpeed": 380.0,
+        "maxSpeed": 560.0,
+        "fireInterval": 0.6,
+        "chargeCycleSeconds": 1.2,
+        "autoFireJitter": 0.08,
+        "maxBallsOnBoard": 30,
+        "killPlaneY": -20.0,
+        "ballPrefab": "StardustFever/Assets/Prefabs/Ball/Prefab.json"
+    }
+}

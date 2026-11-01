@@ -1,0 +1,110 @@
+{
+    "StarTable": {
+        "stars": [
+            {
+                "id": "betelgeuse",
+                "name": "ベテルギウス",
+                "magnitude": 0.5,
+                "spectralType": "M",
+                "basePayout": 630.0,
+                "levelBonus": 0.4
+            },
+            {
+                "id": "rigel",
+                "name": "リゲル",
+                "magnitude": 0.13,
+                "spectralType": "B",
+                "basePayout": 890.0,
+                "levelBonus": 0.25
+            },
+            {
+                "id": "bellatrix",
+                "name": "ベラトリックス",
+                "magnitude": 1.64,
+                "spectralType": "B",
+                "basePayout": 220.0,
+                "levelBonus": 0.25
+            },
+            {
+                "id": "mintaka",
+                "name": "ミンタカ",
+                "magnitude": 2.25,
+                "spectralType": "O",
+                "basePayout": 130.0,
+                "levelBonus": 0.25
+            },
+            {
+                "id": "alnilam",
+                "name": "アルニラム",
+                "magnitude": 1.69,
+                "spectralType": "B",
+                "basePayout": 210.0,
+                "levelBonus": 0.25
+            },
+            {
+                "id": "alnitak",
+                "name": "アルニタク",
+                "magnitude": 1.77,
+                "spectralType": "O",
+                "basePayout": 200.0,
+                "levelBonus": 0.25
+            },
+            {
+                "id": "saiph",
+                "name": "サイフ",
+                "magnitude": 2.06,
+                "spectralType": "B",
+                "basePayout": 150.0,
+                "levelBonus": 0.25
+            },
+            {
+                "id": "castor",
+                "name": "カストル",
+                "magnitude": 1.58,
+                "spectralType": "A",
+                "basePayout": 230.0,
+                "levelBonus": 0.15
+            },
+            {
+                "id": "pollux",
+                "name": "ポルックス",
+                "magnitude": 1.14,
+                "spectralType": "K",
+                "basePayout": 350.0,
+                "levelBonus": 0.12
+            },
+            {
+                "id": "alhena",
+                "name": "アルヘナ",
+                "magnitude": 1.93,
+                "spectralType": "A",
+                "basePayout": 170.0,
+                "levelBonus": 0.15
+            },
+            {
+                "id": "mebsuta",
+                "name": "メブスタ",
+                "magnitude": 2.98,
+                "spectralType": "G",
+                "basePayout": 60.0,
+                "levelBonus": 0.12
+            },
+            {
+                "id": "tejat",
+                "name": "テジャト",
+                "magnitude": 2.87,
+                "spectralType": "M",
+                "basePayout": 70.0,
+                "levelBonus": 0.4
+            },
+            {
+                "id": "wasat",
+                "name": "ワサト",
+                "magnitude": 3.53,
+                "spectralType": "F",
+                "basePayout": 40.0,
+                "levelBonus": 0.15
+            }
+        ]
+    }
+}

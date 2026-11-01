@@ -1,0 +1,5 @@
+newmtl StartPocket
+Kd 1.0 0.8 0.2
+Ke 1.2 0.9 0.2
+Ns 32
+d 1.0

@@ -1,0 +1,16 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Launcher/Transform.json"
+        },
+        {
+            "key": "LauncherComponent",
+            "value": "StardustFever/Assets/Prefabs/Launcher/Launcher.json"
+        },
+        {
+            "key": "AutoFireComponent",
+            "value": "StardustFever/Assets/Prefabs/Launcher/AutoFire.json"
+        }
+    ]
+}

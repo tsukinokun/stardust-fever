@@ -1,0 +1,20 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Drain/Transform.json"
+        },
+        {
+            "key": "CollisionComponent",
+            "value": "StardustFever/Assets/Prefabs/Drain/Collision.json"
+        },
+        {
+            "key": "ModelComponent",
+            "value": "StardustFever/Assets/Prefabs/Drain/Model.json"
+        },
+        {
+            "key": "DrainComponent",
+            "value": "StardustFever/Assets/Prefabs/Drain/Drain.json"
+        }
+    ]
+}

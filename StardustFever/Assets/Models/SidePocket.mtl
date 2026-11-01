@@ -1,0 +1,5 @@
+newmtl SidePocket
+Kd 0.2 0.8 0.9
+Ke 0.2 0.7 0.9
+Ns 32
+d 1.0

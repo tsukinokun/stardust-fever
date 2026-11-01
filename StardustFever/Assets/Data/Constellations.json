@@ -1,0 +1,167 @@
+{
+    "ConstellationTable": {
+        "constellations": [
+            {
+                "id": "orion",
+                "name": "オリオン座",
+                "stars": [
+                    {
+                        "starId": "betelgeuse",
+                        "ra": 5.919,
+                        "dec": 7.41,
+                        "x": -15.83,
+                        "y": 56.0
+                    },
+                    {
+                        "starId": "bellatrix",
+                        "ra": 5.419,
+                        "dec": 6.35,
+                        "x": 10.51,
+                        "y": 54.14
+                    },
+                    {
+                        "starId": "mintaka",
+                        "ra": 5.533,
+                        "dec": -0.3,
+                        "x": 4.5,
+                        "y": 42.46
+                    },
+                    {
+                        "starId": "alnilam",
+                        "ra": 5.604,
+                        "dec": -1.2,
+                        "x": 0.76,
+                        "y": 40.88
+                    },
+                    {
+                        "starId": "alnitak",
+                        "ra": 5.679,
+                        "dec": -1.94,
+                        "x": -3.19,
+                        "y": 39.58
+                    },
+                    {
+                        "starId": "saiph",
+                        "ra": 5.796,
+                        "dec": -9.67,
+                        "x": -9.35,
+                        "y": 26.0
+                    },
+                    {
+                        "starId": "rigel",
+                        "ra": 5.242,
+                        "dec": -8.2,
+                        "x": 19.83,
+                        "y": 28.58
+                    }
+                ],
+                "lines": [
+                    {
+                        "from": 0,
+                        "to": 1
+                    },
+                    {
+                        "from": 0,
+                        "to": 4
+                    },
+                    {
+                        "from": 1,
+                        "to": 2
+                    },
+                    {
+                        "from": 2,
+                        "to": 3
+                    },
+                    {
+                        "from": 3,
+                        "to": 4
+                    },
+                    {
+                        "from": 4,
+                        "to": 5
+                    },
+                    {
+                        "from": 2,
+                        "to": 6
+                    }
+                ],
+                "completionPayout": 12000.0,
+                "completionMultiplier": 2.5,
+                "bonusDescription": "狩人: 完成するたびに全体倍率 ×2.5"
+            },
+            {
+                "id": "gemini",
+                "name": "ふたご座",
+                "stars": [
+                    {
+                        "starId": "castor",
+                        "ra": 7.577,
+                        "dec": 31.89,
+                        "x": -14.29,
+                        "y": 56.0
+                    },
+                    {
+                        "starId": "pollux",
+                        "ra": 7.755,
+                        "dec": 28.03,
+                        "x": -20.0,
+                        "y": 48.52
+                    },
+                    {
+                        "starId": "mebsuta",
+                        "ra": 6.732,
+                        "dec": 25.13,
+                        "x": 12.81,
+                        "y": 42.91
+                    },
+                    {
+                        "starId": "tejat",
+                        "ra": 6.383,
+                        "dec": 22.51,
+                        "x": 24.0,
+                        "y": 37.83
+                    },
+                    {
+                        "starId": "wasat",
+                        "ra": 7.335,
+                        "dec": 21.98,
+                        "x": -6.53,
+                        "y": 36.81
+                    },
+                    {
+                        "starId": "alhena",
+                        "ra": 6.629,
+                        "dec": 16.4,
+                        "x": 16.11,
+                        "y": 26.0
+                    }
+                ],
+                "lines": [
+                    {
+                        "from": 0,
+                        "to": 1
+                    },
+                    {
+                        "from": 0,
+                        "to": 2
+                    },
+                    {
+                        "from": 2,
+                        "to": 3
+                    },
+                    {
+                        "from": 1,
+                        "to": 4
+                    },
+                    {
+                        "from": 4,
+                        "to": 5
+                    }
+                ],
+                "completionPayout": 8000.0,
+                "completionMultiplier": 2.0,
+                "bonusDescription": "双子: 完成するたびに全体倍率 ×2"
+            }
+        ]
+    }
+}

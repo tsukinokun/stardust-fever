@@ -1,0 +1,8 @@
+{
+    "ModelComponent": {
+        "modelHandle": "StardustFever/Assets/Models/Ball.obj",
+        "visible": true,
+        "opacity": 1.0,
+        "doubleSided": false
+    }
+}

@@ -1,0 +1,28 @@
+{
+    "Components": [
+        {
+            "key": "WalletComponent",
+            "value": "StardustFever/Assets/Prefabs/GameState/Wallet.json"
+        },
+        {
+            "key": "ScoreMultiplierComponent",
+            "value": "null"
+        },
+        {
+            "key": "StarCollectionComponent",
+            "value": "null"
+        },
+        {
+            "key": "LotteryStateComponent",
+            "value": "null"
+        },
+        {
+            "key": "FeverStateComponent",
+            "value": "null"
+        },
+        {
+            "key": "HudStateComponent",
+            "value": "null"
+        }
+    ]
+}

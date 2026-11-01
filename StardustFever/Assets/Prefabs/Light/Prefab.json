@@ -1,0 +1,8 @@
+{
+    "Components": [
+        {
+            "key": "DirectionalLightComponent",
+            "value": "StardustFever/Assets/Prefabs/Light/DirectionalLight.json"
+        }
+    ]
+}

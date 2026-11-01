@@ -1,0 +1,12 @@
+{
+    "Components": [
+        {
+            "key": "BloomComponent",
+            "value": "StardustFever/Assets/Prefabs/SpaceEffects/Bloom.json"
+        },
+        {
+            "key": "AmbientParticleComponent",
+            "value": "StardustFever/Assets/Prefabs/SpaceEffects/AmbientParticle.json"
+        }
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/LinkLine/Transform.json"
+        },
+        {
+            "key": "ModelComponent",
+            "value": "StardustFever/Assets/Prefabs/LinkLine/Model.json"
+        },
+        {
+            "key": "LinkLineComponent",
+            "value": "null"
+        }
+    ]
+}

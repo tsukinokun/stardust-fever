@@ -1,0 +1,8 @@
+{
+    "PhysicsConfigComponent": {
+        "unitsPerMeter": 100.0,
+        "substeps": 8,
+        "penetrationSlop": 0.05,
+        "speculativeContactDistance": 1.0
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/SpaceBackdrop/Transform.json"
+        },
+        {
+            "key": "ModelComponent",
+            "value": "StardustFever/Assets/Prefabs/SpaceBackdrop/Model.json"
+        }
+    ]
+}

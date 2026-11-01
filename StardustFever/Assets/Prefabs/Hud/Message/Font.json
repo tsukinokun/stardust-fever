@@ -1,0 +1,26 @@
+{
+    "FontComponent": {
+        "color": {
+            "x": 1,
+            "y": 1,
+            "z": 1,
+            "w": 1
+        },
+        "origin": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "horizontalAlign": 1,
+        "verticalAlign": 1,
+        "outlineColor": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.05,
+            "w": 1.0
+        },
+        "outlineWidth": 2.5,
+        "sortOrder": 10,
+        "maxWidth": 0.0,
+        "scale": 1.1
+    }
+}

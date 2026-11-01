@@ -1,0 +1,22 @@
+{
+    "LotteryConfigComponent": {
+        "winProbability": 0.1,
+        "maxPending": 4,
+        "spinDuration": 2.0,
+        "symbolInterval": 0.07,
+        "symbols": [
+            "牡羊",
+            "牡牛",
+            "双子",
+            "蟹",
+            "獅子",
+            "乙女",
+            "天秤",
+            "蠍",
+            "射手",
+            "山羊",
+            "水瓶",
+            "魚"
+        ]
+    }
+}

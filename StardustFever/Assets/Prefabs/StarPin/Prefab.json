@@ -1,0 +1,20 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/StarPin/Transform.json"
+        },
+        {
+            "key": "CollisionComponent",
+            "value": "StardustFever/Assets/Prefabs/StarPin/Collision.json"
+        },
+        {
+            "key": "ModelComponent",
+            "value": "StardustFever/Assets/Prefabs/StarPin/Model.json"
+        },
+        {
+            "key": "StarPinComponent",
+            "value": "null"
+        }
+    ]
+}

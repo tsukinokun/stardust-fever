@@ -1,0 +1,37 @@
+# Build results
+[Bb]in/
+bin-int/
+[Oo]bj/
+x64/
+Debug/
+Release/
+
+# Visual Studio cache
+.vs/
+
+# Premake generated project files
+.build/
+
+# NuGet
+packages/
+
+# Precompiled headers
+*.pch
+*.pdb
+*.ipch
+
+# Logs
+Logs/
+*.log
+
+# DLL / EXE
+*.dll
+*.exe
+
+# DirectX shader cache
+*.cso
+*.pso
+
+# Asset import cache (the engine converts .obj / .fbx into Cache/**/*.tsm on first load)
+Cache/
+*.tsm

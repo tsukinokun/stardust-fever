@@ -1,0 +1,20 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/SidePocket/Transform.json"
+        },
+        {
+            "key": "CollisionComponent",
+            "value": "StardustFever/Assets/Prefabs/SidePocket/Collision.json"
+        },
+        {
+            "key": "ModelComponent",
+            "value": "StardustFever/Assets/Prefabs/SidePocket/Model.json"
+        },
+        {
+            "key": "PocketComponent",
+            "value": "StardustFever/Assets/Prefabs/SidePocket/Pocket.json"
+        }
+    ]
+}

@@ -1,0 +1,36 @@
+{
+    "Components": [
+        {
+            "key": "LauncherConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/LauncherConfig.json"
+        },
+        {
+            "key": "LotteryConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/LotteryConfig.json"
+        },
+        {
+            "key": "FeverConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/FeverConfig.json"
+        },
+        {
+            "key": "StarLinkConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/StarLinkConfig.json"
+        },
+        {
+            "key": "PayoutConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/PayoutConfig.json"
+        },
+        {
+            "key": "UpgradeConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/UpgradeConfig.json"
+        },
+        {
+            "key": "HudConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/HudConfig.json"
+        },
+        {
+            "key": "PhysicsConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/PhysicsConfig.json"
+        }
+    ]
+}

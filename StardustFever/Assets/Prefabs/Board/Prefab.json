@@ -1,0 +1,8 @@
+{
+    "Components": [
+        {
+            "key": "BoardBuildRequestComponent",
+            "value": "StardustFever/Assets/Prefabs/Board/BoardBuildRequest.json"
+        }
+    ]
+}

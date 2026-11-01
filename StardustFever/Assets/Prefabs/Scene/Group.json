@@ -1,0 +1,68 @@
+{
+    "Entities": [
+        {
+            "key": "Config",
+            "value": "StardustFever/Assets/Prefabs/Config/Prefab.json"
+        },
+        {
+            "key": "GameState",
+            "value": "StardustFever/Assets/Prefabs/GameState/Prefab.json"
+        },
+        {
+            "key": "Camera",
+            "value": "StardustFever/Assets/Prefabs/Camera/Prefab.json"
+        },
+        {
+            "key": "Light",
+            "value": "StardustFever/Assets/Prefabs/Light/Prefab.json"
+        },
+        {
+            "key": "SpaceEffects",
+            "value": "StardustFever/Assets/Prefabs/SpaceEffects/Prefab.json"
+        },
+        {
+            "key": "SpaceBackdrop",
+            "value": "StardustFever/Assets/Prefabs/SpaceBackdrop/Prefab.json"
+        },
+        {
+            "key": "Board",
+            "value": "StardustFever/Assets/Prefabs/Board/Prefab.json"
+        },
+        {
+            "key": "HudStardust",
+            "value": "StardustFever/Assets/Prefabs/Hud/Stardust/Prefab.json"
+        },
+        {
+            "key": "HudMultiplier",
+            "value": "StardustFever/Assets/Prefabs/Hud/Multiplier/Prefab.json"
+        },
+        {
+            "key": "HudLottery",
+            "value": "StardustFever/Assets/Prefabs/Hud/Lottery/Prefab.json"
+        },
+        {
+            "key": "HudHandle",
+            "value": "StardustFever/Assets/Prefabs/Hud/Handle/Prefab.json"
+        },
+        {
+            "key": "HudAutoFire",
+            "value": "StardustFever/Assets/Prefabs/Hud/AutoFire/Prefab.json"
+        },
+        {
+            "key": "HudHelp",
+            "value": "StardustFever/Assets/Prefabs/Hud/Help/Prefab.json"
+        },
+        {
+            "key": "HudFever",
+            "value": "StardustFever/Assets/Prefabs/Hud/Fever/Prefab.json"
+        },
+        {
+            "key": "HudMessage",
+            "value": "StardustFever/Assets/Prefabs/Hud/Message/Prefab.json"
+        },
+        {
+            "key": "HudCollection",
+            "value": "StardustFever/Assets/Prefabs/Hud/Collection/Prefab.json"
+        }
+    ]
+}
