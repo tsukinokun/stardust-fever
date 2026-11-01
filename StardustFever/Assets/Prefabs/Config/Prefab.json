@@ -21,10 +21,6 @@
             "value": "StardustFever/Assets/Prefabs/Config/PayoutConfig.json"
         },
         {
-            "key": "UpgradeConfigComponent",
-            "value": "StardustFever/Assets/Prefabs/Config/UpgradeConfig.json"
-        },
-        {
             "key": "HudConfigComponent",
             "value": "StardustFever/Assets/Prefabs/Config/HudConfig.json"
         },

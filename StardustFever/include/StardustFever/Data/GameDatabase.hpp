@@ -5,6 +5,7 @@
 #pragma once
 #include <StardustFever/Data/ConstellationData.hpp>
 #include <StardustFever/Data/StarData.hpp>
+#include <StardustFever/Data/UpgradeData.hpp>
 
 // 名前空間 : StardustFever::Data
 namespace StardustFever::Data {
@@ -25,5 +26,12 @@ namespace StardustFever::Data {
     //! @note   GetStarTable と同じく、要素への参照をフレームをまたいで持たないこと
     //-------------------------------------------------------------
     const ConstellationTable& GetConstellationTable();
+
+    //-------------------------------------------------------------
+    //! @brief  強化のマスターデータを取得する
+    //! @return Assets/Data/Upgrades.json の中身
+    //! @note   GetStarTable と同じく、要素への参照をフレームをまたいで持たないこと
+    //-------------------------------------------------------------
+    const UpgradeTable& GetUpgradeTable();
 
 }    // namespace StardustFever::Data

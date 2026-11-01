@@ -1,17 +1,18 @@
 //-------------------------------------------------------------
-//! @file   UpgradeConfigComponent.hpp
-//! @brief  UpgradeConfigComponent の宣言
+//! @file   UpgradePurchasedEvent.hpp
+//! @brief  UpgradePurchasedEvent の宣言
 //-------------------------------------------------------------
 #pragma once
+#include <string>
 
 // 名前空間 : StardustFever::ECS
 namespace StardustFever::ECS {
     //-------------------------------------------------------------
-    //! @struct UpgradeConfigComponent
-    //! @brief  強化の調整値
-    //! @note   設定エンティティに付く。ホットリロード対象
+    //! @struct UpgradePurchasedEvent
+    //! @brief  強化を買った
     //-------------------------------------------------------------
-    struct UpgradeConfigComponent {
-        double autoFireUnlockCost = 2000.0;    //!< 自動発射の解禁に要る星屑
+    struct UpgradePurchasedEvent {
+        std::string upgradeId;    //!< 買った強化
+        int         newLevel;     //!< 買った後のレベル
     };
 }    // namespace StardustFever::ECS

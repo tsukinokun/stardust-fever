@@ -7,6 +7,7 @@
 #include <StardustFever/ECS/Component/PayoutConfigComponent.hpp>
 #include <StardustFever/ECS/Component/PocketComponent.hpp>
 #include <StardustFever/ECS/Component/ScoreMultiplierComponent.hpp>
+#include <StardustFever/ECS/Component/UpgradeModifiersComponent.hpp>
 #include <StardustFever/ECS/Component/WalletComponent.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
 
@@ -33,11 +34,16 @@ namespace StardustFever::ECS {
         if(!wallet || !config)
             return;
 
+        // 強化の倍率は釘・入賞口それぞれの払い出しにだけ掛ける（星つなぎの獲得は対象外）
+        const UpgradeModifiersComponent* upgrades         = FindSingleton<UpgradeModifiersComponent>(registry);
+        const double                     pinMultiplier    = upgrades ? upgrades->pinPayoutMultiplier : 1.0;
+        const double                     pocketMultiplier = upgrades ? upgrades->pocketPayoutMultiplier : 1.0;
+
         Core::BigNumber baseTotal;
-        baseTotal += Core::BigNumber(config->pinHitPayout * static_cast<double>(pinHits.size()));
+        baseTotal += Core::BigNumber(config->pinHitPayout * static_cast<double>(pinHits.size())) * Core::BigNumber(pinMultiplier);
         for(const BallEnteredPocketEvent& entry : pocketEntries) {
             if(const PocketComponent* pocket = registry.try_get<PocketComponent>(entry.pocket))
-                baseTotal += Core::BigNumber(pocket->basePayout);
+                baseTotal += Core::BigNumber(pocket->basePayout) * Core::BigNumber(pocketMultiplier);
         }
         for(const StardustEarnedEvent& earned : earnings) {
             baseTotal += earned.baseAmount;

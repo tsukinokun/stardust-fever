@@ -8,6 +8,7 @@
 #include <StardustFever/ECS/Component/LotteryConfigComponent.hpp>
 #include <StardustFever/ECS/Component/LotteryStateComponent.hpp>
 #include <StardustFever/ECS/Component/PocketComponent.hpp>
+#include <StardustFever/ECS/Component/UpgradeModifiersComponent.hpp>
 #include <StardustFever/ECS/Event/LotteryResultEvent.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
 
@@ -59,10 +60,12 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         if(!state->spinning && state->pending > 0 && !feverActive) {
             --state->pending;
-            state->spinning    = true;
-            state->spinTimer   = config->spinDuration;
-            state->symbolTimer = 0.0f;
-            state->willWin     = std::bernoulli_distribution(std::clamp(config->winProbability, 0.0, 1.0))(m_random);
+            state->spinning                                 = true;
+            state->spinTimer                                = config->spinDuration;
+            state->symbolTimer                              = 0.0f;
+            const UpgradeModifiersComponent* upgrades       = FindSingleton<UpgradeModifiersComponent>(registry);
+            const double                     winProbability = config->winProbability + (upgrades ? upgrades->lotteryChanceBonus : 0.0);
+            state->willWin                                  = std::bernoulli_distribution(std::clamp(winProbability, 0.0, 1.0))(m_random);
 
             if(state->willWin) {
                 const int symbol    = pickSymbol(m_random);

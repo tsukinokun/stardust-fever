@@ -8,6 +8,7 @@
 #include <StardustFever/ECS/Component/BallComponent.hpp>
 #include <StardustFever/ECS/Component/LauncherComponent.hpp>
 #include <StardustFever/ECS/Component/LauncherConfigComponent.hpp>
+#include <StardustFever/ECS/Component/UpgradeModifiersComponent.hpp>
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
 
@@ -69,7 +70,9 @@ namespace StardustFever::ECS {
 
             float power = launcher.handlePower;
             if(!launcher.fireRequested) {
-                std::uniform_real_distribution<float> jitter(-config->autoFireJitter, config->autoFireJitter);
+                const UpgradeModifiersComponent*      upgrades = FindSingleton<UpgradeModifiersComponent>(registry);
+                const float                           range    = config->autoFireJitter * (upgrades ? upgrades->autoFireJitterScale : 1.0f);
+                std::uniform_real_distribution<float> jitter(-range, range);
                 power += jitter(m_random);
             }
             launcher.fireRequested = false;

@@ -9,6 +9,7 @@
 #include <StardustFever/ECS/Component/FeverStateComponent.hpp>
 #include <StardustFever/ECS/Component/StarLinkConfigComponent.hpp>
 #include <StardustFever/ECS/Component/StarPinComponent.hpp>
+#include <StardustFever/ECS/Component/UpgradeModifiersComponent.hpp>
 #include <StardustFever/ECS/Event/ConstellationCompletedEvent.hpp>
 #include <StardustFever/ECS/Event/StardustEarnedEvent.hpp>
 #include <StardustFever/ECS/Event/StarLinkedEvent.hpp>
@@ -109,8 +110,10 @@ namespace StardustFever::ECS {
         // 最初の玉と違う玉でつないだ時点で、星座完成時のパーフェクトは無くなる
         //-------------------------------------------------------------
         ++ball->linkedStarCount;
-        const int             chain            = ball->linkedStarCount;
-        const Core::BigNumber strokeMultiplier = Core::BigNumber::Pow(config->strokeBase, static_cast<double>(chain - 1));
+        const int                        chain            = ball->linkedStarCount;
+        const UpgradeModifiersComponent* upgrades         = FindSingleton<UpgradeModifiersComponent>(registry);
+        const double                     strokeBase       = config->strokeBase + (upgrades ? upgrades->strokeBaseBonus : 0.0);
+        const Core::BigNumber            strokeMultiplier = Core::BigNumber::Pow(strokeBase, static_cast<double>(chain - 1));
 
         ++fever->starsLinked;
         fever->bestChain = std::max(fever->bestChain, chain);

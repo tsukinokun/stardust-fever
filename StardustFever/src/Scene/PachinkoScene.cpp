@@ -17,7 +17,8 @@
 #include <StardustFever/ECS/System/PhysicsStepSystem.hpp>
 #include <StardustFever/ECS/System/StarLinkSystem.hpp>
 #include <StardustFever/ECS/System/StarProgressSystem.hpp>
-#include <StardustFever/ECS/System/UpgradeSystem.hpp>
+#include <StardustFever/ECS/System/UpgradeEffectSystem.hpp>
+#include <StardustFever/ECS/System/UpgradeShopSystem.hpp>
 
 #include <Tsukino/EngineIntegration/ECS/System/AmbientParticleSystem.hpp>
 #include <Tsukino/EngineIntegration/ECS/System/BloomSystem.hpp>
@@ -55,7 +56,8 @@ namespace StardustFever::Scene {
             ConfigReload = 0,    // 設定を読み直してから、そのフレームの処理を始める
             BoardBuild,
             LauncherInput,
-            Upgrade,
+            UpgradeShop,
+            UpgradeEffect,    // 購入 → 効果。効果を使う System（発射・払い出し・抽選など）より前に計算する
             Launch,
             Physics,
             BallEvent,       // 衝突 → 釘・入賞・アウト・星
@@ -100,7 +102,8 @@ namespace StardustFever::Scene {
         m_scene.AddSystem(configReload, Order(SystemOrder::ConfigReload));
         m_scene.AddSystem(std::make_shared<ECS::BoardBuildSystem>(), Order(SystemOrder::BoardBuild));
         m_scene.AddSystem(std::make_shared<ECS::LauncherInputSystem>(eventBus), Order(SystemOrder::LauncherInput));
-        m_scene.AddSystem(std::make_shared<ECS::UpgradeSystem>(eventBus), Order(SystemOrder::Upgrade));
+        m_scene.AddSystem(std::make_shared<ECS::UpgradeShopSystem>(eventBus), Order(SystemOrder::UpgradeShop));
+        m_scene.AddSystem(std::make_shared<ECS::UpgradeEffectSystem>(), Order(SystemOrder::UpgradeEffect));
         m_scene.AddSystem(std::make_shared<ECS::LaunchSystem>(), Order(SystemOrder::Launch));
         m_scene.AddSystem(std::make_shared<ECS::PhysicsStepSystem>(eventBus), Order(SystemOrder::Physics));
         m_scene.AddSystem(std::make_shared<ECS::BallEventSystem>(eventBus), Order(SystemOrder::BallEvent));

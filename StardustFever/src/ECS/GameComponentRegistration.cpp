@@ -16,6 +16,8 @@
 #include <StardustFever/ECS/Component/ScoreMultiplierComponent.hpp>
 #include <StardustFever/ECS/Component/StarCollectionComponent.hpp>
 #include <StardustFever/ECS/Component/StarPinComponent.hpp>
+#include <StardustFever/ECS/Component/UpgradeLevelsComponent.hpp>
+#include <StardustFever/ECS/Component/UpgradeModifiersComponent.hpp>
 
 // 値を JSON から読むコンポーネント（シリアライズ定義が見えていないと、値を読まずに付けるだけになる）
 #include <StardustFever/ECS/Serialization/AutoFireComponentSerialization.hpp>
@@ -31,7 +33,6 @@
 #include <StardustFever/ECS/Serialization/PhysicsConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/PocketComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/StarLinkConfigComponentSerialization.hpp>
-#include <StardustFever/ECS/Serialization/UpgradeConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/WalletComponentSerialization.hpp>
 
 #include <Tsukino/Engine/ECS/Prefab/PrefabFactory.hpp>
@@ -62,6 +63,8 @@ namespace StardustFever::ECS {
         factory.RegisterComponent<LotteryStateComponent>("LotteryStateComponent");
         factory.RegisterComponent<FeverStateComponent>("FeverStateComponent");
         factory.RegisterComponent<HudStateComponent>("HudStateComponent");
+        factory.RegisterComponent<UpgradeLevelsComponent>("UpgradeLevelsComponent");
+        factory.RegisterComponent<UpgradeModifiersComponent>("UpgradeModifiersComponent");
 
         // 設定
         factory.RegisterComponent<LauncherConfigComponent>("LauncherConfigComponent");
@@ -69,7 +72,6 @@ namespace StardustFever::ECS {
         factory.RegisterComponent<FeverConfigComponent>("FeverConfigComponent");
         factory.RegisterComponent<StarLinkConfigComponent>("StarLinkConfigComponent");
         factory.RegisterComponent<PayoutConfigComponent>("PayoutConfigComponent");
-        factory.RegisterComponent<UpgradeConfigComponent>("UpgradeConfigComponent");
         factory.RegisterComponent<HudConfigComponent>("HudConfigComponent");
         factory.RegisterComponent<PhysicsConfigComponent>("PhysicsConfigComponent");
     }
@@ -83,7 +85,6 @@ namespace StardustFever::ECS {
         reloadSystem.RegisterType<FeverConfigComponent>("FeverConfigComponent");
         reloadSystem.RegisterType<StarLinkConfigComponent>("StarLinkConfigComponent");
         reloadSystem.RegisterType<PayoutConfigComponent>("PayoutConfigComponent");
-        reloadSystem.RegisterType<UpgradeConfigComponent>("UpgradeConfigComponent");
         reloadSystem.RegisterType<HudConfigComponent>("HudConfigComponent");
         reloadSystem.RegisterType<PhysicsConfigComponent>("PhysicsConfigComponent");
     }

@@ -16,7 +16,7 @@
 #include <StardustFever/ECS/Component/LotteryStateComponent.hpp>
 #include <StardustFever/ECS/Component/ScoreMultiplierComponent.hpp>
 #include <StardustFever/ECS/Component/StarCollectionComponent.hpp>
-#include <StardustFever/ECS/Component/UpgradeConfigComponent.hpp>
+#include <StardustFever/ECS/Component/UpgradeLevelsComponent.hpp>
 #include <StardustFever/ECS/Component/WalletComponent.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
 
@@ -76,11 +76,58 @@ namespace StardustFever::ECS {
             if(!autoFire)
                 return {};
             if(!autoFire->unlocked) {
-                const UpgradeConfigComponent* upgrade = FindSingleton<UpgradeConfigComponent>(registry);
-                const std::string             cost    = upgrade ? Core::BigNumber(upgrade->autoFireUnlockCost).ToJapaneseString() : std::string("?");
-                return "自動発射  未解禁（U: 星屑 " + cost + " で解禁）";
+                // 解禁する強化の購入キーは Upgrades.json の並び順で決まるので、データから探す
+                const auto& upgrades = Data::GetUpgradeTable().upgrades;
+                for(size_t i = 0; i < upgrades.size(); ++i) {
+                    if(upgrades[i].effect == "autoFireUnlock")
+                        return "自動発射  未解禁（強化 [" + std::to_string(i + 1) + "] で解禁）";
+                }
+                return "自動発射  未解禁";
             }
             return autoFire->enabled ? "自動発射  ON（強さが揺らぐ）  A: 切替" : "自動発射  OFF  A: 切替";
+        }
+
+        //-------------------------------------------------------------
+        //! @brief  強化の効果量を表示用にする
+        //! @param  upgrade [in] 強化の定義
+        //! @param  level   [in] レベル
+        //! @return 掛け算は "×1.95"、足し算は displayUnit に合わせて "+3%" / "+10秒" / "+0.5"
+        //-------------------------------------------------------------
+        std::string FormatUpgradeEffect(const Data::UpgradeDef& upgrade, int level) {
+            const double value = upgrade.EffectAt(level);
+            char         buffer[48];
+            if(upgrade.Stacking() == Core::UpgradeFormula::Stacking::Multiply)
+                std::snprintf(buffer, sizeof(buffer), "×%.2f", value);
+            else if(upgrade.displayUnit == "%")
+                std::snprintf(buffer, sizeof(buffer), "+%g%%", value * 100.0);
+            else
+                std::snprintf(buffer, sizeof(buffer), "+%g%s", value, upgrade.displayUnit.c_str());
+            return buffer;
+        }
+
+        std::string BuildUpgradesText(Tsukino::ECS::Registry& registry) {
+            const UpgradeLevelsComponent* levels = FindSingleton<UpgradeLevelsComponent>(registry);
+            const WalletComponent*        wallet = FindSingleton<WalletComponent>(registry);
+            if(!levels || !wallet)
+                return {};
+
+            std::string text     = "強化（数字キーで購入）";
+            const auto& upgrades = Data::GetUpgradeTable().upgrades;
+            for(size_t i = 0; i < upgrades.size(); ++i) {
+                const Data::UpgradeDef& upgrade = upgrades[i];
+                const auto              found   = levels->levels.find(upgrade.id);
+                const int               level   = found == levels->levels.end() ? 0 : found->second;
+                const bool              maxed   = Core::UpgradeFormula::IsMaxed(level, upgrade.maxLevel);
+                const Core::BigNumber   cost    = upgrade.CostAt(level);
+
+                // 買える行に印を付け、星屑が貯まったことにすぐ気づけるようにする
+                const std::string mark  = maxed ? "　" : (wallet->stardust >= cost ? "◆" : "　");
+                text                   += "\n" + mark + "[" + std::to_string(i + 1) + "] " + upgrade.name + " Lv" + std::to_string(level);
+                text                   += maxed ? "  MAX" : "  星屑 " + cost.ToJapaneseString();
+                if(level > 0 && upgrade.effect != "autoFireUnlock")
+                    text += "  " + upgrade.description + " " + FormatUpgradeEffect(upgrade, level);
+            }
+            return text;
         }
 
         std::string BuildLotteryText(Tsukino::ECS::Registry& registry) {
@@ -201,6 +248,9 @@ namespace StardustFever::ECS {
                 break;
             case HudTextKind::Collection:
                 text = BuildCollectionText(registry);
+                break;
+            case HudTextKind::Upgrades:
+                text = BuildUpgradesText(registry);
                 break;
             }
             registry.GetComponent<FontComponent>(entity).text = Core::Utf8ToWide(text);

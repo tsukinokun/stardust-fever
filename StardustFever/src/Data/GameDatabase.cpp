@@ -19,6 +19,7 @@ namespace StardustFever::Data {
     namespace {
         constexpr const char* kStarTablePath          = "StardustFever/Assets/Data/Stars.json";
         constexpr const char* kConstellationTablePath = "StardustFever/Assets/Data/Constellations.json";
+        constexpr const char* kUpgradeTablePath       = "StardustFever/Assets/Data/Upgrades.json";
 
         //-------------------------------------------------------------
         //! @brief  ルートキー付きのJSONを1つ読む
@@ -63,6 +64,15 @@ namespace StardustFever::Data {
     const ConstellationTable& GetConstellationTable() {
         static Tsukino::IO::HotReloadable<ConstellationTable> s_Table(
             Tsukino::Core::Path(kConstellationTablePath), [](ConstellationTable& out) { return LoadJson(kConstellationTablePath, "ConstellationTable", out); });
+        return s_Table.Get();
+    }
+
+    //-------------------------------------------------------------
+    // 強化のマスターデータ
+    //-------------------------------------------------------------
+    const UpgradeTable& GetUpgradeTable() {
+        static Tsukino::IO::HotReloadable<UpgradeTable> s_Table(Tsukino::Core::Path(kUpgradeTablePath),
+                                                                [](UpgradeTable& out) { return LoadJson(kUpgradeTablePath, "UpgradeTable", out); });
         return s_Table.Get();
     }
 

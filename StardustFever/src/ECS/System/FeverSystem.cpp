@@ -18,6 +18,7 @@
 
 #include <StardustFever/ECS/Component/DrainComponent.hpp>
 #include <StardustFever/ECS/Component/PocketComponent.hpp>
+#include <StardustFever/ECS/Component/UpgradeModifiersComponent.hpp>
 
 #include <Tsukino/BuiltIn/ECS/Component/CollisionComponent.hpp>
 #include <Tsukino/BuiltIn/ECS/Component/TransformComponent.hpp>
@@ -173,16 +174,17 @@ namespace StardustFever::ECS {
             registry.GetComponent<BallComponent>(ball).linkedStarCount = 0;
         }
 
-        state->active          = true;
-        state->timeRemaining   = config->duration;
-        state->constellationId = constellation.id;
-        state->starsLinked     = 0;
-        state->starsTotal      = static_cast<int>(constellation.stars.size());
-        state->firstLinkBall   = entt::null;
-        state->perfect         = true;
-        state->completed       = false;
-        state->endDelay        = config->endDelayAfterComplete;
-        state->bestChain       = 0;
+        state->active                             = true;
+        const UpgradeModifiersComponent* upgrades = FindSingleton<UpgradeModifiersComponent>(registry);
+        state->timeRemaining                      = config->duration + (upgrades ? upgrades->feverDurationBonus : 0.0f);
+        state->constellationId                    = constellation.id;
+        state->starsLinked                        = 0;
+        state->starsTotal                         = static_cast<int>(constellation.stars.size());
+        state->firstLinkBall                      = entt::null;
+        state->perfect                            = true;
+        state->completed                          = false;
+        state->endDelay                           = config->endDelayAfterComplete;
+        state->bestChain                          = 0;
 
         m_eventBus->Publish(FeverStartedEvent{constellation.id});
         m_eventBus->Publish(HudMessageEvent{"★ 星詠みタイム ★  " + constellation.name + "を描け！"});

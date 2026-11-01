@@ -1,0 +1,90 @@
+{
+    "UpgradeTable": {
+        "upgrades": [
+            {
+                "id": "pin_payout",
+                "name": "星屑の釘",
+                "description": "釘の星屑",
+                "effect": "pinPayout",
+                "stacking": "multiply",
+                "valuePerLevel": 0.25,
+                "baseCost": 50.0,
+                "costGrowth": 1.35,
+                "maxLevel": 0,
+                "displayUnit": ""
+            },
+            {
+                "id": "pocket_payout",
+                "name": "星の門",
+                "description": "入賞の星屑",
+                "effect": "pocketPayout",
+                "stacking": "multiply",
+                "valuePerLevel": 0.3,
+                "baseCost": 120.0,
+                "costGrowth": 1.4,
+                "maxLevel": 0,
+                "displayUnit": ""
+            },
+            {
+                "id": "lottery_chance",
+                "name": "幸運の星回り",
+                "description": "当選確率",
+                "effect": "lotteryChance",
+                "stacking": "add",
+                "valuePerLevel": 0.01,
+                "baseCost": 300.0,
+                "costGrowth": 1.8,
+                "maxLevel": 10,
+                "displayUnit": "%"
+            },
+            {
+                "id": "fever_duration",
+                "name": "星詠みの延長",
+                "description": "フィーバー時間",
+                "effect": "feverDuration",
+                "stacking": "add",
+                "valuePerLevel": 5.0,
+                "baseCost": 500.0,
+                "costGrowth": 1.7,
+                "maxLevel": 8,
+                "displayUnit": "秒"
+            },
+            {
+                "id": "stroke_base",
+                "name": "一筆の冴え",
+                "description": "一筆書きの底",
+                "effect": "strokeBase",
+                "stacking": "add",
+                "valuePerLevel": 0.25,
+                "baseCost": 2000.0,
+                "costGrowth": 2.0,
+                "maxLevel": 6,
+                "displayUnit": ""
+            },
+            {
+                "id": "auto_fire",
+                "name": "自動発射",
+                "description": "自動発射を解禁",
+                "effect": "autoFireUnlock",
+                "stacking": "add",
+                "valuePerLevel": 1.0,
+                "baseCost": 2000.0,
+                "costGrowth": 1.0,
+                "maxLevel": 1,
+                "displayUnit": ""
+            },
+            {
+                "id": "auto_fire_jitter",
+                "name": "精密照準",
+                "description": "自動発射の揺らぎ",
+                "effect": "autoFireJitter",
+                "stacking": "multiply",
+                "valuePerLevel": -0.2,
+                "baseCost": 3000.0,
+                "costGrowth": 1.9,
+                "maxLevel": 5,
+                "displayUnit": ""
+            }
+        ]
+    }
+}

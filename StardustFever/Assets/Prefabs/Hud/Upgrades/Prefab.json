@@ -1,0 +1,16 @@
+{
+    "Components": [
+        {
+            "key": "FontComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Upgrades/Font.json"
+        },
+        {
+            "key": "HudTextComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Upgrades/HudText.json"
+        },
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Upgrades/Transform.json"
+        }
+    ]
+}

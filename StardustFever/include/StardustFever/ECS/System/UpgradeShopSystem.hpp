@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-//! @file   UpgradeSystem.hpp
-//! @brief  星屑を払って台を強化する System
+//! @file   UpgradeShopSystem.hpp
+//! @brief  星屑を払って強化を買う System
 //-------------------------------------------------------------
 #pragma once
 #include <Tsukino/Core/ECS/System/ISystem.hpp>
@@ -12,17 +12,17 @@ namespace Tsukino::ECS {
 // 名前空間 : StardustFever::ECS
 namespace StardustFever::ECS {
     //-------------------------------------------------------------
-    //! @class  UpgradeSystem
-    //! @brief  U キーで自動発射を解禁する（縦切り用の仮の強化）
-    //! @note   強化ツリーを作るときは、強化の種類と値段をデータへ出してここを広げる
+    //! @class  UpgradeShopSystem
+    //! @brief  数字キー 1〜9 で、Upgrades.json の並び順の強化を1レベル買う
+    //! @note   買うのはレベルを上げるところまで。効果は UpgradeEffectSystem が計算する
     //-------------------------------------------------------------
-    class UpgradeSystem final : public Tsukino::ECS::ISystem {
+    class UpgradeShopSystem final : public Tsukino::ECS::ISystem {
     public:
         //-------------------------------------------------------------
         //! @brief  コンストラクタ
-        //! @param  eventBus [in] メッセージの発行先
+        //! @param  eventBus [in] 購入イベントとメッセージの発行先
         //-------------------------------------------------------------
-        explicit UpgradeSystem(Tsukino::ECS::EventBus& eventBus);
+        explicit UpgradeShopSystem(Tsukino::ECS::EventBus& eventBus);
 
         //-------------------------------------------------------------
         //! @brief  購入の入力を処理する

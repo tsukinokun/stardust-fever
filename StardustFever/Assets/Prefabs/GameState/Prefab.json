@@ -23,6 +23,14 @@
         {
             "key": "HudStateComponent",
             "value": "null"
+        },
+        {
+            "key": "UpgradeLevelsComponent",
+            "value": "null"
+        },
+        {
+            "key": "UpgradeModifiersComponent",
+            "value": "null"
         }
     ]
 }
