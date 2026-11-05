@@ -14,8 +14,8 @@ TsukinoEngine（EnTT ECS / Jolt Physics / cereal Prefab JSON）上で作る。
 
 1. ハンドル強弱で玉を打つ（止め打ち・右打ちの狙い分け）→ 釘や入賞口で **星屑**（通貨）を獲得
 2. スタート入賞 → **黄道十二宮リール**の抽選 → 当たりで **フィーバー「星詠みタイム」**（星屑の稼ぎ時）
-   - 釘と入賞の星屑が ×3、横の入賞口が横へ広がる（`FeverConfig.json`）
-3. 盤面上部の **星の門** に入る → 抽選 → 当たりで **星ゲットチャンス**（ミニゲーム）
+   - 釘と入賞の星屑が ×3、チューリップの羽が開いて入りやすくなる（`FeverConfig.json` / `TulipWing*` の Prefab）
+3. 盤面の下の段、スタート入賞口の左右にある **星の門** に入る → 抽選 → 当たりで **星ゲットチャンス**（ミニゲーム）
    - 88星座から1つが選ばれ、盤面にその形で **星釘** が出る。星座の線は薄いガイドとして現れ、両端の星をつなぐと金色に灯る
    - 星釘と重なる普通の釘は、チャンスの間だけ消える
    - 制限時間のうちに **全部つなげたときだけ**、星を1つ引ける。どの玉でつないでもよい
@@ -133,7 +133,7 @@ TsukinoEngine（EnTT ECS / Jolt Physics / cereal Prefab JSON）上で作る。
 | 下 | 操作のキーのチップ（Tab で星図） |
 | 右下 | 通知のトースト（新しいものが下に入り、古いものは押し上がる。縁の色は出来事の良し悪しで変える） |
 | 中央 | 大見出し（フィーバー開始・星座完成・ビッグバン）。弾みながら現れる |
-| 盤面の上 | 星屑が入った場所から浮かぶ数字（金額で大きさ、出どころで色）と、星をつないだときの粒子。星の門は桃色に光る |
+| 盤面の上 | 星屑が入った場所から浮かぶ数字（金額で大きさ、出どころで色）と、星をつないだときの粒子。入賞口の上の名札（「スタート」「チューリップ」「星の門」。入賞口の色の文字） |
 
 **動きの決まり**
 - 待機中のパネルは、それぞれ周期と位相をずらしてわずかに漂う。全部が揃って動くと機械的に見えるため
@@ -143,6 +143,16 @@ TsukinoEngine（EnTT ECS / Jolt Physics / cereal Prefab JSON）上で作る。
 
 並べ方と色は `Prefabs/Hud/**` と `Prefabs/Config/HudLayoutConfig.json` / `HudFxConfig.json` にあり、ホットリロードできる。
 素材は `Tools/GenerateUiTextures.py` で作る。
+
+## 入賞口
+
+| 色 | 入賞口 | 場所 | 働き |
+|---|---|---|---|
+| 金 | スタート入賞口 | 下の真ん中 | フィーバーの抽選を1つ保留する |
+| 桃 | 星の門（2つ） | スタートの左右 | 星ゲットチャンスの抽選（`StarChanceConfig.json` の `chanceProbability`） |
+| 水色 | チューリップ（2つ） | 盤面の左右 | 星屑だけ。フィーバー中は羽が V の字に開いて、玉を受け止めやすくなる（`TulipSystem`） |
+
+- 柱・羽と釘の間には、玉が挟まって止まる幅の隙間を作らない（`GenerateBoardLayout.py` が確かめ、だめなら書き出さない）
 
 ## 盤面の見た目
 
@@ -154,7 +164,8 @@ TsukinoEngine（EnTT ECS / Jolt Physics / cereal Prefab JSON）上で作る。
 | 釘 | 1本ずつばらばらの間隔でふっと明るくなる。玉が当たると一瞬閃き、ときどき火花が散る | `Prefabs/Pin/Twinkle.json`、火花は `CosmicFxConfig.json` |
 | 星釘 | 十字の光芒が呼吸し、周りを点光源で照らす。つなぐと金色に強まる | `Prefabs/StarPin/GlowHalo.json` |
 | 星座の線 | フィーバー開始時に全部の線が薄い青で現れ、両端の星がつながると金色に灯ってブルームでにじむ | `Prefabs/Config/StarLinkConfig.json`（太さと色） |
-| 壁・入賞口 | ネオンの縁（壁は紫、スタート入賞口は金、横の入賞口は水色） | 各 Prefab の `RimGlow.json` |
+| 壁 | ネオンの縁（紫） | `Prefabs/Wall/RimGlow.json` |
+| 入賞口 | 本物のパチンコのように、上が開いた杯（左右の柱＋口の底の光る床）。口に落ちた玉だけ入賞し、柱に当たった玉は弾かれる | 形は `Tools/GenerateBoardLayout.py` の `POCKET_TYPES`、色は `Tools/GeneratePocketModels.py` |
 | 背景 | 遠い星空と2つの星雲を奥行きを変えて重ね、盤面の板にも淡い星空を敷く。流れ星がときどき横切り、フィーバー中は流星群になる | `Prefabs/Space*` / `BoardStarfield`、流れ星は `CosmicFxConfig.json` |
 
 素材は `Tools/GenerateSpaceTextures.py` で作る。

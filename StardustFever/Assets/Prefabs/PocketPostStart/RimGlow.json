@@ -1,0 +1,13 @@
+{
+    "RimGlowComponent": {
+        "active": true,
+        "rimColor": {
+            "x": 1.8,
+            "y": 1.4,
+            "z": 0.5
+        },
+        "rimIntensity": 1.5,
+        "rimPower": 3.0,
+        "glow": 0.0
+    }
+}

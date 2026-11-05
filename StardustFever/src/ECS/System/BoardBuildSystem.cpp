@@ -104,11 +104,11 @@ namespace StardustFever::ECS {
             }
 
             //-------------------------------------------------------------
-            // 壁は1つの Prefab を伸ばして使う。見た目（scale）と当たり判定（extent）の
+            // 壁は1つの Prefab を伸ばして使う（入賞口の柱は壁ごとに Prefab を選べる）。見た目（scale）と当たり判定（extent）の
             // 両方を同じ大きさにする。奥行きは Prefab の値のまま
             //-------------------------------------------------------------
             for(const Data::BoardWallDef& wall : layout.walls) {
-                const entt::entity entity = PlaceOnBoard(factory, registry, layout.wallPrefab, wall.x, wall.y);
+                const entt::entity entity = PlaceOnBoard(factory, registry, wall.prefab.empty() ? layout.wallPrefab : wall.prefab, wall.x, wall.y);
                 if(entity == entt::null)
                     continue;
 

@@ -46,6 +46,7 @@
 #include <StardustFever/ECS/Serialization/PayoutConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/PhysicsConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/PocketComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/PocketLabelComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/PrestigeConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/RimGlowComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/RollingNumberComponentSerialization.hpp>
@@ -54,6 +55,7 @@
 #include <StardustFever/ECS/Serialization/StarChanceConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/StarLinkConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/StarMapConfigComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/TulipWingComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/TwinkleComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/WalletComponentSerialization.hpp>
 
@@ -70,6 +72,8 @@ namespace StardustFever::ECS {
         factory.RegisterComponent<BallComponent>("BallComponent");
         factory.RegisterComponent<PinComponent>("PinComponent");
         factory.RegisterComponent<PocketComponent>("PocketComponent");
+        factory.RegisterComponent<PocketLabelComponent>("PocketLabelComponent");
+        factory.RegisterComponent<TulipWingComponent>("TulipWingComponent");
         factory.RegisterComponent<DrainComponent>("DrainComponent");
         factory.RegisterComponent<StarPinComponent>("StarPinComponent");
         factory.RegisterComponent<LinkLineComponent>("LinkLineComponent");

@@ -1,0 +1,8 @@
+{
+    "TulipWingComponent": {
+        "halfLength": 1.5,
+        "closedDeg": 90.0,
+        "openDeg": 140.0,
+        "moveSeconds": 0.35
+    }
+}

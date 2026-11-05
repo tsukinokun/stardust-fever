@@ -1,0 +1,24 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/PocketPostStart/Transform.json"
+        },
+        {
+            "key": "CollisionComponent",
+            "value": "StardustFever/Assets/Prefabs/PocketPostStart/Collision.json"
+        },
+        {
+            "key": "RigidbodyComponent",
+            "value": "StardustFever/Assets/Prefabs/PocketPostStart/Rigidbody.json"
+        },
+        {
+            "key": "ModelComponent",
+            "value": "StardustFever/Assets/Prefabs/PocketPostStart/Model.json"
+        },
+        {
+            "key": "RimGlowComponent",
+            "value": "StardustFever/Assets/Prefabs/PocketPostStart/RimGlow.json"
+        }
+    ]
+}

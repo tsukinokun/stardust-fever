@@ -4,6 +4,8 @@
 //! @note   釘の位置は Tools/GenerateBoardLayout.py が生成する
 //-------------------------------------------------------------
 #pragma once
+#include <Tsukino/Core/IO/CerealOptional.hpp>
+
 #include <cereal/cereal.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/vector.hpp>
@@ -27,11 +29,12 @@ namespace StardustFever::Data {
     //! @brief  壁1枚。Wall Prefab の大きさと向きを上書きして置く
     //-------------------------------------------------------------
     struct BoardWallDef {
-        float x          = 0.0f;    //!< 中心X
-        float y          = 0.0f;    //!< 中心Y
-        float halfWidth  = 1.0f;    //!< 長さの半分
-        float halfHeight = 0.5f;    //!< 厚みの半分
-        float angleDeg   = 0.0f;    //!< Z軸回りの回転（度）
+        float       x          = 0.0f;    //!< 中心X
+        float       y          = 0.0f;    //!< 中心Y
+        float       halfWidth  = 1.0f;    //!< 長さの半分
+        float       halfHeight = 0.5f;    //!< 厚みの半分
+        float       angleDeg   = 0.0f;    //!< Z軸回りの回転（度）
+        std::string prefab;               //!< 使う Prefab（空なら BoardLayoutData::wallPrefab）。入賞口の柱は入賞口の色の Prefab にする
     };
 
     //-------------------------------------------------------------
@@ -68,6 +71,7 @@ namespace StardustFever::Data {
                 cereal::make_nvp("halfWidth", wall.halfWidth),
                 cereal::make_nvp("halfHeight", wall.halfHeight),
                 cereal::make_nvp("angleDeg", wall.angleDeg));
+        Tsukino::IO::LoadOptional(archive, "prefab", wall.prefab);
     }
 
     template <class Archive>

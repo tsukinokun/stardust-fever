@@ -263,7 +263,7 @@ def prefab_sensor_box(prefab_rel, x, y):
 
 
 def blocking_boxes():
-    boxes = [(prefab, prefab_sensor_box(prefab, x, y)) for prefab, x, y in board.POCKETS]
+    boxes = [(prefab, prefab_sensor_box(prefab, x, y)) for prefab, x, y in board.SENSORS]
     boxes.append(("Prefabs/Drain/Prefab.json", prefab_sensor_box("Prefabs/Drain/Prefab.json", 2.0, -3.0)))
     return boxes
 

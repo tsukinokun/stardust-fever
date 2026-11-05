@@ -4,39 +4,11 @@
         "wallPrefab": "StardustFever/Assets/Prefabs/Wall/Prefab.json",
         "pins": [
             {
-                "x": -2.9,
-                "y": 11.6
-            },
-            {
-                "x": 2.9,
-                "y": 11.6
-            },
-            {
                 "x": -20.8,
                 "y": 13.5
             },
             {
                 "x": -16.2,
-                "y": 13.5
-            },
-            {
-                "x": -11.6,
-                "y": 13.5
-            },
-            {
-                "x": -7.0,
-                "y": 13.5
-            },
-            {
-                "x": 2.2,
-                "y": 13.5
-            },
-            {
-                "x": 6.8,
-                "y": 13.5
-            },
-            {
-                "x": 11.4,
                 "y": 13.5
             },
             {
@@ -52,40 +24,12 @@
                 "y": 13.5
             },
             {
-                "x": -18.5,
-                "y": 17.1
-            },
-            {
-                "x": -9.3,
-                "y": 17.1
-            },
-            {
-                "x": -4.7,
-                "y": 17.1
-            },
-            {
                 "x": -0.1,
-                "y": 17.1
-            },
-            {
-                "x": 4.5,
-                "y": 17.1
-            },
-            {
-                "x": 9.1,
-                "y": 17.1
-            },
-            {
-                "x": 18.3,
                 "y": 17.1
             },
             {
                 "x": 22.9,
                 "y": 17.1
-            },
-            {
-                "x": -20.8,
-                "y": 20.7
             },
             {
                 "x": -7.0,
@@ -104,24 +48,8 @@
                 "y": 20.7
             },
             {
-                "x": 20.6,
-                "y": 20.7
-            },
-            {
                 "x": 25.2,
                 "y": 20.7
-            },
-            {
-                "x": -18.5,
-                "y": 24.3
-            },
-            {
-                "x": -13.9,
-                "y": 24.3
-            },
-            {
-                "x": -9.3,
-                "y": 24.3
             },
             {
                 "x": -4.7,
@@ -136,31 +64,7 @@
                 "y": 24.3
             },
             {
-                "x": 9.1,
-                "y": 24.3
-            },
-            {
-                "x": 13.7,
-                "y": 24.3
-            },
-            {
-                "x": 18.3,
-                "y": 24.3
-            },
-            {
-                "x": 22.9,
-                "y": 24.3
-            },
-            {
                 "x": -20.8,
-                "y": 27.9
-            },
-            {
-                "x": -16.2,
-                "y": 27.9
-            },
-            {
-                "x": -11.6,
                 "y": 27.9
             },
             {
@@ -177,14 +81,6 @@
             },
             {
                 "x": 6.8,
-                "y": 27.9
-            },
-            {
-                "x": 11.4,
-                "y": 27.9
-            },
-            {
-                "x": 16.0,
                 "y": 27.9
             },
             {
@@ -964,14 +860,89 @@
                 "halfWidth": 3.5,
                 "halfHeight": 1.0,
                 "angleDeg": 0.0
+            },
+            {
+                "x": -2.35,
+                "y": 9.55,
+                "halfWidth": 0.35,
+                "halfHeight": 1.25,
+                "angleDeg": 0.0,
+                "prefab": "StardustFever/Assets/Prefabs/PocketPostStart/Prefab.json"
+            },
+            {
+                "x": 2.35,
+                "y": 9.55,
+                "halfWidth": 0.35,
+                "halfHeight": 1.25,
+                "angleDeg": 0.0,
+                "prefab": "StardustFever/Assets/Prefabs/PocketPostStart/Prefab.json"
+            },
+            {
+                "x": -17.35,
+                "y": 20.25,
+                "halfWidth": 0.35,
+                "halfHeight": 0.95,
+                "angleDeg": 0.0,
+                "prefab": "StardustFever/Assets/Prefabs/PocketPostTulip/Prefab.json"
+            },
+            {
+                "x": -12.65,
+                "y": 20.25,
+                "halfWidth": 0.35,
+                "halfHeight": 0.95,
+                "angleDeg": 0.0,
+                "prefab": "StardustFever/Assets/Prefabs/PocketPostTulip/Prefab.json"
+            },
+            {
+                "x": 12.65,
+                "y": 20.25,
+                "halfWidth": 0.35,
+                "halfHeight": 0.95,
+                "angleDeg": 0.0,
+                "prefab": "StardustFever/Assets/Prefabs/PocketPostTulip/Prefab.json"
+            },
+            {
+                "x": 17.35,
+                "y": 20.25,
+                "halfWidth": 0.35,
+                "halfHeight": 0.95,
+                "angleDeg": 0.0,
+                "prefab": "StardustFever/Assets/Prefabs/PocketPostTulip/Prefab.json"
+            },
+            {
+                "x": -10.6,
+                "y": 15.25,
+                "halfWidth": 0.3,
+                "halfHeight": 0.95,
+                "angleDeg": 0.0,
+                "prefab": "StardustFever/Assets/Prefabs/PocketPostStarGate/Prefab.json"
+            },
+            {
+                "x": -5.4,
+                "y": 15.25,
+                "halfWidth": 0.3,
+                "halfHeight": 0.95,
+                "angleDeg": 0.0,
+                "prefab": "StardustFever/Assets/Prefabs/PocketPostStarGate/Prefab.json"
+            },
+            {
+                "x": 5.4,
+                "y": 15.25,
+                "halfWidth": 0.3,
+                "halfHeight": 0.95,
+                "angleDeg": 0.0,
+                "prefab": "StardustFever/Assets/Prefabs/PocketPostStarGate/Prefab.json"
+            },
+            {
+                "x": 10.6,
+                "y": 15.25,
+                "halfWidth": 0.3,
+                "halfHeight": 0.95,
+                "angleDeg": 0.0,
+                "prefab": "StardustFever/Assets/Prefabs/PocketPostStarGate/Prefab.json"
             }
         ],
         "objects": [
-            {
-                "prefab": "StardustFever/Assets/Prefabs/StarGate/Prefab.json",
-                "x": 12.0,
-                "y": 62.0
-            },
             {
                 "prefab": "StardustFever/Assets/Prefabs/StartPocket/Prefab.json",
                 "x": 0.0,
@@ -986,6 +957,36 @@
                 "prefab": "StardustFever/Assets/Prefabs/SidePocket/Prefab.json",
                 "x": 15.0,
                 "y": 20.0
+            },
+            {
+                "prefab": "StardustFever/Assets/Prefabs/StarGate/Prefab.json",
+                "x": -8.0,
+                "y": 15.0
+            },
+            {
+                "prefab": "StardustFever/Assets/Prefabs/StarGate/Prefab.json",
+                "x": 8.0,
+                "y": 15.0
+            },
+            {
+                "prefab": "StardustFever/Assets/Prefabs/TulipWingLeft/Prefab.json",
+                "x": -17.0,
+                "y": 21.2
+            },
+            {
+                "prefab": "StardustFever/Assets/Prefabs/TulipWingRight/Prefab.json",
+                "x": -13.0,
+                "y": 21.2
+            },
+            {
+                "prefab": "StardustFever/Assets/Prefabs/TulipWingLeft/Prefab.json",
+                "x": 13.0,
+                "y": 21.2
+            },
+            {
+                "prefab": "StardustFever/Assets/Prefabs/TulipWingRight/Prefab.json",
+                "x": 17.0,
+                "y": 21.2
             },
             {
                 "prefab": "StardustFever/Assets/Prefabs/Drain/Prefab.json",

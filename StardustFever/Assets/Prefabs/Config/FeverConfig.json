@@ -2,7 +2,6 @@
     "FeverConfigComponent": {
         "duration": 45.0,
         "pinPayoutMultiplier": 3.0,
-        "pocketPayoutMultiplier": 3.0,
-        "sidePocketScale": 1.6
+        "pocketPayoutMultiplier": 3.0
     }
 }

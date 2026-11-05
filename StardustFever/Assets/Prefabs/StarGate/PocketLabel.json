@@ -1,0 +1,13 @@
+{
+    "PocketLabelComponent": {
+        "text": "星の門",
+        "color": {
+            "x": 1.0,
+            "y": 0.6,
+            "z": 0.95,
+            "w": 1.0
+        },
+        "worldOffsetY": 4.2,
+        "scale": 0.42
+    }
+}

@@ -22,6 +22,7 @@
 #include <StardustFever/ECS/System/LotterySystem.hpp>
 #include <StardustFever/ECS/System/LotteryViewSystem.hpp>
 #include <StardustFever/ECS/System/PayoutSystem.hpp>
+#include <StardustFever/ECS/System/PocketLabelSystem.hpp>
 #include <StardustFever/ECS/System/PhysicsStepSystem.hpp>
 #include <StardustFever/ECS/System/RollingNumberSystem.hpp>
 #include <StardustFever/ECS/System/SaveSystem.hpp>
@@ -36,6 +37,7 @@
 #include <StardustFever/ECS/System/StarMapInputSystem.hpp>
 #include <StardustFever/ECS/System/StarMapViewSystem.hpp>
 #include <StardustFever/ECS/System/ToastSystem.hpp>
+#include <StardustFever/ECS/System/TulipSystem.hpp>
 #include <StardustFever/ECS/System/TwinkleSystem.hpp>
 #include <StardustFever/ECS/System/UpgradeEffectSystem.hpp>
 #include <StardustFever/ECS/System/UpgradeShopSystem.hpp>
@@ -98,6 +100,7 @@ namespace StardustFever::Scene {
             BallEvent,          // 衝突 → 釘・入賞・アウト・星
             Lottery,            // 入賞 → 抽選結果
             Fever,              // 抽選結果 → フィーバー（星屑の稼ぎ時）
+            Tulip,              // フィーバーの状態 → チューリップの羽を開け閉めする
             StarChance,         // 星の門への入賞 → 星ゲットチャンス（星釘を並べる・片付ける）
             StarLink,           // 星に触れた → つないだ・全部つないだ
             StarDraw,           // チャンスの結果 → 星を引く・星座がそろう
@@ -110,6 +113,7 @@ namespace StardustFever::Scene {
             Hud,         // 文字の中身
             ShopView,    // ここから下は HUD の見た目と動き（ゲームの状態を読むだけ）
             StarChartView,
+            PocketLabel,    // 入賞口の名札
             StarMapView,    // 88星座の星図の画面（HUD より上に重ねる）
             LotteryView,
             HudGauge,
@@ -170,6 +174,7 @@ namespace StardustFever::Scene {
         m_scene.AddSystem(std::make_shared<ECS::BallEventSystem>(eventBus), Order(SystemOrder::BallEvent));
         m_scene.AddSystem(std::make_shared<ECS::LotterySystem>(eventBus), Order(SystemOrder::Lottery));
         m_scene.AddSystem(std::make_shared<ECS::FeverSystem>(eventBus), Order(SystemOrder::Fever));
+        m_scene.AddSystem(std::make_shared<ECS::TulipSystem>(), Order(SystemOrder::Tulip));
         m_scene.AddSystem(std::make_shared<ECS::StarChanceSystem>(eventBus), Order(SystemOrder::StarChance));
         m_scene.AddSystem(std::make_shared<ECS::StarLinkSystem>(eventBus), Order(SystemOrder::StarLink));
         m_scene.AddSystem(std::make_shared<ECS::StarDrawSystem>(eventBus), Order(SystemOrder::StarDraw));
@@ -182,6 +187,7 @@ namespace StardustFever::Scene {
         m_scene.AddSystem(std::make_shared<ECS::HudSystem>(), Order(SystemOrder::Hud));
         m_scene.AddSystem(std::make_shared<ECS::ShopViewSystem>(eventBus), Order(SystemOrder::ShopView));
         m_scene.AddSystem(std::make_shared<ECS::StarChartViewSystem>(), Order(SystemOrder::StarChartView));
+        m_scene.AddSystem(std::make_shared<ECS::PocketLabelSystem>(m_scene), Order(SystemOrder::PocketLabel));
         m_scene.AddSystem(std::make_shared<ECS::StarMapViewSystem>(m_scene), Order(SystemOrder::StarMapView));
         m_scene.AddSystem(std::make_shared<ECS::LotteryViewSystem>(eventBus), Order(SystemOrder::LotteryView));
         m_scene.AddSystem(std::make_shared<ECS::HudGaugeSystem>(), Order(SystemOrder::HudGauge));

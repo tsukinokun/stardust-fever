@@ -1,0 +1,13 @@
+{
+    "PocketLabelComponent": {
+        "text": "チューリップ",
+        "color": {
+            "x": 0.5,
+            "y": 0.95,
+            "z": 1.0,
+            "w": 1.0
+        },
+        "worldOffsetY": 4.2,
+        "scale": 0.42
+    }
+}

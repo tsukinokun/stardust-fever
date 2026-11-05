@@ -1,0 +1,5 @@
+newmtl PocketPostCyan
+Kd 0.25 0.8 0.95
+Ke 0.2 0.6 0.85
+Ns 64
+d 1.0

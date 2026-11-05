@@ -1,0 +1,28 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/TulipWingRight/Transform.json"
+        },
+        {
+            "key": "CollisionComponent",
+            "value": "StardustFever/Assets/Prefabs/TulipWingRight/Collision.json"
+        },
+        {
+            "key": "RigidbodyComponent",
+            "value": "StardustFever/Assets/Prefabs/TulipWingRight/Rigidbody.json"
+        },
+        {
+            "key": "ModelComponent",
+            "value": "StardustFever/Assets/Prefabs/TulipWingRight/Model.json"
+        },
+        {
+            "key": "RimGlowComponent",
+            "value": "StardustFever/Assets/Prefabs/TulipWingRight/RimGlow.json"
+        },
+        {
+            "key": "TulipWingComponent",
+            "value": "StardustFever/Assets/Prefabs/TulipWingRight/TulipWing.json"
+        }
+    ]
+}

@@ -173,7 +173,7 @@ namespace StardustFever::ECS {
                     const StarChanceStateComponent* chance = FindSingleton<StarChanceStateComponent>(registry);
                     if(chance && chance->active)
                         return chance->completed ? "星を引いています…" : "全部つないで星をゲット";
-                    return "横の入賞口が広がる";
+                    return "チューリップが開く";
                 }
             }
             return {};

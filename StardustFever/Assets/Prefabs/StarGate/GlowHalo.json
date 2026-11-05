@@ -2,7 +2,7 @@
     "GlowHaloComponent": {
         "texture": "StardustFever/Assets/Textures/Space/flare.png",
         "texturePixels": 256.0,
-        "size": 8.0,
+        "size": 6.0,
         "linkedSizeScale": 1.0,
         "color": {
             "x": 1.6,
@@ -31,6 +31,6 @@
         },
         "lightIntensity": 1.5,
         "linkedLightIntensity": 1.5,
-        "lightRange": 12.0
+        "lightRange": 9.0
     }
 }

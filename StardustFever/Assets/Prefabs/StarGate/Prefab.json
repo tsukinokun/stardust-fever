@@ -23,6 +23,10 @@
         {
             "key": "GlowHaloComponent",
             "value": "StardustFever/Assets/Prefabs/StarGate/GlowHalo.json"
+        },
+        {
+            "key": "PocketLabelComponent",
+            "value": "StardustFever/Assets/Prefabs/StarGate/PocketLabel.json"
         }
     ]
 }

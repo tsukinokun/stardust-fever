@@ -20,7 +20,6 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("duration", component.duration));
         archive(cereal::make_nvp("pinPayoutMultiplier", component.pinPayoutMultiplier));
         archive(cereal::make_nvp("pocketPayoutMultiplier", component.pocketPayoutMultiplier));
-        archive(cereal::make_nvp("sidePocketScale", component.sidePocketScale));
     }
 
     template <class Archive>
@@ -28,7 +27,6 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "duration", component.duration);
         Tsukino::IO::LoadOptional(archive, "pinPayoutMultiplier", component.pinPayoutMultiplier);
         Tsukino::IO::LoadOptional(archive, "pocketPayoutMultiplier", component.pocketPayoutMultiplier);
-        Tsukino::IO::LoadOptional(archive, "sidePocketScale", component.sidePocketScale);
     }
 
 }    // namespace StardustFever::ECS

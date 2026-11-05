@@ -2,8 +2,8 @@
     "CollisionComponent": {
         "type": 0,
         "extent": {
-            "x": 2.2,
-            "y": 0.8,
+            "x": 1.9,
+            "y": 0.5,
             "z": 1.0
         },
         "offsetPosition": {
