@@ -38,3 +38,6 @@ Cache/
 
 # Save data (written by SaveSystem)
 Saves/
+
+# Downloaded sky source data (Tools/BuildSkyCatalog.py --download fetches it again)
+Tools/SkyData/
