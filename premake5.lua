@@ -46,6 +46,7 @@ project "StardustFever"
 
     tsukino_link()
     tsukino_release_payload()
+    tsukino_icon("StardustFever/Assets/Icon/App.ico")    -- exe とウィンドウのアイコン（Tools/GenerateAppIcon.py で作る）
 
     -- Debug は workspace ルートが実行時の基準なので、Assets はその場から読む。
     -- Release は exe の隣が基準になるため、ゲームの Assets も隣へ置く
