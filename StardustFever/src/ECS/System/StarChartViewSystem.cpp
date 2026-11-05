@@ -61,6 +61,7 @@ namespace StardustFever::ECS {
         // 見出しの行の種類（StarChartEntryComponent::constellationId に入れて見分ける）
         constexpr const char* kConstellationsHeader = "#constellations";
         constexpr const char* kStarsHeader          = "#stars";
+        constexpr const char* kGroupsHeader         = "#groups";
         constexpr const char* kSectionHeader        = "#section";
 
         //-------------------------------------------------------------
@@ -142,7 +143,7 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         // まとめ（星座・星の数）、その下に、チャンス中は盤面の星、それ以外は最近手に入れた星を並べる
         //-------------------------------------------------------------
-        if(!header(kConstellationsHeader, "そろった星座") || !header(kStarsHeader, "集めた星"))
+        if(!header(kConstellationsHeader, "そろった星座") || !header(kGroupsHeader, "そろったグループ") || !header(kStarsHeader, "集めた星"))
             return;
         const Data::ConstellationDef* chance = chanceId.empty() ? nullptr : Data::GetConstellationTable().Find(chanceId);
         if(!header(kSectionHeader, chance ? chance->name : std::string("最近手に入れた星")))
@@ -209,6 +210,9 @@ namespace StardustFever::ECS {
                 if(entry.constellationId == kConstellationsHeader && modifiers) {
                     count = modifiers->collectedConstellations;
                     text  = std::to_string(count) + " / " + std::to_string(modifiers->totalConstellations);
+                } else if(entry.constellationId == kGroupsHeader && modifiers) {
+                    count = modifiers->collectedGroups;
+                    text  = std::to_string(count) + " / " + std::to_string(modifiers->totalGroups);
                 } else if(entry.constellationId == kStarsHeader && modifiers) {
                     count = modifiers->ownedStars;
                     text  = std::to_string(count) + " / " + std::to_string(modifiers->totalStars);

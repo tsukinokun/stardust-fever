@@ -13,6 +13,7 @@ namespace StardustFever::ECS {
     //!         - ドラッグか矢印キーで動かす
     //!         - ホイールか Q / E で拡大・縮小する
     //!         - クリックで星座を選ぶ。Z / X で前後の星座へ移り、その星座を真ん中に出す
+    //!         - G でグループの一覧に切り替える（Z / X で前後のグループ）
     //! @note   見た目は StarMapViewSystem が作る。開いている間は遊びを止める（GamePause.hpp）
     //-------------------------------------------------------------
     class StarMapInputSystem final : public Tsukino::ECS::ISystem {

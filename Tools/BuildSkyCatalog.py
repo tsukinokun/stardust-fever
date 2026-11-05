@@ -1,7 +1,7 @@
 """88星座と、その線をつくる星のデータを公開データから作る。
 
     python Tools/BuildSkyCatalog.py --download   # 元データを Tools/SkyData/ へ取ってくる（初回だけ）
-    python Tools/BuildSkyCatalog.py              # Stars.json / Constellations.json を書き出す
+    python Tools/BuildSkyCatalog.py              # Stars.json / Constellations.json / ConstellationGroups.json を書き出す
     python Tools/GenerateBoardLayout.py          # 盤面の釘を打ち直す
 
 元データ（Tools/SkyData/ はコミットしない。クレジットは Docs/Credits.md）
@@ -34,6 +34,7 @@ SOURCES = {
 }
 STARS_PATH = os.path.join(board.ROOT, board.ASSETS, "Data", "Stars.json")
 CONSTELLATIONS_PATH = board.CONSTELLATIONS_PATH
+GROUPS_PATH = os.path.join(board.ROOT, board.ASSETS, "Data", "ConstellationGroups.json")
 
 # 星を出せる範囲。下は入賞口の上端(20.8)+星の半径+玉の直径より上、左は発射レーン、右と上は外壁と星の門から離す
 STAR_FIELD_MIN = (-20.0, 26.0)
@@ -330,11 +331,26 @@ def main():
             return 1
         aliases.append({"from": legacy, "to": f"hip_{hip}"})
 
+    groups = []
+    for group_id, name, description, kind, value, members in names.GROUPS:
+        unknown = [m for m in members if m not in lines]
+        if unknown:
+            print(f"error: group {group_id} has unknown constellations {unknown}")
+            return 1
+        groups.append({
+            "id": group_id,
+            "name": name,
+            "description": description,
+            "constellationIds": [m.lower() for m in members],
+            "effect": {"type": kind, "value": value},
+        })
+
+    write_json(GROUPS_PATH, {"ConstellationGroupTable": {"groups": groups}})
     write_json(STARS_PATH, {"StarTable": {"stars": list(star_by_hip.values()), "aliases": aliases}})
     write_json(CONSTELLATIONS_PATH, {"ConstellationTable": {"constellations": constellations}})
     named = sum(1 for s in star_by_hip.values() if s["nameEn"])
     board_counts = [len(c["board"]["stars"]) for c in constellations]
-    print(f"wrote {len(star_by_hip)} stars ({named} named) and {len(constellations)} constellations")
+    print(f"wrote {len(star_by_hip)} stars ({named} named), {len(constellations)} constellations and {len(groups)} groups")
     print(f"board stars per constellation: min {min(board_counts)}, max {max(board_counts)}")
     return 0
 

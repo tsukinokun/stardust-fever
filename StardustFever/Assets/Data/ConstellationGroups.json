@@ -1,0 +1,356 @@
+{
+    "ConstellationGroupTable": {
+        "groups": [
+            {
+                "id": "zodiac",
+                "name": "黄道12星座",
+                "description": "太陽が1年かけて通る道（黄道）にある12の星座",
+                "constellationIds": [
+                    "ari",
+                    "tau",
+                    "gem",
+                    "cnc",
+                    "leo",
+                    "vir",
+                    "lib",
+                    "sco",
+                    "sgr",
+                    "cap",
+                    "aqr",
+                    "psc"
+                ],
+                "effect": {
+                    "type": "lotteryChance",
+                    "value": 0.02
+                }
+            },
+            {
+                "id": "spring",
+                "name": "春の星座",
+                "description": "春の宵に南の空に見える星座",
+                "constellationIds": [
+                    "leo",
+                    "vir",
+                    "boo",
+                    "cnc",
+                    "crv",
+                    "crt",
+                    "hya",
+                    "cvn",
+                    "com",
+                    "lmi",
+                    "uma",
+                    "sex"
+                ],
+                "effect": {
+                    "type": "pinPayout",
+                    "value": 0.5
+                }
+            },
+            {
+                "id": "summer",
+                "name": "夏の星座",
+                "description": "夏の宵に見える星座。天の川が南から北へ流れる",
+                "constellationIds": [
+                    "lyr",
+                    "cyg",
+                    "aql",
+                    "sco",
+                    "sgr",
+                    "her",
+                    "oph",
+                    "ser",
+                    "del",
+                    "sge",
+                    "vul",
+                    "sct",
+                    "cra",
+                    "crb",
+                    "lib"
+                ],
+                "effect": {
+                    "type": "pocketPayout",
+                    "value": 0.5
+                }
+            },
+            {
+                "id": "autumn",
+                "name": "秋の星座",
+                "description": "秋の宵に見える星座。古代エチオピア王家の神話の舞台",
+                "constellationIds": [
+                    "peg",
+                    "and",
+                    "cas",
+                    "cep",
+                    "per",
+                    "psc",
+                    "aqr",
+                    "cap",
+                    "cet",
+                    "psa",
+                    "ari",
+                    "tri",
+                    "lac",
+                    "equ",
+                    "scl"
+                ],
+                "effect": {
+                    "type": "lotteryChance",
+                    "value": 0.015
+                }
+            },
+            {
+                "id": "winter",
+                "name": "冬の星座",
+                "description": "冬の宵に見える星座。1等星が最も多い季節",
+                "constellationIds": [
+                    "ori",
+                    "cma",
+                    "cmi",
+                    "tau",
+                    "gem",
+                    "aur",
+                    "lep",
+                    "mon",
+                    "eri",
+                    "col",
+                    "lyn",
+                    "cam"
+                ],
+                "effect": {
+                    "type": "feverDuration",
+                    "value": 3.0
+                }
+            },
+            {
+                "id": "circumpolar",
+                "name": "北の周極星座",
+                "description": "日本からは一年中沈まずに北の空をめぐる星座",
+                "constellationIds": [
+                    "uma",
+                    "umi",
+                    "dra",
+                    "cas",
+                    "cep",
+                    "cam"
+                ],
+                "effect": {
+                    "type": "starChance",
+                    "value": 0.03
+                }
+            },
+            {
+                "id": "argo",
+                "name": "旧アルゴ座",
+                "description": "大きすぎたアルゴ船座が18世紀に分けられた3つの星座",
+                "constellationIds": [
+                    "car",
+                    "pup",
+                    "vel"
+                ],
+                "effect": {
+                    "type": "pocketPayout",
+                    "value": 0.4
+                }
+            },
+            {
+                "id": "perseus",
+                "name": "ペルセウスの神話",
+                "description": "エチオピア王家とペルセウスの物語に登場する星座",
+                "constellationIds": [
+                    "per",
+                    "and",
+                    "cas",
+                    "cep",
+                    "cet",
+                    "peg"
+                ],
+                "effect": {
+                    "type": "global",
+                    "value": 0.3
+                }
+            },
+            {
+                "id": "hercules",
+                "name": "ヘルクレスの試練",
+                "description": "英雄ヘルクレスと、彼が倒した怪物たち",
+                "constellationIds": [
+                    "her",
+                    "leo",
+                    "hya",
+                    "cnc",
+                    "dra"
+                ],
+                "effect": {
+                    "type": "global",
+                    "value": 0.3
+                }
+            },
+            {
+                "id": "hunt",
+                "name": "オリオンの狩り",
+                "description": "狩人オリオンと、猟犬・獲物・オリオンを刺したさそり",
+                "constellationIds": [
+                    "ori",
+                    "cma",
+                    "cmi",
+                    "lep",
+                    "tau",
+                    "sco"
+                ],
+                "effect": {
+                    "type": "feverDuration",
+                    "value": 2.0
+                }
+            },
+            {
+                "id": "birds",
+                "name": "鳥の星座",
+                "description": "空を飛ぶ鳥をかたどった星座",
+                "constellationIds": [
+                    "aql",
+                    "cyg",
+                    "col",
+                    "crv",
+                    "gru",
+                    "pav",
+                    "phe",
+                    "tuc",
+                    "aps"
+                ],
+                "effect": {
+                    "type": "starChance",
+                    "value": 0.03
+                }
+            },
+            {
+                "id": "waters",
+                "name": "水の生き物",
+                "description": "海や川に住む生き物をかたどった星座",
+                "constellationIds": [
+                    "cet",
+                    "del",
+                    "dor",
+                    "vol",
+                    "hya",
+                    "hyi",
+                    "psa",
+                    "psc"
+                ],
+                "effect": {
+                    "type": "pocketPayout",
+                    "value": 0.4
+                }
+            },
+            {
+                "id": "lacaille",
+                "name": "ラカーユの南天14星座",
+                "description": "18世紀にラカーユが南天に作った、道具や機械の星座",
+                "constellationIds": [
+                    "ant",
+                    "cae",
+                    "cir",
+                    "for",
+                    "hor",
+                    "men",
+                    "mic",
+                    "nor",
+                    "oct",
+                    "pic",
+                    "pyx",
+                    "ret",
+                    "scl",
+                    "tel"
+                ],
+                "effect": {
+                    "type": "pinPayout",
+                    "value": 0.6
+                }
+            },
+            {
+                "id": "navigators",
+                "name": "大航海時代の12星座",
+                "description": "16世紀末の航海者の観測から作られた南天の星座",
+                "constellationIds": [
+                    "aps",
+                    "cha",
+                    "dor",
+                    "gru",
+                    "hyi",
+                    "ind",
+                    "mus",
+                    "pav",
+                    "phe",
+                    "tra",
+                    "tuc",
+                    "vol"
+                ],
+                "effect": {
+                    "type": "starChance",
+                    "value": 0.04
+                }
+            },
+            {
+                "id": "ptolemy",
+                "name": "プトレマイオスの48星座",
+                "description": "2世紀の天文書『アルマゲスト』に載る古代の星座",
+                "constellationIds": [
+                    "and",
+                    "aqr",
+                    "aql",
+                    "ara",
+                    "ari",
+                    "aur",
+                    "boo",
+                    "cma",
+                    "cmi",
+                    "cnc",
+                    "cap",
+                    "cas",
+                    "cen",
+                    "cep",
+                    "cet",
+                    "cra",
+                    "crb",
+                    "crv",
+                    "crt",
+                    "cyg",
+                    "del",
+                    "dra",
+                    "equ",
+                    "eri",
+                    "gem",
+                    "her",
+                    "hya",
+                    "leo",
+                    "lep",
+                    "lib",
+                    "lup",
+                    "lyr",
+                    "oph",
+                    "ori",
+                    "peg",
+                    "per",
+                    "psc",
+                    "psa",
+                    "sge",
+                    "sgr",
+                    "sco",
+                    "ser",
+                    "tau",
+                    "tri",
+                    "uma",
+                    "umi",
+                    "vir",
+                    "car",
+                    "pup",
+                    "vel"
+                ],
+                "effect": {
+                    "type": "global",
+                    "value": 1.0
+                }
+            }
+        ]
+    }
+}

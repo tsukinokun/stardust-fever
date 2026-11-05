@@ -113,6 +113,22 @@ namespace StardustFever::ECS {
                                                     [&](const Data::ConstellationDef& c) { return HasAllStars(c, *collection); });
 
             //-------------------------------------------------------------
+            // 星座がそろったなら、それでグループ（季節の星座など）もそろったかを確かめる
+            //-------------------------------------------------------------
+            std::vector<const Data::ConstellationGroupDef*> completedGroups;
+            for(const Data::ConstellationGroupDef& group : Data::GetConstellationGroupTable().groups) {
+                const bool touched  = std::any_of(collected.begin(), collected.end(), [&](const Data::ConstellationDef* c) {
+                    return std::find(group.constellationIds.begin(), group.constellationIds.end(), c->id) != group.constellationIds.end();
+                });
+                const bool complete = touched && std::all_of(group.constellationIds.begin(), group.constellationIds.end(), [&](const std::string& id) {
+                                          const Data::ConstellationDef* member = constellations.Find(id);
+                                          return member && HasAllStars(*member, *collection);
+                                      });
+                if(complete)
+                    completedGroups.push_back(&group);
+            }
+
+            //-------------------------------------------------------------
             // 知らせる。大見出しは1枚だけなので、いちばん大きな出来事を見出しにし、星のことはトーストに回す
             //-------------------------------------------------------------
             const Data::ConstellationDef* home      = constellations.Find(star.constellationId);
@@ -128,6 +144,17 @@ namespace StardustFever::ECS {
 
             if(allComplete) {
                 m_eventBus->Publish(HudMessageEvent{"★ 88星座 すべてそろった ★\n全ての効果が大きく強まる", HudMessageImportance::Headline});
+                m_eventBus->Publish(HudMessageEvent{starTitle, HudMessageImportance::Toast, HudMessageTone::Positive});
+            } else if(!completedGroups.empty()) {
+                const Data::ConstellationGroupDef& group = *completedGroups.front();
+                m_eventBus->Publish(HudMessageEvent{"★ " + group.name + " がそろった ★\n" + CollectionText::Effect(group.effect, group.effect.value),
+                                                    HudMessageImportance::Headline});
+                for(const Data::ConstellationDef* constellation : collected) {
+                    m_eventBus->Publish(
+                        HudMessageEvent{constellation->name + "がそろった  " + CollectionText::Effect(constellation->effect, constellation->effect.value),
+                                        HudMessageImportance::Toast,
+                                        HudMessageTone::Positive});
+                }
                 m_eventBus->Publish(HudMessageEvent{starTitle, HudMessageImportance::Toast, HudMessageTone::Positive});
             } else if(!collected.empty()) {
                 const Data::ConstellationDef& first = *collected.front();

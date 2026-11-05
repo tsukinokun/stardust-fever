@@ -25,5 +25,7 @@ namespace StardustFever::ECS {
         int    collectedConstellations = 0;        //!< 星を全部そろえた星座の数
         int    totalConstellations     = 0;        //!< 星座の総数
         bool   allComplete             = false;    //!< 全ての星座をそろえたか
+        int    collectedGroups         = 0;        //!< 星座を全部そろえたグループの数
+        int    totalGroups             = 0;        //!< グループの総数
     };
 }    // namespace StardustFever::ECS

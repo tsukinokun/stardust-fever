@@ -232,7 +232,9 @@ namespace StardustFever::ECS {
         AddText(registry, hint, config->rowScale, order + 5, false).color = hlslpp::float4(0.6f, 0.65f, 0.8f, 0.9f);
         Place(registry, hint, config->mapX, config->mapY + config->mapHeight + 14.0f, 1.0f, 1.0f);
         HudUi::SetText(
-            registry, hint, "ドラッグ・矢印 動かす   ホイール・Q/E 拡大   クリック 星座を選ぶ   Z/X 前後の星座   Tab・Esc 閉じる（遊びは止まっています）");
+            registry,
+            hint,
+            "ドラッグ・矢印 動かす   ホイール・Q/E 拡大   クリック 星座を選ぶ   Z/X 前後   G グループの一覧   Tab・Esc 閉じる（遊びは止まっています）");
 
         float y         = config->mapY + 18.0f;
         auto  panelText = [&](StarMapElementKind kind, int index, float scale, float spacing) {
@@ -270,10 +272,23 @@ namespace StardustFever::ECS {
         const float                     growth   = 1.0f + config->starZoomGrowth * static_cast<float>(state->zoom - 1.0);
         const Data::ConstellationDef*   selected = table.Find(state->selectedId);
 
-        // 星座ごとに、そろったか・選んでいるかを先に決めておく
+        //-------------------------------------------------------------
+        // 星座ごとに、そろったか・目立たせるかを先に決めておく。
+        // 目立たせるのは、星座の詳しい中身では選んだ星座、グループの一覧では選んだグループの星座
+        //-------------------------------------------------------------
+        const Data::ConstellationGroupTable& groups = Data::GetConstellationGroupTable();
+        const Data::ConstellationGroupDef*   group  = nullptr;
+        if(state->groupMode && !groups.groups.empty())
+            group = &groups.groups[static_cast<size_t>(std::clamp(state->selectedGroup, 0, static_cast<int>(groups.groups.size()) - 1))];
         std::vector<bool> collected(table.constellations.size());
+        std::vector<bool> highlighted(table.constellations.size());
         for(size_t c = 0; c < table.constellations.size(); ++c) {
-            collected[c] = IsCollected(table.constellations[c], *collection);
+            const Data::ConstellationDef& constellation = table.constellations[c];
+            collected[c]                                = IsCollected(constellation, *collection);
+            if(group)
+                highlighted[c] = std::find(group->constellationIds.begin(), group->constellationIds.end(), constellation.id) != group->constellationIds.end();
+            else
+                highlighted[c] = selected == &constellation;
         }
 
         for(const auto entity : registry.View<StarMapElementComponent>()) {
@@ -320,7 +335,7 @@ namespace StardustFever::ECS {
                     const float                dx        = static_cast<float>(b.x - a.x);
                     const float                dy        = static_cast<float>(b.y - a.y);
                     const bool                 isDone    = collected[element.index];
-                    const bool                 isSel     = selected == &constellation;
+                    const bool                 isSel     = highlighted[element.index];
                     const float                thickness = (isDone || isSel) ? config->collectedLineThickness : config->lineThickness;
                     Place(registry,
                           entity,
@@ -346,7 +361,7 @@ namespace StardustFever::ECS {
                     StarMapGeometry::Centroid(constellation, stars, ra, dec);
                     const Core::SkyMath::Point point  = Core::SkyMath::Project(view, ra, dec);
                     const bool                 isDone = collected[element.index];
-                    const bool                 isSel  = selected == &constellation;
+                    const bool                 isSel  = highlighted[element.index];
                     const bool                 shown  = isDone || isSel || state->zoom >= config->labelMinZoom;
                     Place(registry, entity, static_cast<float>(point.x), static_cast<float>(point.y), 1.0f, 1.0f);
                     HudUi::SetTextColor(registry,
@@ -379,11 +394,13 @@ namespace StardustFever::ECS {
             char buffer[128];
             std::snprintf(buffer,
                           sizeof(buffer),
-                          "88星座の星図   そろった星座 %d / %d   集めた星 %d / %d",
+                          "88星座の星図   そろった星座 %d / %d   集めた星 %d / %d   そろったグループ %d / %d",
                           modifiers->collectedConstellations,
                           modifiers->totalConstellations,
                           modifiers->ownedStars,
-                          modifiers->totalStars);
+                          modifiers->totalStars,
+                          modifiers->collectedGroups,
+                          modifiers->totalGroups);
             HudUi::SetText(registry, findText(StarMapElementKind::Summary, 0), buffer);
         }
 
@@ -394,6 +411,87 @@ namespace StardustFever::ECS {
         const entt::entity subtitle = findText(StarMapElementKind::Subtitle, 0);
         const entt::entity effect   = findText(StarMapElementKind::Effect, 0);
         const int          maxLevel = chance ? std::max(1, chance->maxStarLevel) : 5;
+        // 行の文字の大きさは、グループの一覧で小さくすることがあるので、毎回戻す
+        for(int row = 0; row < config->maxRows; ++row) {
+            if(FontComponent* font = registry.try_get<FontComponent>(findText(StarMapElementKind::Row, row)))
+                font->scale = config->rowScale;
+        }
+
+        //-------------------------------------------------------------
+        // グループの一覧: 上にグループを並べ、選んだグループの説明・効果・属する星座を出す
+        //-------------------------------------------------------------
+        if(state->groupMode) {
+            const int collectedGroups = modifiers ? modifiers->collectedGroups : 0;
+            HudUi::SetText(registry, title, "星座のグループ");
+            HudUi::SetTextColor(registry, title, config->selectedLabelColor);
+            HudUi::SetText(
+                registry, subtitle, "そろった " + std::to_string(collectedGroups) + " / " + std::to_string(groups.groups.size()) + "   Z/X で選ぶ  G で星座へ");
+
+            auto isConstellationCollected = [&](const std::string& id) {
+                for(size_t c = 0; c < table.constellations.size(); ++c) {
+                    if(table.constellations[c].id == id)
+                        return static_cast<bool>(collected[c]);
+                }
+                return false;
+            };
+            auto countCollected = [&](const Data::ConstellationGroupDef& g) {
+                return static_cast<int>(std::count_if(g.constellationIds.begin(), g.constellationIds.end(), isConstellationCollected));
+            };
+
+            if(group) {
+                const bool done = countCollected(*group) == static_cast<int>(group->constellationIds.size());
+                HudUi::SetText(
+                    registry, effect, group->name + (done ? "  効果 発動中  " : "  そろえると  ") + CollectionText::Effect(group->effect, group->effect.value));
+                HudUi::SetTextColor(registry, effect, done ? config->collectedLabelColor : config->labelColor);
+            } else {
+                HudUi::SetText(registry, effect, "");
+            }
+
+            std::vector<std::pair<std::string, hlslpp::float4>> lines;
+            for(size_t g = 0; g < groups.groups.size(); ++g) {
+                const Data::ConstellationGroupDef& entry = groups.groups[g];
+                const int                          have  = countCollected(entry);
+                const int                          total = static_cast<int>(entry.constellationIds.size());
+                const bool                         done  = have == total;
+                const bool                         isSel = &entry == group;
+                lines.emplace_back(
+                    std::string(isSel ? "▶ " : "　 ") + (done ? "✓ " : "") + entry.name + "  " + std::to_string(have) + " / " + std::to_string(total),
+                    done ? config->collectedLabelColor : (isSel ? config->selectedLabelColor : config->labelColor));
+            }
+            const int detailStart = static_cast<int>(lines.size()) + 1;
+            if(group) {
+                lines.emplace_back("", config->labelColor);
+                lines.emplace_back(group->description, config->selectedLabelColor);
+                // 属する星座は1行に4つずつ。そろった星座には ✓ を付ける
+                std::string line;
+                int         inLine = 0;
+                for(const std::string& id : group->constellationIds) {
+                    const Data::ConstellationDef* member  = table.Find(id);
+                    line                                 += (isConstellationCollected(id) ? "✓" : "・") + (member ? member->name : id) + "  ";
+                    if(++inLine == 4) {
+                        lines.emplace_back(line, config->labelColor);
+                        line.clear();
+                        inLine = 0;
+                    }
+                }
+                if(!line.empty())
+                    lines.emplace_back(line, config->labelColor);
+            }
+            for(int row = 0; row < config->maxRows; ++row) {
+                const entt::entity text = findText(StarMapElementKind::Row, row);
+                if(row >= static_cast<int>(lines.size())) {
+                    HudUi::SetText(registry, text, "");
+                    continue;
+                }
+                HudUi::SetText(registry, text, lines[row].first);
+                HudUi::SetTextColor(registry, text, lines[row].second);
+                if(row > detailStart)
+                    if(FontComponent* font = registry.try_get<FontComponent>(text))
+                        font->scale = config->rowScale * 0.88f;
+            }
+            return;
+        }
+
         if(!selected) {
             HudUi::SetText(registry, title, "星座を選んでください");
             HudUi::SetTextColor(registry, title, config->labelColor);

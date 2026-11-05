@@ -140,8 +140,11 @@ namespace StardustFever::ECS {
             if(state->dragMoved < config->dragThreshold) {
                 const double localX = x - (config->mapX + config->mapWidth * 0.5f);
                 const double localY = y - (config->mapY + config->mapHeight * 0.5f);
-                state->selectedId   = PickConstellation(*state, *config, localX, localY);
-                changed             = true;
+                // クリックで星座を選んだら、星座の詳しい中身に戻す
+                state->selectedId = PickConstellation(*state, *config, localX, localY);
+                if(!state->selectedId.empty())
+                    state->groupMode = false;
+                changed = true;
             }
         }
 
@@ -183,11 +186,26 @@ namespace StardustFever::ECS {
         }
 
         //-------------------------------------------------------------
-        // Z / X で前後の星座へ移る（並びは Constellations.json の順＝和名の五十音順）
+        // G でグループの一覧と星座の詳しい中身を切り替える。グループの一覧では Z / X で前後のグループへ移る
         //-------------------------------------------------------------
+        if(input.IsKeyPressed(KeyCode::G)) {
+            state->groupMode = !state->groupMode;
+            changed          = true;
+        }
         const bool previous = input.IsKeyPressed(KeyCode::Z);
         const bool next     = input.IsKeyPressed(KeyCode::X);
-        if((previous || next) && !table.constellations.empty()) {
+        if(state->groupMode) {
+            const int groupCount = static_cast<int>(Data::GetConstellationGroupTable().groups.size());
+            if((previous || next) && groupCount > 0) {
+                state->selectedGroup = (std::clamp(state->selectedGroup, 0, groupCount - 1) + (next ? 1 : groupCount - 1)) % groupCount;
+                changed              = true;
+            }
+        }
+
+        //-------------------------------------------------------------
+        // Z / X で前後の星座へ移る（並びは Constellations.json の順＝和名の五十音順）
+        //-------------------------------------------------------------
+        if(!state->groupMode && (previous || next) && !table.constellations.empty()) {
             const int count   = static_cast<int>(table.constellations.size());
             int       current = -1;
             for(int i = 0; i < count; ++i) {

@@ -4,6 +4,7 @@
 //-------------------------------------------------------------
 #pragma once
 #include <StardustFever/Data/ConstellationData.hpp>
+#include <StardustFever/Data/ConstellationGroupData.hpp>
 #include <StardustFever/Data/StarData.hpp>
 #include <StardustFever/Data/UpgradeData.hpp>
 
@@ -26,6 +27,13 @@ namespace StardustFever::Data {
     //! @note   GetStarTable と同じく、要素への参照をフレームをまたいで持たないこと
     //-------------------------------------------------------------
     const ConstellationTable& GetConstellationTable();
+
+    //-------------------------------------------------------------
+    //! @brief  星座のグループのマスターデータを取得する
+    //! @return Assets/Data/ConstellationGroups.json の中身
+    //! @note   GetStarTable と同じく、要素への参照をフレームをまたいで持たないこと
+    //-------------------------------------------------------------
+    const ConstellationGroupTable& GetConstellationGroupTable();
 
     //-------------------------------------------------------------
     //! @brief  強化のマスターデータを取得する
