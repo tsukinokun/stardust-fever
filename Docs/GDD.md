@@ -13,7 +13,7 @@ TsukinoEngine（EnTT ECS / Jolt Physics / cereal Prefab JSON）上で作る。
 
 1. ハンドル強弱で玉を打つ（止め打ち・右打ちの狙い分け）→ 釘や入賞口で **星屑**（通貨）を獲得
 2. スタート入賞 → **黄道十二宮リール**の抽選 → 当たりで **フィーバー「星詠みタイム」**
-3. フィーバー中は盤面に星座の形で **星釘** が出現。玉が触れた星同士が光の線でつながる
+3. フィーバー中は盤面に星座の形で **星釘** が出現し、星座の線が薄いガイドとして現れる。玉が触れて両端の星がつながった線が金色に灯る
    - どの玉でも線はつながる
    - **1球で連続してつなぐと一筆書き倍率**（×底^連続数）
 4. 触れた星は獲得、すでに持っていればレベルアップ。全部つなぐと **星座完成ボーナス**（永続効果）
@@ -106,6 +106,7 @@ TsukinoEngine（EnTT ECS / Jolt Physics / cereal Prefab JSON）上で作る。
 | 玉 | 青白く光る輪郭（RimGlow）と、動いている間の星屑の尾。フィーバー中は尾が金と紫になる | `Prefabs/Ball/RimGlow.json` / `SparkleTrail.json` |
 | 釘 | 1本ずつばらばらの間隔でふっと明るくなる。玉が当たると一瞬閃き、ときどき火花が散る | `Prefabs/Pin/Twinkle.json`、火花は `CosmicFxConfig.json` |
 | 星釘 | 十字の光芒が呼吸し、周りを点光源で照らす。つなぐと金色に強まる | `Prefabs/StarPin/GlowHalo.json` |
+| 星座の線 | フィーバー開始時に全部の線が薄い青で現れ、両端の星がつながると金色に灯ってブルームでにじむ | `Prefabs/Config/StarLinkConfig.json`（太さと色） |
 | 壁・入賞口 | ネオンの縁（壁は紫、スタート入賞口は金、横の入賞口は水色） | 各 Prefab の `RimGlow.json` |
 | 背景 | 遠い星空と2つの星雲を奥行きを変えて重ね、盤面の板にも淡い星空を敷く。流れ星がときどき横切り、フィーバー中は流星群になる | `Prefabs/Space*` / `BoardStarfield`、流れ星は `CosmicFxConfig.json` |
 
