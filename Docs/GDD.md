@@ -97,6 +97,20 @@ TsukinoEngine（EnTT ECS / Jolt Physics / cereal Prefab JSON）上で作る。
 並べ方と色は `Prefabs/Hud/**` と `Prefabs/Config/HudLayoutConfig.json` / `HudFxConfig.json` にあり、ホットリロードできる。
 素材は `Tools/GenerateUiTextures.py` で作る。
 
+## 盤面の見た目
+
+星空の中で、光る玉が星屑の尾を引き、釘が星のように瞬く。
+
+| もの | 見た目 | 調整する場所 |
+|---|---|---|
+| 玉 | 青白く光る輪郭（RimGlow）と、動いている間の星屑の尾。フィーバー中は尾が金と紫になる | `Prefabs/Ball/RimGlow.json` / `SparkleTrail.json` |
+| 釘 | 1本ずつばらばらの間隔でふっと明るくなる。玉が当たると一瞬閃き、ときどき火花が散る | `Prefabs/Pin/Twinkle.json`、火花は `CosmicFxConfig.json` |
+| 星釘 | 十字の光芒が呼吸し、周りを点光源で照らす。つなぐと金色に強まる | `Prefabs/StarPin/GlowHalo.json` |
+| 壁・入賞口 | ネオンの縁（壁は紫、スタート入賞口は金、横の入賞口は水色） | 各 Prefab の `RimGlow.json` |
+| 背景 | 遠い星空と2つの星雲を奥行きを変えて重ね、盤面の板にも淡い星空を敷く。流れ星がときどき横切り、フィーバー中は流星群になる | `Prefabs/Space*` / `BoardStarfield`、流れ星は `CosmicFxConfig.json` |
+
+素材は `Tools/GenerateSpaceTextures.py` で作る。
+
 ## インフレと転生
 
 - 内部は BigNumber（仮数 double ＋ 指数 int64）。上限は実質なし
