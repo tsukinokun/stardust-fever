@@ -53,8 +53,12 @@ namespace StardustFever::Data {
     //-------------------------------------------------------------
     const StarTable& GetStarTable() {
         // HotReload は監視を解除できないため、監視先の this が先に消えないよう関数内staticに置く
-        static Tsukino::IO::HotReloadable<StarTable> s_Table(Tsukino::Core::Path(kStarTablePath),
-                                                             [](StarTable& out) { return LoadJson(kStarTablePath, "StarTable", out); });
+        static Tsukino::IO::HotReloadable<StarTable> s_Table(Tsukino::Core::Path(kStarTablePath), [](StarTable& out) {
+            if(!LoadJson(kStarTablePath, "StarTable", out))
+                return false;
+            out.BuildIndex();
+            return true;
+        });
         return s_Table.Get();
     }
 

@@ -1,0 +1,16 @@
+{
+    "StarChanceConfigComponent": {
+        "chanceProbability": 0.08,
+        "duration": 30.0,
+        "endDelayAfterComplete": 2.5,
+        "starPinPrefab": "StardustFever/Assets/Prefabs/StarPin/Prefab.json",
+        "pinHideRadius": 2.6,
+        "rarityBase": 1.8,
+        "maxStarLevel": 5,
+        "duplicatePayoutScale": 20.0,
+        "effectLevelBonus": 0.1,
+        "allCompleteMultiplier": 10.0,
+        "recentCount": 5,
+        "missToastInterval": 8.0
+    }
+}

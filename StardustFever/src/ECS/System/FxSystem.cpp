@@ -160,7 +160,10 @@ namespace StardustFever::ECS {
                                                       linked.position,
                                                       m_random);
         }
-        for([[maybe_unused]] const ConstellationCompletedEvent& completed : completions) {
+        // 星ゲットチャンスで全部つないだら、盤面いっぱいに散らす
+        for(const StarChanceEndedEvent& completed : completions) {
+            if(!completed.success)
+                continue;
             Tsukino::BuiltIn::ECS::BurstParams params = MakeBurst(fx->completeBurstCount, 150.0f, 2.4f, fx->starColor, fx->bonusColor);
             params.radius                             = 14.0f;
             params.lifeMax                            = 1.8f;

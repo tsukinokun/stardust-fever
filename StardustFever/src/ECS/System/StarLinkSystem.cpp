@@ -5,14 +5,11 @@
 #include <StardustFever/ECS/System/StarLinkSystem.hpp>
 
 #include <StardustFever/Data/GameDatabase.hpp>
-#include <StardustFever/ECS/Component/BallComponent.hpp>
-#include <StardustFever/ECS/Component/FeverStateComponent.hpp>
 #include <StardustFever/ECS/Component/LinkLineComponent.hpp>
 #include <StardustFever/ECS/Component/StarLinkConfigComponent.hpp>
+#include <StardustFever/ECS/Component/StarChanceConfigComponent.hpp>
+#include <StardustFever/ECS/Component/StarChanceStateComponent.hpp>
 #include <StardustFever/ECS/Component/StarPinComponent.hpp>
-#include <StardustFever/ECS/Component/UpgradeModifiersComponent.hpp>
-#include <StardustFever/ECS/Event/ConstellationCompletedEvent.hpp>
-#include <StardustFever/ECS/Event/StardustEarnedEvent.hpp>
 #include <StardustFever/ECS/Event/StarLinkedEvent.hpp>
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
@@ -103,7 +100,7 @@ namespace StardustFever::ECS {
     //-------------------------------------------------------------
     void StarLinkSystem::Update(Tsukino::ECS::Registry& registry, float) {
         // 開始と同じフレームに触れた星も、ガイドを引いた後に処理して灯せるようにする
-        for(const FeverStartedEvent& started : m_starts.Drain()) {
+        for(const StarChanceStartedEvent& started : m_starts.Drain()) {
             SpawnGuideLines(registry, started);
         }
         for(const BallTouchedStarEvent& touch : m_touches.Drain()) {
@@ -114,21 +111,22 @@ namespace StardustFever::ECS {
     //-------------------------------------------------------------
     // 星座の線を全部ガイドとして引く
     //-------------------------------------------------------------
-    void StarLinkSystem::SpawnGuideLines(Tsukino::ECS::Registry& registry, const FeverStartedEvent& started) {
+    void StarLinkSystem::SpawnGuideLines(Tsukino::ECS::Registry& registry, const StarChanceStartedEvent& started) {
         const StarLinkConfigComponent*             config        = FindSingleton<StarLinkConfigComponent>(registry);
         Tsukino::EngineIntegration::EngineContext* context       = GetEngineContext(registry);
         const Data::ConstellationDef*              constellation = Data::GetConstellationTable().Find(started.constellationId);
         if(!config || !context || !context->prefabFactory || !constellation)
             return;
 
-        // 星釘は星座データの x, y に置かれるので、端の位置もデータから取る
-        const int starCount = static_cast<int>(constellation->stars.size());
-        for(const Data::ConstellationLineDef& line : constellation->lines) {
+        // 星釘は盤面の形（board）の x, y に置かれるので、端の位置もそこから取る
+        const Data::ConstellationBoardDef& board     = constellation->board;
+        const int                          starCount = static_cast<int>(board.stars.size());
+        for(const Data::ConstellationLineDef& line : board.lines) {
             if(line.from < 0 || line.to < 0 || line.from >= starCount || line.to >= starCount || line.from == line.to)
                 continue;
-            const Data::ConstellationStarDef& from   = constellation->stars[line.from];
-            const Data::ConstellationStarDef& to     = constellation->stars[line.to];
-            const entt::entity                entity = SpawnLine(*context->prefabFactory, registry, *config, from.x, from.y, to.x, to.y);
+            const Data::ConstellationBoardStarDef& from   = board.stars[line.from];
+            const Data::ConstellationBoardStarDef& to     = board.stars[line.to];
+            const entt::entity                     entity = SpawnLine(*context->prefabFactory, registry, *config, from.x, from.y, to.x, to.y);
             if(entity == entt::null)
                 continue;
 
@@ -145,18 +143,18 @@ namespace StardustFever::ECS {
     // 星釘1つをつなぐ
     //-------------------------------------------------------------
     void StarLinkSystem::LinkStar(Tsukino::ECS::Registry& registry, const BallTouchedStarEvent& touch) {
-        FeverStateComponent*                       fever   = FindSingleton<FeverStateComponent>(registry);
-        const StarLinkConfigComponent*             config  = FindSingleton<StarLinkConfigComponent>(registry);
-        Tsukino::EngineIntegration::EngineContext* context = GetEngineContext(registry);
-        if(!fever || !fever->active || !config || !context)
+        StarChanceStateComponent*                  chance       = FindSingleton<StarChanceStateComponent>(registry);
+        const StarChanceConfigComponent*           chanceConfig = FindSingleton<StarChanceConfigComponent>(registry);
+        const StarLinkConfigComponent*             config       = FindSingleton<StarLinkConfigComponent>(registry);
+        Tsukino::EngineIntegration::EngineContext* context      = GetEngineContext(registry);
+        if(!chance || !chance->active || chance->completed || !config || !context)
             return;
         if(!registry.IsValid(touch.ball) || !registry.IsValid(touch.starPin))
             return;
 
-        StarPinComponent* pin  = registry.try_get<StarPinComponent>(touch.starPin);
-        BallComponent*    ball = registry.try_get<BallComponent>(touch.ball);
-        // 既につながった星に触れても何も起きない（一筆書きの数も途切れない）
-        if(!pin || pin->linked || !ball)
+        // 既につながった星に触れても何も起きない
+        StarPinComponent* pin = registry.try_get<StarPinComponent>(touch.starPin);
+        if(!pin || pin->linked)
             return;
 
         pin->linked = true;
@@ -167,26 +165,8 @@ namespace StardustFever::ECS {
            model && !config->litStarModel.empty() && context->assetManager)
             model->modelHandle = context->assetManager->Load(Tsukino::Core::Path(config->litStarModel));
 
-        //-------------------------------------------------------------
-        // 一筆書き: この玉がこのフィーバーでつないだ n 個目なら strokeBase^(n-1) 倍。
-        // 最初の玉と違う玉でつないだ時点で、星座完成時のパーフェクトは無くなる
-        //-------------------------------------------------------------
-        ++ball->linkedStarCount;
-        const int                        chain            = ball->linkedStarCount;
-        const UpgradeModifiersComponent* upgrades         = FindSingleton<UpgradeModifiersComponent>(registry);
-        const double                     strokeBase       = config->strokeBase + (upgrades ? upgrades->strokeBaseBonus : 0.0);
-        const Core::BigNumber            strokeMultiplier = Core::BigNumber::Pow(strokeBase, static_cast<double>(chain - 1));
-
-        ++fever->starsLinked;
-        fever->bestChain = std::max(fever->bestChain, chain);
-        if(fever->firstLinkBall == entt::null)
-            fever->firstLinkBall = touch.ball;
-        else if(fever->firstLinkBall != touch.ball)
-            fever->perfect = false;
-
-        if(const Data::StarDef* star = Data::GetStarTable().Find(pin->starId))
-            m_eventBus->Publish(StardustEarnedEvent{Core::BigNumber(star->basePayout) * strokeMultiplier, pinPosition, true});
-        m_eventBus->Publish(StarLinkedEvent{pin->starId, chain, strokeMultiplier.ToDouble(), pinPosition});
+        ++chance->starsLinked;
+        m_eventBus->Publish(StarLinkedEvent{pin->starId, pinPosition});
 
         //-------------------------------------------------------------
         // この星を端に持ち、もう片方の端も既につながっているガイドを灯す
@@ -210,9 +190,10 @@ namespace StardustFever::ECS {
             ApplyLineLook(registry, entity, *config, true);
         }
 
-        if(!fever->completed && fever->starsLinked >= fever->starsTotal) {
-            fever->completed = true;
-            m_eventBus->Publish(ConstellationCompletedEvent{fever->constellationId, fever->perfect});
+        // 全部つないだら、余韻のあとで StarChanceSystem が終わらせ、StarDrawSystem が星を引く
+        if(chance->starsLinked >= chance->starsTotal) {
+            chance->completed = true;
+            chance->endDelay  = chanceConfig ? chanceConfig->endDelayAfterComplete : 0.0f;
         }
     }
 

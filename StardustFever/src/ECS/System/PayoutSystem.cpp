@@ -4,6 +4,9 @@
 //-------------------------------------------------------------
 #include <StardustFever/ECS/System/PayoutSystem.hpp>
 
+#include <StardustFever/ECS/Component/CollectionModifiersComponent.hpp>
+#include <StardustFever/ECS/Component/FeverConfigComponent.hpp>
+#include <StardustFever/ECS/Component/FeverStateComponent.hpp>
 #include <StardustFever/ECS/Component/PayoutConfigComponent.hpp>
 #include <StardustFever/ECS/Component/PocketComponent.hpp>
 #include <StardustFever/ECS/Component/PrestigeStateComponent.hpp>
@@ -62,12 +65,28 @@ namespace StardustFever::ECS {
         if(!wallet || !config)
             return;
 
-        const ScoreMultiplierComponent*  score            = FindSingleton<ScoreMultiplierComponent>(registry);
-        const Core::BigNumber            total            = score ? score->total : Core::BigNumber(1.0);
-        const UpgradeModifiersComponent* upgrades         = FindSingleton<UpgradeModifiersComponent>(registry);
-        PrestigeStateComponent*          prestige         = FindSingleton<PrestigeStateComponent>(registry);
-        const double                     pinMultiplier    = upgrades ? upgrades->pinPayoutMultiplier : 1.0;
-        const double                     pocketMultiplier = upgrades ? upgrades->pocketPayoutMultiplier : 1.0;
+        const ScoreMultiplierComponent*     score       = FindSingleton<ScoreMultiplierComponent>(registry);
+        const Core::BigNumber               total       = score ? score->total : Core::BigNumber(1.0);
+        const UpgradeModifiersComponent*    upgrades    = FindSingleton<UpgradeModifiersComponent>(registry);
+        PrestigeStateComponent*             prestige    = FindSingleton<PrestigeStateComponent>(registry);
+        const CollectionModifiersComponent* collection  = FindSingleton<CollectionModifiersComponent>(registry);
+        const FeverStateComponent*          fever       = FindSingleton<FeverStateComponent>(registry);
+        const FeverConfigComponent*         feverConfig = FindSingleton<FeverConfigComponent>(registry);
+        const bool                          feverActive = fever && fever->active && feverConfig;
+
+        //-------------------------------------------------------------
+        // 釘・入賞口の払い出しには、強化・集めた星座の効果・フィーバー（星屑の稼ぎ時）の倍率を掛ける
+        //-------------------------------------------------------------
+        double pinMultiplier    = upgrades ? upgrades->pinPayoutMultiplier : 1.0;
+        double pocketMultiplier = upgrades ? upgrades->pocketPayoutMultiplier : 1.0;
+        if(collection) {
+            pinMultiplier    *= collection->pinPayoutMultiplier;
+            pocketMultiplier *= collection->pocketPayoutMultiplier;
+        }
+        if(feverActive) {
+            pinMultiplier    *= feverConfig->pinPayoutMultiplier;
+            pocketMultiplier *= feverConfig->pocketPayoutMultiplier;
+        }
 
         auto credit = [&](const Core::BigNumber& base, StardustSource source, bool hasPosition, const hlslpp::float3& position) {
             if(base.IsZero())
@@ -80,7 +99,7 @@ namespace StardustFever::ECS {
             m_eventBus->Publish(StardustCreditedEvent{amount, source, position, hasPosition});
         };
 
-        // 強化の倍率は釘・入賞口それぞれの払い出しにだけ掛ける（星つなぎの獲得は対象外）
+        // 強化などの倍率は釘・入賞口それぞれの払い出しにだけ掛ける（星を最大レベルで引いたときの星屑は対象外）
         for(const BallHitPinEvent& hit : pinHits) {
             hlslpp::float3 position(0.0f, 0.0f, 0.0f);
             const bool     hasPosition = TryGetPosition(registry, hit.ball, position);

@@ -19,9 +19,6 @@ namespace StardustFever::ECS {
 
     template <class Archive>
     void save(Archive& archive, const StarLinkConfigComponent& component) {
-        archive(cereal::make_nvp("strokeBase", component.strokeBase));
-        archive(cereal::make_nvp("perfectMultiplier", component.perfectMultiplier));
-        archive(cereal::make_nvp("maxStarLevel", component.maxStarLevel));
         archive(cereal::make_nvp("linkLinePrefab", component.linkLinePrefab));
         archive(cereal::make_nvp("litStarModel", component.litStarModel));
         archive(cereal::make_nvp("lineThickness", component.lineThickness));
@@ -32,9 +29,6 @@ namespace StardustFever::ECS {
 
     template <class Archive>
     void load(Archive& archive, StarLinkConfigComponent& component) {
-        Tsukino::IO::LoadOptional(archive, "strokeBase", component.strokeBase);
-        Tsukino::IO::LoadOptional(archive, "perfectMultiplier", component.perfectMultiplier);
-        Tsukino::IO::LoadOptional(archive, "maxStarLevel", component.maxStarLevel);
         Tsukino::IO::LoadOptional(archive, "linkLinePrefab", component.linkLinePrefab);
         Tsukino::IO::LoadOptional(archive, "litStarModel", component.litStarModel);
         Tsukino::IO::LoadOptional(archive, "lineThickness", component.lineThickness);

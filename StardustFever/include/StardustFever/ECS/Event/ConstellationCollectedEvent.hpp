@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-//! @file   ConstellationCompletedEvent.hpp
-//! @brief  ConstellationCompletedEvent の宣言
+//! @file   ConstellationCollectedEvent.hpp
+//! @brief  ConstellationCollectedEvent の宣言
 //-------------------------------------------------------------
 #pragma once
 #include <string>
@@ -8,11 +8,10 @@
 // 名前空間 : StardustFever::ECS
 namespace StardustFever::ECS {
     //-------------------------------------------------------------
-    //! @struct ConstellationCompletedEvent
-    //! @brief  星座が完成した
+    //! @struct ConstellationCollectedEvent
+    //! @brief  星座の星が全部そろった（固有の効果が発動した）
     //-------------------------------------------------------------
-    struct ConstellationCompletedEvent {
-        std::string constellationId;    //!< 完成した星座
-        bool        perfect;            //!< 1球で全てつないだか
+    struct ConstellationCollectedEvent {
+        std::string constellationId;    //!< そろった星座
     };
 }    // namespace StardustFever::ECS

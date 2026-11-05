@@ -6,6 +6,8 @@
 #include <StardustFever/ECS/Event/BigBangEvent.hpp>
 #include <StardustFever/ECS/Event/FeverEndedEvent.hpp>
 #include <StardustFever/ECS/Event/FeverStartedEvent.hpp>
+#include <StardustFever/ECS/Event/StarChanceEndedEvent.hpp>
+#include <StardustFever/ECS/Event/StarChanceStartedEvent.hpp>
 #include <StardustFever/ECS/Utility/EventQueue.hpp>
 
 #include <Tsukino/Core/ECS/System/ISystem.hpp>
@@ -34,11 +36,13 @@ namespace StardustFever::ECS {
         void Update(Tsukino::ECS::Registry& registry, float deltaTime) override;
 
     private:
-        EventQueue<FeverStartedEvent> m_feverStarts;
-        EventQueue<FeverEndedEvent>   m_feverEnds;
-        EventQueue<BigBangEvent>      m_bigBangs;
-        bool                          m_initialized = false;    //!< 帯を隠し、閃光を透明にしたか
-        float                         m_hideTimer   = -1.0f;    //!< 帯を隠すまでの残り時間（引っ込むトゥイーンの後。負なら隠さない）
-        bool                          m_timeWarning = false;    //!< 残り時間の秒数を脈打たせているか
+        EventQueue<FeverStartedEvent>      m_feverStarts;
+        EventQueue<FeverEndedEvent>        m_feverEnds;
+        EventQueue<StarChanceStartedEvent> m_chanceStarts;
+        EventQueue<StarChanceEndedEvent>   m_chanceEnds;
+        EventQueue<BigBangEvent>           m_bigBangs;
+        bool                               m_initialized = false;    //!< 帯を隠し、閃光を透明にしたか
+        float                              m_hideTimer   = -1.0f;    //!< 帯を隠すまでの残り時間（引っ込むトゥイーンの後。負なら隠さない）
+        bool                               m_timeWarning = false;    //!< 残り時間の秒数を脈打たせているか
     };
 }    // namespace StardustFever::ECS

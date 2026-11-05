@@ -1,0 +1,28 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/StarGate/Transform.json"
+        },
+        {
+            "key": "CollisionComponent",
+            "value": "StardustFever/Assets/Prefabs/StarGate/Collision.json"
+        },
+        {
+            "key": "ModelComponent",
+            "value": "StardustFever/Assets/Prefabs/StarGate/Model.json"
+        },
+        {
+            "key": "PocketComponent",
+            "value": "StardustFever/Assets/Prefabs/StarGate/Pocket.json"
+        },
+        {
+            "key": "RimGlowComponent",
+            "value": "StardustFever/Assets/Prefabs/StarGate/RimGlow.json"
+        },
+        {
+            "key": "GlowHaloComponent",
+            "value": "StardustFever/Assets/Prefabs/StarGate/GlowHalo.json"
+        }
+    ]
+}

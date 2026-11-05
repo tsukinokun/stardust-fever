@@ -10,6 +10,7 @@
 #include <StardustFever/ECS/Component/LotteryStateComponent.hpp>
 #include <StardustFever/ECS/Component/PrestigeConfigComponent.hpp>
 #include <StardustFever/ECS/Component/PrestigeStateComponent.hpp>
+#include <StardustFever/ECS/Component/StarChanceStateComponent.hpp>
 #include <StardustFever/ECS/Component/UpgradeLevelsComponent.hpp>
 #include <StardustFever/ECS/Component/WalletComponent.hpp>
 #include <StardustFever/ECS/Event/BigBangEvent.hpp>
@@ -58,6 +59,10 @@ namespace StardustFever::ECS {
             m_eventBus->Publish(HudMessageEvent{"星詠みタイム中はビッグバンできません", HudMessageImportance::Toast, HudMessageTone::Warning});
             return;
         }
+        if(const StarChanceStateComponent* chance = FindSingleton<StarChanceStateComponent>(registry); chance && chance->active) {
+            m_eventBus->Publish(HudMessageEvent{"星ゲットチャンス中はビッグバンできません", HudMessageImportance::Toast, HudMessageTone::Warning});
+            return;
+        }
 
         if(prestige->confirmTimer <= 0.0f) {
             prestige->confirmTimer = config->confirmWindow;
@@ -89,7 +94,8 @@ namespace StardustFever::ECS {
 
         m_eventBus->Publish(BigBangEvent{gain, prestige->cosmicConstants});
         m_eventBus->Publish(
-            HudMessageEvent{"★ ビッグバン ★\n宇宙定数 +" + gain.ToJapaneseString() + "（合計 " + prestige->cosmicConstants.ToJapaneseString() + "）", HudMessageImportance::Headline});
+            HudMessageEvent{"★ ビッグバン ★\n宇宙定数 +" + gain.ToJapaneseString() + "（合計 " + prestige->cosmicConstants.ToJapaneseString() + "）",
+                            HudMessageImportance::Headline});
     }
 
-    }    // namespace StardustFever::ECS
+}    // namespace StardustFever::ECS

@@ -1,8 +1,8 @@
 {
     "FeverConfigComponent": {
         "duration": 45.0,
-        "endDelayAfterComplete": 3.0,
-        "starPinPrefab": "StardustFever/Assets/Prefabs/StarPin/Prefab.json",
-        "minStarToPocketGap": 3.0
+        "pinPayoutMultiplier": 3.0,
+        "pocketPayoutMultiplier": 3.0,
+        "sidePocketScale": 1.6
     }
 }

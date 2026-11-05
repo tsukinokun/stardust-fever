@@ -21,6 +21,10 @@
             "value": "null"
         },
         {
+            "key": "StarChanceStateComponent",
+            "value": "null"
+        },
+        {
             "key": "UpgradeLevelsComponent",
             "value": "null"
         },
@@ -30,6 +34,10 @@
         },
         {
             "key": "PrestigeStateComponent",
+            "value": "null"
+        },
+        {
+            "key": "CollectionModifiersComponent",
             "value": "null"
         }
     ]

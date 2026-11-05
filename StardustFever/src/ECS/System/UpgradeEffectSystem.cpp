@@ -43,8 +43,8 @@ namespace StardustFever::ECS {
                 result.lotteryChanceBonus += value;
             } else if(upgrade.effect == "feverDuration") {
                 result.feverDurationBonus += static_cast<float>(value);
-            } else if(upgrade.effect == "strokeBase") {
-                result.strokeBaseBonus += value;
+            } else if(upgrade.effect == "starChance") {
+                result.starChanceBonus += value;
             } else if(upgrade.effect == "autoFireJitter") {
                 result.autoFireJitterScale *= static_cast<float>(value);
             } else if(upgrade.effect == "autoFireUnlock") {

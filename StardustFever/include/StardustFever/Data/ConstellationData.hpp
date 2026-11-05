@@ -1,6 +1,7 @@
 //-------------------------------------------------------------
 //! @file   ConstellationData.hpp
 //! @brief  星座のマスターデータ（Assets/Data/Constellations.json）
+//! @note   Tools/BuildSkyCatalog.py が公開データ（Stellarium の星座線）から作る。手で書き換えない
 //-------------------------------------------------------------
 #pragma once
 #include <Tsukino/Core/IO/CerealOptional.hpp>
@@ -16,25 +17,50 @@
 namespace StardustFever::Data {
     //-------------------------------------------------------------
     //! @struct ConstellationStarDef
-    //! @brief  星座を構成する星1つと、フィーバー中に盤面へ出す位置
-    //! @note   x / y は Tools/GenerateConstellations.py が ra / dec から計算し、役物と重ならないことを確かめて書く。
-    //!         手で書き換えると役物と重なり、玉が先に入賞してつなげない星ができるので注意
+    //! @brief  星座の線をつくる星1つ
     //-------------------------------------------------------------
     struct ConstellationStarDef {
-        std::string starId;        //!< StarDef::id
-        double      ra  = 0.0;     //!< 赤経（時）。盤面の位置の計算元で、実行時は使わない
-        double      dec = 0.0;     //!< 赤緯（度）。盤面の位置の計算元で、実行時は使わない
-        float       x   = 0.0f;    //!< 盤面上のX（ワールド単位）
-        float       y   = 0.0f;    //!< 盤面上のY（ワールド単位）
+        std::string starId;    //!< StarDef::id
     };
 
     //-------------------------------------------------------------
     //! @struct ConstellationLineDef
-    //! @brief  星座の線。両端の星がつながると光の線が引かれる
+    //! @brief  星座の線（星の添字の組）
     //-------------------------------------------------------------
     struct ConstellationLineDef {
-        int from = 0;    //!< stars の添字
-        int to   = 0;    //!< stars の添字
+        int from = 0;    //!< 片方の端の星の添字
+        int to   = 0;    //!< もう片方の端の星の添字
+    };
+
+    //-------------------------------------------------------------
+    //! @struct ConstellationBoardStarDef
+    //! @brief  星ゲットチャンスで盤面に出す星1つと、その位置
+    //! @note   x / y は役物と重ならないことを確かめて書いてある
+    //-------------------------------------------------------------
+    struct ConstellationBoardStarDef {
+        std::string starId;      //!< StarDef::id
+        float       x = 0.0f;    //!< 盤面上のX（ワールド単位）
+        float       y = 0.0f;    //!< 盤面上のY（ワールド単位）
+    };
+
+    //-------------------------------------------------------------
+    //! @struct ConstellationBoardDef
+    //! @brief  星ゲットチャンスで盤面に出す形
+    //! @note   星が多い星座は、明るい星から線でつながる順に絞ってある（lines の添字は stars のもの）
+    //-------------------------------------------------------------
+    struct ConstellationBoardDef {
+        std::vector<ConstellationBoardStarDef> stars;
+        std::vector<ConstellationLineDef>      lines;
+    };
+
+    //-------------------------------------------------------------
+    //! @struct ConstellationEffectDef
+    //! @brief  星座の星を全部そろえたときの固有の効果
+    //! @note   type は global / pinPayout / pocketPayout / lotteryChance / starChance / feverDuration
+    //-------------------------------------------------------------
+    struct ConstellationEffectDef {
+        std::string type  = "global";    //!< 効果の種類
+        double      value = 0.0;         //!< 効果の量（★1 のとき）
     };
 
     //-------------------------------------------------------------
@@ -42,13 +68,13 @@ namespace StardustFever::Data {
     //! @brief  星座1つの定義
     //-------------------------------------------------------------
     struct ConstellationDef {
-        std::string                       id;                                //!< 参照用のID（例: "orion"）
-        std::string                       name;                              //!< 表示名（UTF-8）
-        std::vector<ConstellationStarDef> stars;                             //!< 構成する星
-        std::vector<ConstellationLineDef> lines;                             //!< 星座の線
-        double                            completionPayout     = 10000.0;    //!< 完成したときの基本の星屑
-        double                            completionMultiplier = 2.0;        //!< 完成するたびに全体倍率へ掛ける量（永続）
-        std::string                       bonusDescription;                  //!< 完成ボーナスの説明（UTF-8）
+        std::string                       id;        //!< 参照用のID（IAU の略符の小文字。例: "ori"）
+        std::string                       name;      //!< 表示名（UTF-8）
+        std::string                       nameEn;    //!< ラテン語名
+        std::vector<ConstellationStarDef> stars;     //!< 線をつくる星すべて（そろえる対象）
+        std::vector<ConstellationLineDef> lines;     //!< 星座の線
+        ConstellationEffectDef            effect;    //!< そろえたときの効果
+        ConstellationBoardDef             board;     //!< 星ゲットチャンスで盤面に出す形
     };
 
     //-------------------------------------------------------------
@@ -75,9 +101,6 @@ namespace StardustFever::Data {
     template <class Archive>
     void serialize(Archive& archive, ConstellationStarDef& star) {
         archive(cereal::make_nvp("starId", star.starId));
-        Tsukino::IO::LoadOptional(archive, "ra", star.ra);
-        Tsukino::IO::LoadOptional(archive, "dec", star.dec);
-        archive(cereal::make_nvp("x", star.x), cereal::make_nvp("y", star.y));
     }
 
     template <class Archive>
@@ -86,14 +109,30 @@ namespace StardustFever::Data {
     }
 
     template <class Archive>
+    void serialize(Archive& archive, ConstellationBoardStarDef& star) {
+        archive(cereal::make_nvp("starId", star.starId), cereal::make_nvp("x", star.x), cereal::make_nvp("y", star.y));
+    }
+
+    template <class Archive>
+    void serialize(Archive& archive, ConstellationBoardDef& board) {
+        archive(cereal::make_nvp("stars", board.stars), cereal::make_nvp("lines", board.lines));
+    }
+
+    template <class Archive>
+    void serialize(Archive& archive, ConstellationEffectDef& effect) {
+        Tsukino::IO::LoadOptional(archive, "type", effect.type);
+        Tsukino::IO::LoadOptional(archive, "value", effect.value);
+    }
+
+    template <class Archive>
     void serialize(Archive& archive, ConstellationDef& constellation) {
         archive(cereal::make_nvp("id", constellation.id),
                 cereal::make_nvp("name", constellation.name),
                 cereal::make_nvp("stars", constellation.stars),
                 cereal::make_nvp("lines", constellation.lines));
-        Tsukino::IO::LoadOptional(archive, "completionPayout", constellation.completionPayout);
-        Tsukino::IO::LoadOptional(archive, "completionMultiplier", constellation.completionMultiplier);
-        Tsukino::IO::LoadOptional(archive, "bonusDescription", constellation.bonusDescription);
+        Tsukino::IO::LoadOptional(archive, "nameEn", constellation.nameEn);
+        Tsukino::IO::LoadOptional(archive, "effect", constellation.effect);
+        Tsukino::IO::LoadOptional(archive, "board", constellation.board);
     }
 
     template <class Archive>

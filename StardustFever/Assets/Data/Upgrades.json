@@ -15,7 +15,7 @@
             },
             {
                 "id": "pocket_payout",
-                "name": "星の門",
+                "name": "輝く入賞口",
                 "description": "入賞の星屑",
                 "effect": "pocketPayout",
                 "stacking": "multiply",
@@ -50,16 +50,16 @@
                 "displayUnit": "秒"
             },
             {
-                "id": "stroke_base",
-                "name": "一筆の冴え",
-                "description": "一筆書きの底",
-                "effect": "strokeBase",
+                "id": "star_chance",
+                "name": "星の門の幸運",
+                "description": "星ゲットチャンス",
+                "effect": "starChance",
                 "stacking": "add",
-                "valuePerLevel": 0.25,
-                "baseCost": 2000.0,
-                "costGrowth": 2.0,
-                "maxLevel": 6,
-                "displayUnit": ""
+                "valuePerLevel": 0.02,
+                "baseCost": 1500.0,
+                "costGrowth": 1.9,
+                "maxLevel": 10,
+                "displayUnit": "%"
             },
             {
                 "id": "auto_fire",

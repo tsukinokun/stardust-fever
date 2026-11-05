@@ -1,0 +1,36 @@
+{
+    "GlowHaloComponent": {
+        "texture": "StardustFever/Assets/Textures/Space/flare.png",
+        "texturePixels": 256.0,
+        "size": 8.0,
+        "linkedSizeScale": 1.0,
+        "color": {
+            "x": 1.6,
+            "y": 0.7,
+            "z": 1.8,
+            "w": 0.8
+        },
+        "linkedColor": {
+            "x": 1.6,
+            "y": 0.7,
+            "z": 1.8,
+            "w": 0.8
+        },
+        "offset": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": -0.8
+        },
+        "pulseAmplitude": 0.2,
+        "periodMin": 1.2,
+        "periodMax": 1.6,
+        "lightColor": {
+            "x": 1.0,
+            "y": 0.5,
+            "z": 1.0
+        },
+        "lightIntensity": 1.5,
+        "linkedLightIntensity": 1.5,
+        "lightRange": 12.0
+    }
+}

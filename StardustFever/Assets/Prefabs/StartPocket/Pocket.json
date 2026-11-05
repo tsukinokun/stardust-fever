@@ -1,6 +1,6 @@
 {
     "PocketComponent": {
         "basePayout": 20.0,
-        "isStartPocket": true
+        "role": "start"
     }
 }

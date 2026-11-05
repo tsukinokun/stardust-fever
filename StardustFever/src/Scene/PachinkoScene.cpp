@@ -8,6 +8,7 @@
 #include <StardustFever/ECS/System/BallEventSystem.hpp>
 #include <StardustFever/ECS/System/BigBangSystem.hpp>
 #include <StardustFever/ECS/System/BoardBuildSystem.hpp>
+#include <StardustFever/ECS/System/CollectionEffectSystem.hpp>
 #include <StardustFever/ECS/System/ConfigReloadSystem.hpp>
 #include <StardustFever/ECS/System/FeverSystem.hpp>
 #include <StardustFever/ECS/System/FxSystem.hpp>
@@ -29,8 +30,9 @@
 #include <StardustFever/ECS/System/ShopViewSystem.hpp>
 #include <StardustFever/ECS/System/SparkleTrailSystem.hpp>
 #include <StardustFever/ECS/System/StarChartViewSystem.hpp>
+#include <StardustFever/ECS/System/StarChanceSystem.hpp>
+#include <StardustFever/ECS/System/StarDrawSystem.hpp>
 #include <StardustFever/ECS/System/StarLinkSystem.hpp>
-#include <StardustFever/ECS/System/StarProgressSystem.hpp>
 #include <StardustFever/ECS/System/ToastSystem.hpp>
 #include <StardustFever/ECS/System/TwinkleSystem.hpp>
 #include <StardustFever/ECS/System/UpgradeEffectSystem.hpp>
@@ -86,15 +88,17 @@ namespace StardustFever::Scene {
             LauncherInput,
             BigBang,
             UpgradeShop,
-            UpgradeEffect,    // 購入 → 効果。効果を使う System（発射・払い出し・抽選など）より前に計算する
+            UpgradeEffect,       // 購入 → 効果。効果を使う System（発射・払い出し・抽選など）より前に計算する
+            CollectionEffect,    // 集めた星座 → 効果。同じく、効果を使う System より前に計算する
             Launch,
             Physics,
             BallEvent,          // 衝突 → 釘・入賞・アウト・星
             Lottery,            // 入賞 → 抽選結果
-            Fever,              // 抽選結果 → 星釘を並べる
-            StarLink,           // 星に触れた → つないだ・完成
-            StarProgress,       // つないだ・完成 → レベル・完成ボーナス
-            ScoreMultiplier,    // 星・星座・宇宙定数 → 全体倍率（払い出しより前に計算する）
+            Fever,              // 抽選結果 → フィーバー（星屑の稼ぎ時）
+            StarChance,         // 星の門への入賞 → 星ゲットチャンス（星釘を並べる・片付ける）
+            StarLink,           // 星に触れた → つないだ・全部つないだ
+            StarDraw,           // チャンスの結果 → 星を引く・星座がそろう
+            ScoreMultiplier,    // 星・星座の効果・宇宙定数 → 全体倍率（払い出しより前に計算する）
             Payout,             // 全ての獲得 → 財布
             SparkleTrail,       // ここから4つは盤面の見た目（玉の尾・釘の瞬き・星釘の光輪・流れ星）
             Twinkle,
@@ -155,13 +159,15 @@ namespace StardustFever::Scene {
         m_scene.AddSystem(std::make_shared<ECS::BigBangSystem>(eventBus), Order(SystemOrder::BigBang));
         m_scene.AddSystem(std::make_shared<ECS::UpgradeShopSystem>(eventBus), Order(SystemOrder::UpgradeShop));
         m_scene.AddSystem(std::make_shared<ECS::UpgradeEffectSystem>(), Order(SystemOrder::UpgradeEffect));
+        m_scene.AddSystem(std::make_shared<ECS::CollectionEffectSystem>(), Order(SystemOrder::CollectionEffect));
         m_scene.AddSystem(std::make_shared<ECS::LaunchSystem>(), Order(SystemOrder::Launch));
         m_scene.AddSystem(std::make_shared<ECS::PhysicsStepSystem>(eventBus), Order(SystemOrder::Physics));
         m_scene.AddSystem(std::make_shared<ECS::BallEventSystem>(eventBus), Order(SystemOrder::BallEvent));
         m_scene.AddSystem(std::make_shared<ECS::LotterySystem>(eventBus), Order(SystemOrder::Lottery));
         m_scene.AddSystem(std::make_shared<ECS::FeverSystem>(eventBus), Order(SystemOrder::Fever));
+        m_scene.AddSystem(std::make_shared<ECS::StarChanceSystem>(eventBus), Order(SystemOrder::StarChance));
         m_scene.AddSystem(std::make_shared<ECS::StarLinkSystem>(eventBus), Order(SystemOrder::StarLink));
-        m_scene.AddSystem(std::make_shared<ECS::StarProgressSystem>(eventBus), Order(SystemOrder::StarProgress));
+        m_scene.AddSystem(std::make_shared<ECS::StarDrawSystem>(eventBus), Order(SystemOrder::StarDraw));
         m_scene.AddSystem(std::make_shared<ECS::ScoreMultiplierSystem>(), Order(SystemOrder::ScoreMultiplier));
         m_scene.AddSystem(std::make_shared<ECS::PayoutSystem>(eventBus), Order(SystemOrder::Payout));
         m_scene.AddSystem(std::make_shared<ECS::SparkleTrailSystem>(m_scene), Order(SystemOrder::SparkleTrail));

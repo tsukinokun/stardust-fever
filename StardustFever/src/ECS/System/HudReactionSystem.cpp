@@ -7,6 +7,7 @@
 #include <StardustFever/ECS/Component/FeverStateComponent.hpp>
 #include <StardustFever/ECS/Component/HudFxConfigComponent.hpp>
 #include <StardustFever/ECS/Component/HudTextComponent.hpp>
+#include <StardustFever/ECS/Component/StarChanceStateComponent.hpp>
 #include <StardustFever/ECS/Utility/HudUi.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
 
@@ -42,6 +43,8 @@ namespace StardustFever::ECS {
     HudReactionSystem::HudReactionSystem(Tsukino::ECS::EventBus& eventBus)
         : m_feverStarts(eventBus)
         , m_feverEnds(eventBus)
+        , m_chanceStarts(eventBus)
+        , m_chanceEnds(eventBus)
         , m_bigBangs(eventBus) {
     }
 
@@ -51,6 +54,8 @@ namespace StardustFever::ECS {
     void HudReactionSystem::Update(Tsukino::ECS::Registry& registry, float deltaTime) {
         const auto                  feverStarts = m_feverStarts.Drain();
         const auto                  feverEnds   = m_feverEnds.Drain();
+        const bool                  opened      = !feverStarts.empty() | !m_chanceStarts.Drain().empty();
+        const bool                  closed      = !feverEnds.empty() | !m_chanceEnds.Drain().empty();
         const auto                  bigBangs    = m_bigBangs.Drain();
         const Tsukino::ECS::Entity  banner      = HudUi::FindAnyPart(registry, "FeverBanner");
         const Tsukino::ECS::Entity  flash       = HudUi::FindAnyPart(registry, "Flash");
@@ -65,12 +70,13 @@ namespace StardustFever::ECS {
             m_initialized = true;
         }
 
-        if(!feverStarts.empty() && banner != entt::null) {
+        // 帯はフィーバーと星ゲットチャンスで使い回す
+        if(opened && banner != entt::null) {
             m_hideTimer = -1.0f;
             SetVisible(registry, banner, true);
             Tween::SlideIn(registry, banner, hlslpp::float2(0.0f, -fx->bannerTravel), 0.15f, 0.6f);
         }
-        if(!feverEnds.empty() && banner != entt::null) {
+        if(closed && !opened && banner != entt::null) {
             Tween::SlideOut(registry, banner, hlslpp::float2(0.0f, -fx->bannerTravel), 0.0f, 0.35f);
             m_hideTimer = 0.4f;
         }
@@ -83,8 +89,10 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         // 残り時間が少ないときは秒数を脈打たせ、急かす
         //-------------------------------------------------------------
-        const FeverStateComponent* fever       = FindSingleton<FeverStateComponent>(registry);
-        const bool                 timeWarning = fever && fever->active && !fever->completed && fever->timeRemaining < fx->timeWarningSeconds;
+        const FeverStateComponent*      fever       = FindSingleton<FeverStateComponent>(registry);
+        const StarChanceStateComponent* chance      = FindSingleton<StarChanceStateComponent>(registry);
+        const bool                      timeWarning = (chance && chance->active && !chance->completed && chance->timeRemaining < fx->timeWarningSeconds)
+                                 || (fever && fever->active && fever->timeRemaining < fx->timeWarningSeconds);
         if(timeWarning != m_timeWarning) {
             const Tsukino::ECS::Entity timeText = FindText(registry, HudTextKind::FeverTime);
             if(timeWarning)

@@ -7,6 +7,7 @@
 #include <StardustFever/Core/PrestigeFormula.hpp>
 #include <StardustFever/Data/GameDatabase.hpp>
 #include <StardustFever/ECS/Component/AutoFireComponent.hpp>
+#include <StardustFever/ECS/Component/FeverConfigComponent.hpp>
 #include <StardustFever/ECS/Component/FeverStateComponent.hpp>
 #include <StardustFever/ECS/Component/HudTextComponent.hpp>
 #include <StardustFever/ECS/Component/LauncherComponent.hpp>
@@ -16,6 +17,7 @@
 #include <StardustFever/ECS/Component/PrestigeStateComponent.hpp>
 #include <StardustFever/ECS/Component/RollingNumberComponent.hpp>
 #include <StardustFever/ECS/Component/ScoreMultiplierComponent.hpp>
+#include <StardustFever/ECS/Component/StarChanceStateComponent.hpp>
 #include <StardustFever/ECS/Component/WalletComponent.hpp>
 #include <StardustFever/ECS/Utility/HudUi.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
@@ -131,28 +133,47 @@ namespace StardustFever::ECS {
                 }
             case HudTextKind::AutoFire:
                 return BuildAutoFire(registry);
+            //-------------------------------------------------------------
+            // 盤面の上の帯は、星ゲットチャンスとフィーバーで使い回す（同時には起きない）
+            //-------------------------------------------------------------
+            case HudTextKind::BannerHeading:
+                {
+                    const StarChanceStateComponent* chance = FindSingleton<StarChanceStateComponent>(registry);
+                    return chance && chance->active ? "★ 星ゲットチャンス ★" : "★ 星詠みタイム ★";
+                }
             case HudTextKind::FeverTitle:
                 {
-                    const FeverStateComponent* fever = FindSingleton<FeverStateComponent>(registry);
-                    if(!fever || !fever->active)
+                    if(const StarChanceStateComponent* chance = FindSingleton<StarChanceStateComponent>(registry); chance && chance->active) {
+                        const Data::ConstellationDef* constellation = Data::GetConstellationTable().Find(chance->constellationId);
+                        return constellation ? constellation->name : chance->constellationId;
+                    }
+                    const FeverConfigComponent* config = FindSingleton<FeverConfigComponent>(registry);
+                    if(!config)
                         return {};
-                    const Data::ConstellationDef* constellation = Data::GetConstellationTable().Find(fever->constellationId);
-                    return constellation ? constellation->name : fever->constellationId;
+                    char buffer[48];
+                    std::snprintf(buffer, sizeof(buffer), "星屑 ×%g", config->pinPayoutMultiplier);
+                    return buffer;
                 }
             case HudTextKind::FeverProgress:
                 {
-                    const FeverStateComponent* fever = FindSingleton<FeverStateComponent>(registry);
-                    return fever ? std::to_string(fever->starsLinked) + " / " + std::to_string(fever->starsTotal) : std::string();
+                    const StarChanceStateComponent* chance = FindSingleton<StarChanceStateComponent>(registry);
+                    return chance && chance->active ? std::to_string(chance->starsLinked) + " / " + std::to_string(chance->starsTotal) : std::string();
                 }
             case HudTextKind::FeverTime:
                 {
-                    const FeverStateComponent* fever = FindSingleton<FeverStateComponent>(registry);
-                    return fever ? std::to_string(std::max(0, static_cast<int>(std::ceil(fever->timeRemaining)))) + "秒" : std::string();
+                    float remaining = -1.0f;
+                    if(const StarChanceStateComponent* chance = FindSingleton<StarChanceStateComponent>(registry); chance && chance->active)
+                        remaining = chance->timeRemaining;
+                    else if(const FeverStateComponent* fever = FindSingleton<FeverStateComponent>(registry); fever && fever->active)
+                        remaining = fever->timeRemaining;
+                    return remaining >= 0.0f ? std::to_string(std::max(0, static_cast<int>(std::ceil(remaining)))) + "秒" : std::string();
                 }
             case HudTextKind::FeverChain:
                 {
-                    const FeverStateComponent* fever = FindSingleton<FeverStateComponent>(registry);
-                    return fever && fever->bestChain >= 2 ? "一筆書き " + std::to_string(fever->bestChain) + "連" : std::string();
+                    const StarChanceStateComponent* chance = FindSingleton<StarChanceStateComponent>(registry);
+                    if(chance && chance->active)
+                        return chance->completed ? "星を引いています…" : "全部つないで星をゲット";
+                    return "横の入賞口が広がる";
                 }
             }
             return {};

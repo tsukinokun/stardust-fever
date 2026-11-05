@@ -11,6 +11,7 @@
 #include <StardustFever/ECS/Component/LauncherComponent.hpp>
 #include <StardustFever/ECS/Component/PrestigeConfigComponent.hpp>
 #include <StardustFever/ECS/Component/PrestigeStateComponent.hpp>
+#include <StardustFever/ECS/Component/StarChanceStateComponent.hpp>
 #include <StardustFever/ECS/Utility/HudUi.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
 
@@ -44,6 +45,9 @@ namespace StardustFever::ECS {
                 }
             case GaugeSource::FeverTime:
                 {
+                    // 帯はチャンスとフィーバーで使い回すので、残り時間も動いている方を出す
+                    if(const StarChanceStateComponent* chance = FindSingleton<StarChanceStateComponent>(registry); chance && chance->active)
+                        return chance->timeTotal > 0.0f ? chance->timeRemaining / chance->timeTotal : 0.0f;
                     const FeverStateComponent* fever = FindSingleton<FeverStateComponent>(registry);
                     if(!fever || !fever->active || fever->timeTotal <= 0.0f)
                         return 0.0f;

@@ -4,7 +4,7 @@
 //-------------------------------------------------------------
 #pragma once
 #include <StardustFever/ECS/Event/BallEnteredPocketEvent.hpp>
-#include <StardustFever/ECS/Event/ConstellationCompletedEvent.hpp>
+#include <StardustFever/ECS/Event/StarChanceEndedEvent.hpp>
 #include <StardustFever/ECS/Event/StarLinkedEvent.hpp>
 #include <StardustFever/ECS/Event/StardustCreditedEvent.hpp>
 #include <StardustFever/ECS/Utility/EventQueue.hpp>
@@ -48,12 +48,12 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         void SpawnPopup(Tsukino::ECS::Registry& registry, const StardustCreditedEvent& credited);
 
-        Tsukino::ECS::Scene*                    m_scene = nullptr;
-        EventQueue<StardustCreditedEvent>       m_credits;
-        EventQueue<StarLinkedEvent>             m_linkedStars;
-        EventQueue<ConstellationCompletedEvent> m_completions;
-        EventQueue<BallEnteredPocketEvent>      m_pocketEntries;
-        std::deque<Tsukino::ECS::Entity>        m_popups;    //!< 出ている数字（上限を超えたら新しく出さない）
-        std::mt19937                            m_random;
+        Tsukino::ECS::Scene*               m_scene = nullptr;
+        EventQueue<StardustCreditedEvent>  m_credits;
+        EventQueue<StarLinkedEvent>        m_linkedStars;
+        EventQueue<StarChanceEndedEvent>   m_completions;
+        EventQueue<BallEnteredPocketEvent> m_pocketEntries;
+        std::deque<Tsukino::ECS::Entity>   m_popups;    //!< 出ている数字（上限を超えたら新しく出さない）
+        std::mt19937                       m_random;
     };
 }    // namespace StardustFever::ECS

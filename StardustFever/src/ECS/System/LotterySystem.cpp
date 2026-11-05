@@ -4,10 +4,12 @@
 //-------------------------------------------------------------
 #include <StardustFever/ECS/System/LotterySystem.hpp>
 
+#include <StardustFever/ECS/Component/CollectionModifiersComponent.hpp>
 #include <StardustFever/ECS/Component/FeverStateComponent.hpp>
 #include <StardustFever/ECS/Component/LotteryConfigComponent.hpp>
 #include <StardustFever/ECS/Component/LotteryStateComponent.hpp>
 #include <StardustFever/ECS/Component/PocketComponent.hpp>
+#include <StardustFever/ECS/Component/StarChanceStateComponent.hpp>
 #include <StardustFever/ECS/Component/UpgradeModifiersComponent.hpp>
 #include <StardustFever/ECS/Event/LotteryResultEvent.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
@@ -43,7 +45,7 @@ namespace StardustFever::ECS {
 
         for(const BallEnteredPocketEvent& entry : entries) {
             const PocketComponent* pocket = registry.try_get<PocketComponent>(entry.pocket);
-            if(pocket && pocket->isStartPocket)
+            if(pocket && pocket->role == "start")
                 state->pending = std::min(state->pending + 1, config->maxPending);
         }
 
@@ -54,18 +56,23 @@ namespace StardustFever::ECS {
 
         const FeverStateComponent* fever       = FindSingleton<FeverStateComponent>(registry);
         const bool                 feverActive = fever && fever->active;
+        // 星ゲットチャンスの間もリールは待つ（同時に始まると、どちらの演出も見えにくくなる）
+        const StarChanceStateComponent* chance       = FindSingleton<StarChanceStateComponent>(registry);
+        const bool                      chanceActive = chance && chance->active;
 
         //-------------------------------------------------------------
         // 回り始め。当否と止まる絵柄をここで決めておく
         //-------------------------------------------------------------
-        if(!state->spinning && state->pending > 0 && !feverActive) {
+        if(!state->spinning && state->pending > 0 && !feverActive && !chanceActive) {
             --state->pending;
-            state->spinning                                 = true;
-            state->spinTimer                                = config->spinDuration;
-            state->symbolTimer                              = 0.0f;
-            const UpgradeModifiersComponent* upgrades       = FindSingleton<UpgradeModifiersComponent>(registry);
-            const double                     winProbability = config->winProbability + (upgrades ? upgrades->lotteryChanceBonus : 0.0);
-            state->willWin                                  = std::bernoulli_distribution(std::clamp(winProbability, 0.0, 1.0))(m_random);
+            state->spinning                                = true;
+            state->spinTimer                               = config->spinDuration;
+            state->symbolTimer                             = 0.0f;
+            const UpgradeModifiersComponent*    upgrades   = FindSingleton<UpgradeModifiersComponent>(registry);
+            const CollectionModifiersComponent* collection = FindSingleton<CollectionModifiersComponent>(registry);
+            const double                        winProbability =
+                config->winProbability + (upgrades ? upgrades->lotteryChanceBonus : 0.0) + (collection ? collection->lotteryChanceBonus : 0.0);
+            state->willWin = std::bernoulli_distribution(std::clamp(winProbability, 0.0, 1.0))(m_random);
 
             if(state->willWin) {
                 const int symbol    = pickSymbol(m_random);

@@ -4,7 +4,7 @@
 //-------------------------------------------------------------
 #pragma once
 #include <StardustFever/ECS/Event/BallTouchedStarEvent.hpp>
-#include <StardustFever/ECS/Event/FeverStartedEvent.hpp>
+#include <StardustFever/ECS/Event/StarChanceStartedEvent.hpp>
 #include <StardustFever/ECS/Utility/EventQueue.hpp>
 
 #include <Tsukino/Core/ECS/System/ISystem.hpp>
@@ -13,10 +13,10 @@
 namespace StardustFever::ECS {
     //-------------------------------------------------------------
     //! @class  StarLinkSystem
-    //! @brief  星釘に触れた玉ごとに「何個目の星か」を数え、一筆書きの倍率で星屑を出す。
-    //!         フィーバー開始時に星座の線を薄いガイドとして全部引き、両端の星がつながった線を灯す。
-    //!         全ての星がつながったら完成を知らせる
-    //! @note   どの玉で触れても星はつながる。同じ玉で続けてつなぐほど倍率が上がる
+    //! @brief  星ゲットチャンスで、玉が触れた星釘をつなぐ。
+    //!         チャンスの開始時に星座の線を薄いガイドとして全部引き、両端の星がつながった線を灯す。
+    //!         全ての星がつながったらチャンスの状態に完成を書く
+    //! @note   どの玉で触れても星はつながる。星屑は出さない（ご褒美は星を引くこと）
     //-------------------------------------------------------------
     class StarLinkSystem final : public Tsukino::ECS::ISystem {
     public:
@@ -39,7 +39,7 @@ namespace StardustFever::ECS {
         //! @param  registry [in] レジストリ
         //! @param  started  [in] 始まったフィーバーの星座
         //-------------------------------------------------------------
-        void SpawnGuideLines(Tsukino::ECS::Registry& registry, const FeverStartedEvent& started);
+        void SpawnGuideLines(Tsukino::ECS::Registry& registry, const StarChanceStartedEvent& started);
 
         //-------------------------------------------------------------
         //! @brief  星釘1つをつなぐ
@@ -48,8 +48,8 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         void LinkStar(Tsukino::ECS::Registry& registry, const BallTouchedStarEvent& touch);
 
-        Tsukino::ECS::EventBus*          m_eventBus = nullptr;
-        EventQueue<BallTouchedStarEvent> m_touches;
-        EventQueue<FeverStartedEvent>    m_starts;
+        Tsukino::ECS::EventBus*            m_eventBus = nullptr;
+        EventQueue<BallTouchedStarEvent>   m_touches;
+        EventQueue<StarChanceStartedEvent> m_starts;
     };
 }    // namespace StardustFever::ECS

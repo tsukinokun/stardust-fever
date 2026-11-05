@@ -3,7 +3,6 @@
 //! @brief  FeverEndedEvent の宣言
 //-------------------------------------------------------------
 #pragma once
-#include <string>
 
 // 名前空間 : StardustFever::ECS
 namespace StardustFever::ECS {
@@ -12,7 +11,6 @@ namespace StardustFever::ECS {
     //! @brief  フィーバーが終わった
     //-------------------------------------------------------------
     struct FeverEndedEvent {
-        std::string constellationId;    //!< 出していた星座
-        bool        completed;          //!< 星座を完成させたか
+        bool ended = true;    //!< 空型にしないための値
     };
 }    // namespace StardustFever::ECS

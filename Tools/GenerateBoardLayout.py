@@ -1,8 +1,9 @@
 """盤面の配置データ（StardustFever/Assets/Data/BoardLayout.json）を生成する。
 
 釘を数百本手で並べるのは現実的ではないため、規則（格子・除外範囲）から生成する。
-入賞口の位置や星座の星の位置の周りには釘を打たない。
-星座の星の位置は Constellations.json から読むので、星座を足したら再生成すること。
+入賞口の周りには釘を打たない。
+星ゲットチャンスの星釘は88星座のどこにでも出るので、星の周りの釘は抜かない
+（チャンス中だけ StarChanceSystem が重なる釘を隠して当たり判定を外す）。
 
     python Tools/GenerateBoardLayout.py
 
@@ -33,8 +34,10 @@ LANE_INNER_WALL_HALF_THICKNESS = 0.5
 LANE_TOP_Y = 58.0
 LAUNCHER_POSITION = (-28.0, 5.0)
 
-# 入賞口（prefab, x, y）。釘はこの周りに打たない
+# 入賞口（prefab, x, y）。釘はこの周りに打たない。
+# 星の門は釘の格子より上の空いた所に置く。玉が落ちてくる位置はハンドルの強さで決まるので、狙って入れる
 POCKETS = [
+    ("Prefabs/StarGate/Prefab.json", 12.0, 62.0),
     ("Prefabs/StartPocket/Prefab.json", 0.0, 9.0),
     ("Prefabs/SidePocket/Prefab.json", -15.0, 20.0),
     ("Prefabs/SidePocket/Prefab.json", 15.0, 20.0),
@@ -51,37 +54,23 @@ PIN_ROW_SPACING = 3.6
 PIN_COLUMN_SPACING = 4.6
 PIN_MIN_X = -21.5  # 発射レーンの内壁との間に玉が通れる隙間を残す
 PIN_MAX_X = 26.0   # 右の外壁との間に玉が通れる隙間を残す
-STAR_CLEARANCE = 2.8
 
 
 def asset(path):
     return ASSETS + "/" + path
 
 
-def load_star_positions():
-    with open(CONSTELLATIONS_PATH, encoding="utf-8") as f:
-        data = json.load(f)
-    positions = []
-    for constellation in data["ConstellationTable"]["constellations"]:
-        for star in constellation["stars"]:
-            positions.append((star["x"], star["y"]))
-    return positions
-
-
-def is_clear(x, y, star_positions):
+def is_clear(x, y):
     for _, px, py in POCKETS:
         if math.hypot(x - px, y - py) < POCKET_CLEARANCE:
             return False
     for gx, gy in GUARD_PINS:
         if math.hypot(x - gx, y - gy) < 2.0:
             return False
-    for sx, sy in star_positions:
-        if math.hypot(x - sx, y - sy) < STAR_CLEARANCE:
-            return False
     return True
 
 
-def generate_pins(star_positions):
+def generate_pins():
     pins = [{"x": x, "y": y} for x, y in GUARD_PINS]
     row = 0
     y = PIN_ROW_START_Y
@@ -89,7 +78,7 @@ def generate_pins(star_positions):
         offset = 0.0 if row % 2 == 0 else PIN_COLUMN_SPACING * 0.5
         x = -BOARD_HALF_WIDTH + offset
         while x <= PIN_MAX_X + 1e-6:
-            if x >= PIN_MIN_X and is_clear(x, y, star_positions):
+            if x >= PIN_MIN_X and is_clear(x, y):
                 pins.append({"x": round(x, 2), "y": round(y, 2)})
             x += PIN_COLUMN_SPACING
         y += PIN_ROW_SPACING
@@ -133,12 +122,11 @@ def generate_objects():
 
 
 def main():
-    star_positions = load_star_positions()
     layout = {
         "BoardLayout": {
             "pinPrefab": asset("Prefabs/Pin/Prefab.json"),
             "wallPrefab": asset("Prefabs/Wall/Prefab.json"),
-            "pins": generate_pins(star_positions),
+            "pins": generate_pins(),
             "walls": generate_walls(),
             "objects": generate_objects(),
         }

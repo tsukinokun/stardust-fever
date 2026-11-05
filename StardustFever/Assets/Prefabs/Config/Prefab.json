@@ -17,6 +17,10 @@
             "value": "StardustFever/Assets/Prefabs/Config/StarLinkConfig.json"
         },
         {
+            "key": "StarChanceConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/StarChanceConfig.json"
+        },
+        {
             "key": "PayoutConfigComponent",
             "value": "StardustFever/Assets/Prefabs/Config/PayoutConfig.json"
         },

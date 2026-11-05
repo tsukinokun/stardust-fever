@@ -8,7 +8,6 @@
 #pragma once
 #include <StardustFever/ECS/Component/FeverConfigComponent.hpp>
 
-#include <cereal/types/string.hpp>
 #include <Tsukino/Core/IO/CerealOptional.hpp>
 
 #include <cereal/cereal.hpp>
@@ -19,17 +18,17 @@ namespace StardustFever::ECS {
     template <class Archive>
     void save(Archive& archive, const FeverConfigComponent& component) {
         archive(cereal::make_nvp("duration", component.duration));
-        archive(cereal::make_nvp("endDelayAfterComplete", component.endDelayAfterComplete));
-        archive(cereal::make_nvp("starPinPrefab", component.starPinPrefab));
-        archive(cereal::make_nvp("minStarToPocketGap", component.minStarToPocketGap));
+        archive(cereal::make_nvp("pinPayoutMultiplier", component.pinPayoutMultiplier));
+        archive(cereal::make_nvp("pocketPayoutMultiplier", component.pocketPayoutMultiplier));
+        archive(cereal::make_nvp("sidePocketScale", component.sidePocketScale));
     }
 
     template <class Archive>
     void load(Archive& archive, FeverConfigComponent& component) {
         Tsukino::IO::LoadOptional(archive, "duration", component.duration);
-        Tsukino::IO::LoadOptional(archive, "endDelayAfterComplete", component.endDelayAfterComplete);
-        Tsukino::IO::LoadOptional(archive, "starPinPrefab", component.starPinPrefab);
-        Tsukino::IO::LoadOptional(archive, "minStarToPocketGap", component.minStarToPocketGap);
+        Tsukino::IO::LoadOptional(archive, "pinPayoutMultiplier", component.pinPayoutMultiplier);
+        Tsukino::IO::LoadOptional(archive, "pocketPayoutMultiplier", component.pocketPayoutMultiplier);
+        Tsukino::IO::LoadOptional(archive, "sidePocketScale", component.sidePocketScale);
     }
 
 }    // namespace StardustFever::ECS

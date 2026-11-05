@@ -9,10 +9,9 @@ namespace StardustFever::ECS {
     //-------------------------------------------------------------
     //! @struct BallComponent
     //! @brief  盤面を転がる玉
-    //! @note   1球で何個の星をつないだかを持ち、一筆書きの倍率に使う
+    //! @note   入賞・アウトしたかを持つ
     //-------------------------------------------------------------
     struct BallComponent {
-        int  linkedStarCount = 0;        //!< このフィーバー中にこの玉がつないだ星の数
-        bool consumed        = false;    //!< 入賞・アウト済み（破棄待ちの間に届いた接触を無視するため）
+        bool consumed = false;    //!< 入賞・アウト済み（破棄待ちの間に届いた接触を無視するため）
     };
 }    // namespace StardustFever::ECS

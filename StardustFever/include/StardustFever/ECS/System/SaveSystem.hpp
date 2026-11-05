@@ -4,7 +4,7 @@
 //-------------------------------------------------------------
 #pragma once
 #include <StardustFever/ECS/Event/BigBangEvent.hpp>
-#include <StardustFever/ECS/Event/ConstellationCompletedEvent.hpp>
+#include <StardustFever/ECS/Event/StarDrawnEvent.hpp>
 #include <StardustFever/ECS/Event/UpgradePurchasedEvent.hpp>
 #include <StardustFever/ECS/Utility/EventQueue.hpp>
 
@@ -48,10 +48,10 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         void Load(Tsukino::ECS::Registry& registry);
 
-        EventQueue<UpgradePurchasedEvent>       m_purchases;
-        EventQueue<ConstellationCompletedEvent> m_completions;
-        EventQueue<BigBangEvent>                m_bigBangs;
-        bool                                    m_loaded        = false;    //!< 読み込みを終えたか
-        float                                   m_autoSaveTimer = 0.0f;     //!< 次の自動保存までの時間（秒）
+        EventQueue<UpgradePurchasedEvent> m_purchases;
+        EventQueue<StarDrawnEvent>        m_draws;
+        EventQueue<BigBangEvent>          m_bigBangs;
+        bool                              m_loaded        = false;    //!< 読み込みを終えたか
+        float                             m_autoSaveTimer = 0.0f;     //!< 次の自動保存までの時間（秒）
     };
 }    // namespace StardustFever::ECS

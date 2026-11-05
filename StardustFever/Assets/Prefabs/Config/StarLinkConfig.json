@@ -1,8 +1,5 @@
 {
     "StarLinkConfigComponent": {
-        "strokeBase": 2.0,
-        "perfectMultiplier": 5.0,
-        "maxStarLevel": 5,
         "linkLinePrefab": "StardustFever/Assets/Prefabs/LinkLine/Prefab.json",
         "litStarModel": "StardustFever/Assets/Models/StarLit.obj",
         "lineThickness": 0.35,

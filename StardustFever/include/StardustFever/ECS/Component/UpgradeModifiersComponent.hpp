@@ -17,7 +17,7 @@ namespace StardustFever::ECS {
         double pocketPayoutMultiplier = 1.0;      //!< 入賞口で得る星屑に掛ける倍率
         double lotteryChanceBonus     = 0.0;      //!< 抽選の当選確率に足す量
         float  feverDurationBonus     = 0.0f;     //!< フィーバーの長さに足す秒数
-        double strokeBaseBonus        = 0.0;      //!< 一筆書きの倍率の底に足す量
+        double starChanceBonus        = 0.0;      //!< 星ゲットチャンスの当選確率に足す量
         float  autoFireJitterScale    = 1.0f;     //!< 自動発射の揺らぎ幅に掛ける倍率
         bool   autoFireUnlocked       = false;    //!< 自動発射を解禁したか
     };

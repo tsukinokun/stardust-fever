@@ -4,6 +4,7 @@
 //-------------------------------------------------------------
 #include <StardustFever/ECS/System/SaveSystem.hpp>
 
+#include <StardustFever/Data/GameDatabase.hpp>
 #include <StardustFever/Data/SaveData.hpp>
 #include <StardustFever/ECS/Component/AutoFireComponent.hpp>
 #include <StardustFever/ECS/Component/PrestigeStateComponent.hpp>
@@ -40,10 +41,8 @@ namespace StardustFever::ECS {
                 data.stardust = wallet->stardust;
             if(const UpgradeLevelsComponent* upgrades = FindSingleton<UpgradeLevelsComponent>(registry))
                 data.upgradeLevels = upgrades->levels;
-            if(const StarCollectionComponent* collection = FindSingleton<StarCollectionComponent>(registry)) {
-                data.starLevels               = collection->starLevels;
-                data.constellationCompletions = collection->constellationCompletions;
-            }
+            if(const StarCollectionComponent* collection = FindSingleton<StarCollectionComponent>(registry))
+                data.starLevels = collection->starLevels;
             if(const PrestigeStateComponent* prestige = FindSingleton<PrestigeStateComponent>(registry)) {
                 data.cosmicConstants = prestige->cosmicConstants;
                 data.bigBangCount    = prestige->bigBangCount;
@@ -65,10 +64,8 @@ namespace StardustFever::ECS {
                 wallet->stardust = data.stardust;
             if(UpgradeLevelsComponent* upgrades = FindSingleton<UpgradeLevelsComponent>(registry))
                 upgrades->levels = data.upgradeLevels;
-            if(StarCollectionComponent* collection = FindSingleton<StarCollectionComponent>(registry)) {
-                collection->starLevels               = data.starLevels;
-                collection->constellationCompletions = data.constellationCompletions;
-            }
+            if(StarCollectionComponent* collection = FindSingleton<StarCollectionComponent>(registry))
+                collection->starLevels = data.starLevels;
             if(PrestigeStateComponent* prestige = FindSingleton<PrestigeStateComponent>(registry)) {
                 prestige->cosmicConstants = data.cosmicConstants;
                 prestige->bigBangCount    = data.bigBangCount;
@@ -81,7 +78,7 @@ namespace StardustFever::ECS {
 
     SaveSystem::SaveSystem(Tsukino::ECS::EventBus& eventBus)
         : m_purchases(eventBus)
-        , m_completions(eventBus)
+        , m_draws(eventBus)
         , m_bigBangs(eventBus) {
     }
 
@@ -102,7 +99,7 @@ namespace StardustFever::ECS {
 
         // 取り返しのつかない出来事の直後は、自動保存を待たずに保存する。
         // 3つとも必ず空にしたいので、短絡評価の || ではなく | でつなぐ
-        const bool important = !m_purchases.Drain().empty() | !m_completions.Drain().empty() | !m_bigBangs.Drain().empty();
+        const bool important = !m_purchases.Drain().empty() | !m_draws.Drain().empty() | !m_bigBangs.Drain().empty();
 
         m_autoSaveTimer -= deltaTime;
         if(important || m_autoSaveTimer <= 0.0f) {
@@ -133,6 +130,8 @@ namespace StardustFever::ECS {
                 cereal::JSONInputArchive archive(stream);
                 archive(cereal::make_nvp(kRootKey, data));
             }
+            // 古い版のセーブ（星を "rigel" のような名前で持っていた）を今の ID へ直してから入れる
+            Data::MigrateSaveData(data, Data::GetStarTable());
             Apply(registry, data);
             Tsukino::Core::Log::Info("Loaded save from " + config->savePath + " (stardust " + data.stardust.ToJapaneseString() + ", big bangs "
                                      + std::to_string(data.bigBangCount) + ").");

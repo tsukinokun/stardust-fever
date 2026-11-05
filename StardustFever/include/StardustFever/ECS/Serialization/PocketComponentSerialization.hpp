@@ -2,12 +2,12 @@
 //! @file   PocketComponentSerialization.hpp
 //! @brief  PocketComponent の cereal シリアライズ定義
 //! @note   全ての項目を省略可能にしてある（書かれていない項目は既定値のまま）。
-//!         項目を足しても既存のJSONを書き直さずに済み、ホットリロードで
-//!         一部だけ書き換えた途中の状態でも読み込みが止まらないようにするため
+//!         古い Prefab の isStartPocket: true は role "start" として読む
 //-------------------------------------------------------------
 #pragma once
 #include <StardustFever/ECS/Component/PocketComponent.hpp>
 
+#include <cereal/types/string.hpp>
 #include <Tsukino/Core/IO/CerealOptional.hpp>
 
 #include <cereal/cereal.hpp>
@@ -18,13 +18,17 @@ namespace StardustFever::ECS {
     template <class Archive>
     void save(Archive& archive, const PocketComponent& component) {
         archive(cereal::make_nvp("basePayout", component.basePayout));
-        archive(cereal::make_nvp("isStartPocket", component.isStartPocket));
+        archive(cereal::make_nvp("role", component.role));
     }
 
     template <class Archive>
     void load(Archive& archive, PocketComponent& component) {
         Tsukino::IO::LoadOptional(archive, "basePayout", component.basePayout);
-        Tsukino::IO::LoadOptional(archive, "isStartPocket", component.isStartPocket);
+        bool isStartPocket = false;
+        Tsukino::IO::LoadOptional(archive, "isStartPocket", isStartPocket);
+        if(isStartPocket)
+            component.role = "start";
+        Tsukino::IO::LoadOptional(archive, "role", component.role);
     }
 
 }    // namespace StardustFever::ECS
