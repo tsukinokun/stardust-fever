@@ -131,10 +131,13 @@ namespace StardustFever::ECS {
             //-------------------------------------------------------------
             // 知らせる。大見出しは1枚だけなので、いちばん大きな出来事を見出しにし、星のことはトーストに回す
             //-------------------------------------------------------------
-            const Data::ConstellationDef* home      = constellations.Find(star.constellationId);
-            const std::string             homeName  = home ? home->name + "の " : std::string();
-            const std::string             facts     = CollectionText::StarFacts(star);
-            std::string                   starTitle = homeName + star.name;
+            //  見出しの1行目は星の名前だけにして短く保つ（星座の名前と性質は2行目へ。長いと帯からはみ出す）
+            const Data::ConstellationDef* home = constellations.Find(star.constellationId);
+            // 固有名のある星は StarFacts が呼び名（「オリオン座α」）を添えるので、星座の名前は名前の無い星にだけ足す
+            const bool        unnamed   = star.designation.empty() || star.designation == star.name;
+            const std::string homeName  = home && unnamed ? home->name + "の星  " : std::string();
+            const std::string facts     = homeName + CollectionText::StarFacts(star);
+            std::string       starTitle = star.name;
             if(outcome.isNew)
                 starTitle += " を手に入れた！";
             else if(outcome.converted)
