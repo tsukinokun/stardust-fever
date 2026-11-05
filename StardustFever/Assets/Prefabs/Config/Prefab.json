@@ -47,6 +47,10 @@
         {
             "key": "CosmicFxConfigComponent",
             "value": "StardustFever/Assets/Prefabs/Config/CosmicFxConfig.json"
+        },
+        {
+            "key": "StarMapConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/StarMapConfig.json"
         }
     ]
 }

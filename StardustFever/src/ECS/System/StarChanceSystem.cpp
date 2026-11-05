@@ -19,6 +19,7 @@
 #include <StardustFever/ECS/Event/HudMessageEvent.hpp>
 #include <StardustFever/ECS/Event/StarChanceEndedEvent.hpp>
 #include <StardustFever/ECS/Event/StarChanceStartedEvent.hpp>
+#include <StardustFever/ECS/Utility/GamePause.hpp>
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
 
@@ -105,9 +106,12 @@ namespace StardustFever::ECS {
     // 抽選し、残り時間を進め、終わったら片付ける
     //-------------------------------------------------------------
     void StarChanceSystem::Update(Tsukino::ECS::Registry& registry, float deltaTime) {
-        const auto                       entries = m_pocketEntries.Drain();
-        StarChanceStateComponent*        state   = FindSingleton<StarChanceStateComponent>(registry);
-        const StarChanceConfigComponent* config  = FindSingleton<StarChanceConfigComponent>(registry);
+        const auto entries = m_pocketEntries.Drain();
+        // 星図の画面を開いている間は止める
+        if(IsPlayPaused(registry))
+            return;
+        StarChanceStateComponent*        state  = FindSingleton<StarChanceStateComponent>(registry);
+        const StarChanceConfigComponent* config = FindSingleton<StarChanceConfigComponent>(registry);
         if(!state || !config)
             return;
 

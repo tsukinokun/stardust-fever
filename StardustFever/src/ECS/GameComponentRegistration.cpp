@@ -17,6 +17,7 @@
 #include <StardustFever/ECS/Component/ScoreMultiplierComponent.hpp>
 #include <StardustFever/ECS/Component/StarChanceStateComponent.hpp>
 #include <StardustFever/ECS/Component/StarCollectionComponent.hpp>
+#include <StardustFever/ECS/Component/StarMapStateComponent.hpp>
 #include <StardustFever/ECS/Component/ShopCardComponent.hpp>
 #include <StardustFever/ECS/Component/StarChartEntryComponent.hpp>
 #include <StardustFever/ECS/Component/StarPinComponent.hpp>
@@ -52,6 +53,7 @@
 #include <StardustFever/ECS/Serialization/SparkleTrailComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/StarChanceConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/StarLinkConfigComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/StarMapConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/TwinkleComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/WalletComponentSerialization.hpp>
 
@@ -94,6 +96,7 @@ namespace StardustFever::ECS {
         factory.RegisterComponent<FeverStateComponent>("FeverStateComponent");
         factory.RegisterComponent<StarChanceStateComponent>("StarChanceStateComponent");
         factory.RegisterComponent<CollectionModifiersComponent>("CollectionModifiersComponent");
+        factory.RegisterComponent<StarMapStateComponent>("StarMapStateComponent");
         factory.RegisterComponent<UpgradeLevelsComponent>("UpgradeLevelsComponent");
         factory.RegisterComponent<UpgradeModifiersComponent>("UpgradeModifiersComponent");
         factory.RegisterComponent<PrestigeStateComponent>("PrestigeStateComponent");
@@ -110,6 +113,7 @@ namespace StardustFever::ECS {
         factory.RegisterComponent<FeverConfigComponent>("FeverConfigComponent");
         factory.RegisterComponent<StarLinkConfigComponent>("StarLinkConfigComponent");
         factory.RegisterComponent<StarChanceConfigComponent>("StarChanceConfigComponent");
+        factory.RegisterComponent<StarMapConfigComponent>("StarMapConfigComponent");
         factory.RegisterComponent<PayoutConfigComponent>("PayoutConfigComponent");
         factory.RegisterComponent<HudFxConfigComponent>("HudFxConfigComponent");
         factory.RegisterComponent<HudLayoutConfigComponent>("HudLayoutConfigComponent");
@@ -128,6 +132,7 @@ namespace StardustFever::ECS {
         reloadSystem.RegisterType<FeverConfigComponent>("FeverConfigComponent");
         reloadSystem.RegisterType<StarLinkConfigComponent>("StarLinkConfigComponent");
         reloadSystem.RegisterType<StarChanceConfigComponent>("StarChanceConfigComponent");
+        reloadSystem.RegisterType<StarMapConfigComponent>("StarMapConfigComponent");
         reloadSystem.RegisterType<PayoutConfigComponent>("PayoutConfigComponent");
         reloadSystem.RegisterType<HudFxConfigComponent>("HudFxConfigComponent");
         reloadSystem.RegisterType<HudLayoutConfigComponent>("HudLayoutConfigComponent");

@@ -9,6 +9,7 @@
 #include <StardustFever/ECS/Component/LauncherComponent.hpp>
 #include <StardustFever/ECS/Component/LauncherConfigComponent.hpp>
 #include <StardustFever/ECS/Component/UpgradeModifiersComponent.hpp>
+#include <StardustFever/ECS/Utility/GamePause.hpp>
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
 
@@ -32,6 +33,9 @@ namespace StardustFever::ECS {
     // 玉を打ち出す
     //-------------------------------------------------------------
     void LaunchSystem::Update(Tsukino::ECS::Registry& registry, float deltaTime) {
+        // 星図の画面を開いている間は止める
+        if(IsPlayPaused(registry))
+            return;
         Tsukino::EngineIntegration::EngineContext* context = GetEngineContext(registry);
         const LauncherConfigComponent*             config  = FindSingleton<LauncherConfigComponent>(registry);
         if(!context || !context->prefabFactory || !config)

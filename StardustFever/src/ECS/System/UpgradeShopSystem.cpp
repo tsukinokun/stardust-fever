@@ -9,6 +9,7 @@
 #include <StardustFever/ECS/Component/WalletComponent.hpp>
 #include <StardustFever/ECS/Event/HudMessageEvent.hpp>
 #include <StardustFever/ECS/Event/UpgradePurchasedEvent.hpp>
+#include <StardustFever/ECS/Utility/GamePause.hpp>
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
 
@@ -34,6 +35,9 @@ namespace StardustFever::ECS {
     // 購入の入力を処理する
     //-------------------------------------------------------------
     void UpgradeShopSystem::Update(Tsukino::ECS::Registry& registry, float) {
+        // 星図の画面を開いている間は止める
+        if(IsPlayPaused(registry))
+            return;
         Tsukino::EngineIntegration::EngineContext* context = GetEngineContext(registry);
         if(!context || !context->inputSystem)
             return;

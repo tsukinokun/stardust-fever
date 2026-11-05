@@ -5,6 +5,7 @@
 #include <StardustFever/ECS/System/PhysicsStepSystem.hpp>
 
 #include <StardustFever/ECS/Component/PhysicsConfigComponent.hpp>
+#include <StardustFever/ECS/Utility/GamePause.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
 
 #include <Tsukino/EngineIntegration/ECS/System/PhysicsSystem.hpp>
@@ -24,6 +25,9 @@ namespace StardustFever::ECS {
     // 物理を分割して進める
     //-------------------------------------------------------------
     void PhysicsStepSystem::Update(Tsukino::ECS::Registry& registry, float deltaTime) {
+        // 星図の画面を開いている間は止める
+        if(IsPlayPaused(registry))
+            return;
         int substeps = 1;
         if(const PhysicsConfigComponent* config = FindSingleton<PhysicsConfigComponent>(registry)) {
             //-------------------------------------------------------------

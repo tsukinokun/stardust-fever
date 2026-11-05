@@ -273,6 +273,18 @@
             "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChipText4/Prefab.json"
         },
         {
+            "key": "Chip5",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/Chip5/Prefab.json"
+        },
+        {
+            "key": "ChipKey5",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChipKey5/Prefab.json"
+        },
+        {
+            "key": "ChipText5",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChipText5/Prefab.json"
+        },
+        {
             "key": "Flash",
             "value": "StardustFever/Assets/Prefabs/Hud/Layout/Flash/Prefab.json"
         }

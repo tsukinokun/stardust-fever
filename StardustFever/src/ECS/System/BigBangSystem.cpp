@@ -15,6 +15,7 @@
 #include <StardustFever/ECS/Component/WalletComponent.hpp>
 #include <StardustFever/ECS/Event/BigBangEvent.hpp>
 #include <StardustFever/ECS/Event/HudMessageEvent.hpp>
+#include <StardustFever/ECS/Utility/GamePause.hpp>
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
 
@@ -35,6 +36,9 @@ namespace StardustFever::ECS {
     // 入力を見てビッグバンを行う
     //-------------------------------------------------------------
     void BigBangSystem::Update(Tsukino::ECS::Registry& registry, float deltaTime) {
+        // 星図の画面を開いている間は止める
+        if(IsPlayPaused(registry))
+            return;
         PrestigeStateComponent*        prestige = FindSingleton<PrestigeStateComponent>(registry);
         const PrestigeConfigComponent* config   = FindSingleton<PrestigeConfigComponent>(registry);
         if(!prestige || !config)

@@ -13,6 +13,7 @@
 #include <StardustFever/ECS/Event/FeverEndedEvent.hpp>
 #include <StardustFever/ECS/Event/FeverStartedEvent.hpp>
 #include <StardustFever/ECS/Event/HudMessageEvent.hpp>
+#include <StardustFever/ECS/Utility/GamePause.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
 
 #include <Tsukino/BuiltIn/ECS/Component/CollisionComponent.hpp>
@@ -98,9 +99,12 @@ namespace StardustFever::ECS {
     // フィーバーを始める・進める・終える
     //-------------------------------------------------------------
     void FeverSystem::Update(Tsukino::ECS::Registry& registry, float deltaTime) {
-        const auto                  results = m_results.Drain();
-        FeverStateComponent*        state   = FindSingleton<FeverStateComponent>(registry);
-        const FeverConfigComponent* config  = FindSingleton<FeverConfigComponent>(registry);
+        const auto results = m_results.Drain();
+        // 星図の画面を開いている間は止める
+        if(IsPlayPaused(registry))
+            return;
+        FeverStateComponent*        state  = FindSingleton<FeverStateComponent>(registry);
+        const FeverConfigComponent* config = FindSingleton<FeverConfigComponent>(registry);
         if(!state || !config)
             return;
 

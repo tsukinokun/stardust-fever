@@ -12,6 +12,7 @@
 #include <StardustFever/ECS/Component/StarChanceStateComponent.hpp>
 #include <StardustFever/ECS/Component/UpgradeModifiersComponent.hpp>
 #include <StardustFever/ECS/Event/LotteryResultEvent.hpp>
+#include <StardustFever/ECS/Utility/GamePause.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
 
 #include <algorithm>
@@ -37,9 +38,12 @@ namespace StardustFever::ECS {
     // 保留を貯め、リールを進める
     //-------------------------------------------------------------
     void LotterySystem::Update(Tsukino::ECS::Registry& registry, float deltaTime) {
-        const auto                    entries = m_pocketEntries.Drain();
-        LotteryStateComponent*        state   = FindSingleton<LotteryStateComponent>(registry);
-        const LotteryConfigComponent* config  = FindSingleton<LotteryConfigComponent>(registry);
+        const auto entries = m_pocketEntries.Drain();
+        // 星図の画面を開いている間は止める
+        if(IsPlayPaused(registry))
+            return;
+        LotteryStateComponent*        state  = FindSingleton<LotteryStateComponent>(registry);
+        const LotteryConfigComponent* config = FindSingleton<LotteryConfigComponent>(registry);
         if(!state || !config)
             return;
 

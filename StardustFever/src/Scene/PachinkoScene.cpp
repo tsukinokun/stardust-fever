@@ -33,6 +33,8 @@
 #include <StardustFever/ECS/System/StarChanceSystem.hpp>
 #include <StardustFever/ECS/System/StarDrawSystem.hpp>
 #include <StardustFever/ECS/System/StarLinkSystem.hpp>
+#include <StardustFever/ECS/System/StarMapInputSystem.hpp>
+#include <StardustFever/ECS/System/StarMapViewSystem.hpp>
 #include <StardustFever/ECS/System/ToastSystem.hpp>
 #include <StardustFever/ECS/System/TwinkleSystem.hpp>
 #include <StardustFever/ECS/System/UpgradeEffectSystem.hpp>
@@ -85,6 +87,7 @@ namespace StardustFever::Scene {
             ConfigReload = 0,    // 設定を読み直してから、そのフレームの処理を始める
             BoardBuild,          // 発射台（自動発射の ON/OFF を持つ）もここで作られるので、セーブより先に組み立てる
             Save,                // 最初のフレームでセーブを読み、他の System が見る前に進行を戻す
+            StarMapInput,        // 星図の画面の開け閉め。開いている間は、ここより後の遊びの System が止まる（GamePause.hpp）
             LauncherInput,
             BigBang,
             UpgradeShop,
@@ -107,6 +110,7 @@ namespace StardustFever::Scene {
             Hud,         // 文字の中身
             ShopView,    // ここから下は HUD の見た目と動き（ゲームの状態を読むだけ）
             StarChartView,
+            StarMapView,    // 88星座の星図の画面（HUD より上に重ねる）
             LotteryView,
             HudGauge,
             RollingNumber,
@@ -155,6 +159,7 @@ namespace StardustFever::Scene {
         m_saveSystem = std::make_shared<ECS::SaveSystem>(eventBus);
         m_scene.AddSystem(m_saveSystem, Order(SystemOrder::Save));
         m_scene.AddSystem(std::make_shared<ECS::BoardBuildSystem>(), Order(SystemOrder::BoardBuild));
+        m_scene.AddSystem(std::make_shared<ECS::StarMapInputSystem>(), Order(SystemOrder::StarMapInput));
         m_scene.AddSystem(std::make_shared<ECS::LauncherInputSystem>(eventBus), Order(SystemOrder::LauncherInput));
         m_scene.AddSystem(std::make_shared<ECS::BigBangSystem>(eventBus), Order(SystemOrder::BigBang));
         m_scene.AddSystem(std::make_shared<ECS::UpgradeShopSystem>(eventBus), Order(SystemOrder::UpgradeShop));
@@ -177,6 +182,7 @@ namespace StardustFever::Scene {
         m_scene.AddSystem(std::make_shared<ECS::HudSystem>(), Order(SystemOrder::Hud));
         m_scene.AddSystem(std::make_shared<ECS::ShopViewSystem>(eventBus), Order(SystemOrder::ShopView));
         m_scene.AddSystem(std::make_shared<ECS::StarChartViewSystem>(), Order(SystemOrder::StarChartView));
+        m_scene.AddSystem(std::make_shared<ECS::StarMapViewSystem>(m_scene), Order(SystemOrder::StarMapView));
         m_scene.AddSystem(std::make_shared<ECS::LotteryViewSystem>(eventBus), Order(SystemOrder::LotteryView));
         m_scene.AddSystem(std::make_shared<ECS::HudGaugeSystem>(), Order(SystemOrder::HudGauge));
         m_scene.AddSystem(std::make_shared<ECS::RollingNumberSystem>(), Order(SystemOrder::RollingNumber));
