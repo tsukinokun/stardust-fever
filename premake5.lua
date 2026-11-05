@@ -23,7 +23,7 @@ project "StardustFever"
     forceincludes { "pch.h" }
 
     filter "action:vs*"
-        buildoptions { "/permissive-" }
+        buildoptions { "/permissive-", "/bigobj" }    -- 部品の登録の翻訳単位は cereal のテンプレートが多く、セクション数の上限を超えるため
     filter {}
 
     pchheader "pch.h"

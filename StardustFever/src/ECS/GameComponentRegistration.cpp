@@ -25,8 +25,10 @@
 // 値を JSON から読むコンポーネント（シリアライズ定義が見えていないと、値を読まずに付けるだけになる）
 #include <StardustFever/ECS/Serialization/AutoFireComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/BoardBuildRequestComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/CosmicFxConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/DrainComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/FeverConfigComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/GlowHaloComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/HudFxConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/HudGaugeComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/HudGaugeMarkerComponentSerialization.hpp>
@@ -42,9 +44,12 @@
 #include <StardustFever/ECS/Serialization/PhysicsConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/PocketComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/PrestigeConfigComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/RimGlowComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/RollingNumberComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/SaveConfigComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/SparkleTrailComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/StarLinkConfigComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/TwinkleComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/WalletComponentSerialization.hpp>
 
 #include <Tsukino/Engine/ECS/Prefab/PrefabFactory.hpp>
@@ -88,6 +93,12 @@ namespace StardustFever::ECS {
         factory.RegisterComponent<UpgradeModifiersComponent>("UpgradeModifiersComponent");
         factory.RegisterComponent<PrestigeStateComponent>("PrestigeStateComponent");
 
+        // 盤面の見た目（RimGlowComponent はエンジンの型だが、Prefab への登録はゲーム側で行う）
+        factory.RegisterComponent<SparkleTrailComponent>("SparkleTrailComponent");
+        factory.RegisterComponent<TwinkleComponent>("TwinkleComponent");
+        factory.RegisterComponent<GlowHaloComponent>("GlowHaloComponent");
+        factory.RegisterComponent<Tsukino::BuiltIn::ECS::RimGlowComponent>("RimGlowComponent");
+
         // 設定
         factory.RegisterComponent<LauncherConfigComponent>("LauncherConfigComponent");
         factory.RegisterComponent<LotteryConfigComponent>("LotteryConfigComponent");
@@ -99,6 +110,7 @@ namespace StardustFever::ECS {
         factory.RegisterComponent<PhysicsConfigComponent>("PhysicsConfigComponent");
         factory.RegisterComponent<PrestigeConfigComponent>("PrestigeConfigComponent");
         factory.RegisterComponent<SaveConfigComponent>("SaveConfigComponent");
+        factory.RegisterComponent<CosmicFxConfigComponent>("CosmicFxConfigComponent");
     }
 
     //-------------------------------------------------------------
@@ -115,6 +127,7 @@ namespace StardustFever::ECS {
         reloadSystem.RegisterType<PhysicsConfigComponent>("PhysicsConfigComponent");
         reloadSystem.RegisterType<PrestigeConfigComponent>("PrestigeConfigComponent");
         reloadSystem.RegisterType<SaveConfigComponent>("SaveConfigComponent");
+        reloadSystem.RegisterType<CosmicFxConfigComponent>("CosmicFxConfigComponent");
     }
 
 }    // namespace StardustFever::ECS

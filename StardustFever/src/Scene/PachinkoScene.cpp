@@ -11,6 +11,7 @@
 #include <StardustFever/ECS/System/ConfigReloadSystem.hpp>
 #include <StardustFever/ECS/System/FeverSystem.hpp>
 #include <StardustFever/ECS/System/FxSystem.hpp>
+#include <StardustFever/ECS/System/GlowHaloSystem.hpp>
 #include <StardustFever/ECS/System/HudGaugeSystem.hpp>
 #include <StardustFever/ECS/System/HudIdleMotionSystem.hpp>
 #include <StardustFever/ECS/System/HudReactionSystem.hpp>
@@ -24,11 +25,14 @@
 #include <StardustFever/ECS/System/RollingNumberSystem.hpp>
 #include <StardustFever/ECS/System/SaveSystem.hpp>
 #include <StardustFever/ECS/System/ScoreMultiplierSystem.hpp>
+#include <StardustFever/ECS/System/ShootingStarSystem.hpp>
 #include <StardustFever/ECS/System/ShopViewSystem.hpp>
+#include <StardustFever/ECS/System/SparkleTrailSystem.hpp>
 #include <StardustFever/ECS/System/StarChartViewSystem.hpp>
 #include <StardustFever/ECS/System/StarLinkSystem.hpp>
 #include <StardustFever/ECS/System/StarProgressSystem.hpp>
 #include <StardustFever/ECS/System/ToastSystem.hpp>
+#include <StardustFever/ECS/System/TwinkleSystem.hpp>
 #include <StardustFever/ECS/System/UpgradeEffectSystem.hpp>
 #include <StardustFever/ECS/System/UpgradeShopSystem.hpp>
 
@@ -92,8 +96,12 @@ namespace StardustFever::Scene {
             StarProgress,       // つないだ・完成 → レベル・完成ボーナス
             ScoreMultiplier,    // 星・星座・宇宙定数 → 全体倍率（払い出しより前に計算する）
             Payout,             // 全ての獲得 → 財布
-            Hud,                // 文字の中身
-            ShopView,           // ここから下は HUD の見た目と動き（ゲームの状態を読むだけ）
+            SparkleTrail,       // ここから4つは盤面の見た目（玉の尾・釘の瞬き・星釘の光輪・流れ星）
+            Twinkle,
+            GlowHalo,
+            ShootingStar,
+            Hud,         // 文字の中身
+            ShopView,    // ここから下は HUD の見た目と動き（ゲームの状態を読むだけ）
             StarChartView,
             LotteryView,
             HudGauge,
@@ -156,6 +164,10 @@ namespace StardustFever::Scene {
         m_scene.AddSystem(std::make_shared<ECS::StarProgressSystem>(eventBus), Order(SystemOrder::StarProgress));
         m_scene.AddSystem(std::make_shared<ECS::ScoreMultiplierSystem>(), Order(SystemOrder::ScoreMultiplier));
         m_scene.AddSystem(std::make_shared<ECS::PayoutSystem>(eventBus), Order(SystemOrder::Payout));
+        m_scene.AddSystem(std::make_shared<ECS::SparkleTrailSystem>(m_scene), Order(SystemOrder::SparkleTrail));
+        m_scene.AddSystem(std::make_shared<ECS::TwinkleSystem>(m_scene, eventBus), Order(SystemOrder::Twinkle));
+        m_scene.AddSystem(std::make_shared<ECS::GlowHaloSystem>(m_scene), Order(SystemOrder::GlowHalo));
+        m_scene.AddSystem(std::make_shared<ECS::ShootingStarSystem>(m_scene), Order(SystemOrder::ShootingStar));
         m_scene.AddSystem(std::make_shared<ECS::HudSystem>(), Order(SystemOrder::Hud));
         m_scene.AddSystem(std::make_shared<ECS::ShopViewSystem>(eventBus), Order(SystemOrder::ShopView));
         m_scene.AddSystem(std::make_shared<ECS::StarChartViewSystem>(), Order(SystemOrder::StarChartView));
