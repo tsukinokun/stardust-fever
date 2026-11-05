@@ -1,0 +1,16 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/LaunchBarBg/Transform.json"
+        },
+        {
+            "key": "UIRectComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/LaunchBarBg/UIRect.json"
+        },
+        {
+            "key": "SpriteComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/LaunchBarBg/Sprite.json"
+        }
+    ]
+}

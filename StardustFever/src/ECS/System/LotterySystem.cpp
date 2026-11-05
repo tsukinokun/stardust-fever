@@ -90,15 +90,19 @@ namespace StardustFever::ECS {
 
         for(int reel = 0; reel < 3; ++reel) {
             if(elapsedRatio >= kReelStopRatios[reel]) {
-                state->symbols[reel] = state->finalSymbols[reel];
-            } else if(advance) {
-                state->symbols[reel] = (state->symbols[reel] + 1) % symbolCount;
+                state->symbols[reel]     = state->finalSymbols[reel];
+                state->reelStopped[reel] = true;
+            } else {
+                state->reelStopped[reel] = false;
+                if(advance)
+                    state->symbols[reel] = (state->symbols[reel] + 1) % symbolCount;
             }
         }
 
         if(state->spinTimer <= 0.0f) {
-            state->spinning = false;
-            state->symbols  = state->finalSymbols;
+            state->spinning    = false;
+            state->symbols     = state->finalSymbols;
+            state->reelStopped = {true, true, true};
             m_eventBus->Publish(LotteryResultEvent{state->willWin});
         }
     }

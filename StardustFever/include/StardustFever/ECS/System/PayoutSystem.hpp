@@ -34,6 +34,7 @@ namespace StardustFever::ECS {
         void Update(Tsukino::ECS::Registry& registry, float deltaTime) override;
 
     private:
+        Tsukino::ECS::EventBus*            m_eventBus = nullptr;    //!< 入った量（StardustCreditedEvent）の発行先
         EventQueue<BallHitPinEvent>        m_pinHits;
         EventQueue<BallEnteredPocketEvent> m_pocketEntries;
         EventQueue<StardustEarnedEvent>    m_earnings;

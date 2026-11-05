@@ -17,6 +17,7 @@ namespace StardustFever::ECS {
     struct FeverStateComponent {
         bool         active        = false;         //!< フィーバー中か
         float        timeRemaining = 0.0f;          //!< 残り時間（秒）
+        float        timeTotal     = 0.0f;          //!< 始まったときの長さ（秒。残り時間のゲージに使う）
         std::string  constellationId;               //!< 出している星座
         int          starsLinked   = 0;             //!< つないだ星の数
         int          starsTotal    = 0;             //!< 星座の星の数

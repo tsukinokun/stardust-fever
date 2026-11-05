@@ -1,0 +1,20 @@
+{
+    "Entities": [
+        {
+            "key": "Root",
+            "value": "StardustFever/Assets/Prefabs/Hud/Toast/Root/Prefab.json"
+        },
+        {
+            "key": "Frame",
+            "value": "StardustFever/Assets/Prefabs/Hud/Toast/Frame/Prefab.json"
+        },
+        {
+            "key": "Accent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Toast/Accent/Prefab.json"
+        },
+        {
+            "key": "Text",
+            "value": "StardustFever/Assets/Prefabs/Hud/Toast/Text/Prefab.json"
+        }
+    ]
+}

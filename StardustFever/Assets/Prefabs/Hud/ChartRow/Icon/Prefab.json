@@ -1,0 +1,20 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/ChartRow/Icon/Transform.json"
+        },
+        {
+            "key": "UIRectComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/ChartRow/Icon/UIRect.json"
+        },
+        {
+            "key": "SpriteComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/ChartRow/Icon/Sprite.json"
+        },
+        {
+            "key": "HudPartComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/ChartRow/Icon/HudPart.json"
+        }
+    ]
+}

@@ -1,0 +1,28 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ReelPanel/Transform.json"
+        },
+        {
+            "key": "UIRectComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ReelPanel/UIRect.json"
+        },
+        {
+            "key": "SpriteComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ReelPanel/Sprite.json"
+        },
+        {
+            "key": "HudIdleMotionComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ReelPanel/HudIdleMotion.json"
+        },
+        {
+            "key": "HudPartComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ReelPanel/HudPart.json"
+        },
+        {
+            "key": "UICanvasGroupComponent",
+            "value": "null"
+        }
+    ]
+}

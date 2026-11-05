@@ -1,0 +1,33 @@
+{
+    "SpriteComponent": {
+        "textureHandle": "StardustFever/Assets/Textures/UI/panel_frame.png",
+        "blendMode": 0,
+        "space": 0,
+        "tintColor": {
+            "x": 0.82,
+            "y": 0.62,
+            "z": 1.0,
+            "w": 0.75
+        },
+        "uvRect": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1.0,
+            "w": 1.0
+        },
+        "sortOrder": 2,
+        "fillMode": 0,
+        "fillAmount": 1.0,
+        "fillStartAngle": 0.0,
+        "fillClockwise": true,
+        "fillReverse": false,
+        "sliceBorder": {
+            "x": 24.0,
+            "y": 24.0,
+            "z": 24.0,
+            "w": 24.0
+        },
+        "sliceScale": 1.0,
+        "raycastTarget": false
+    }
+}

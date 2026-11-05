@@ -77,6 +77,7 @@ namespace StardustFever::ECS {
             }
             launcher.fireRequested = false;
             power                  = std::clamp(power, 0.0f, 1.0f);
+            launcher.lastShotPower = power;
             const float speed      = config->minSpeed + (config->maxSpeed - config->minSpeed) * power;
 
             const entt::entity ball = context->prefabFactory->Instantiate(config->ballPrefab, registry);

@@ -1,0 +1,20 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/ShopCard/Root/Transform.json"
+        },
+        {
+            "key": "UIRectComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/ShopCard/Root/UIRect.json"
+        },
+        {
+            "key": "SpriteComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/ShopCard/Root/Sprite.json"
+        },
+        {
+            "key": "UICanvasGroupComponent",
+            "value": "null"
+        }
+    ]
+}

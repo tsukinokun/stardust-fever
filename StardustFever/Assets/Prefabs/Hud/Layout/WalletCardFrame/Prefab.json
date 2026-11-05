@@ -1,0 +1,16 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/WalletCardFrame/Transform.json"
+        },
+        {
+            "key": "UIRectComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/WalletCardFrame/UIRect.json"
+        },
+        {
+            "key": "SpriteComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/WalletCardFrame/Sprite.json"
+        }
+    ]
+}

@@ -1,0 +1,9 @@
+{
+    "HudIdleMotionComponent": {
+        "floatAmplitude": 1.5,
+        "scaleAmplitude": 0.05,
+        "alphaAmplitude": 0,
+        "periodMin": 2.2,
+        "periodMax": 3.3
+    }
+}

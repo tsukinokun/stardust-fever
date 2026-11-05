@@ -1,0 +1,16 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ReelLabel/Transform.json"
+        },
+        {
+            "key": "FontComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ReelLabel/Font.json"
+        },
+        {
+            "key": "HudTextComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ReelLabel/HudText.json"
+        }
+    ]
+}

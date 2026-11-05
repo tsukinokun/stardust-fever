@@ -101,6 +101,9 @@ namespace StardustFever::ECS {
             return;
 
         pin->linked = true;
+        hlslpp::float3 pinPosition(0.0f, 0.0f, 0.0f);
+        if(const auto* pinTransform = registry.try_get<TransformComponent>(touch.starPin))
+            pinPosition = pinTransform->position;
         if(auto* model = registry.try_get<Tsukino::BuiltIn::ECS::ModelComponent>(touch.starPin);
            model && !config->litStarModel.empty() && context->assetManager)
             model->modelHandle = context->assetManager->Load(Tsukino::Core::Path(config->litStarModel));
@@ -123,8 +126,8 @@ namespace StardustFever::ECS {
             fever->perfect = false;
 
         if(const Data::StarDef* star = Data::GetStarTable().Find(pin->starId))
-            m_eventBus->Publish(StardustEarnedEvent{Core::BigNumber(star->basePayout) * strokeMultiplier});
-        m_eventBus->Publish(StarLinkedEvent{pin->starId, chain, strokeMultiplier.ToDouble()});
+            m_eventBus->Publish(StardustEarnedEvent{Core::BigNumber(star->basePayout) * strokeMultiplier, pinPosition, true});
+        m_eventBus->Publish(StarLinkedEvent{pin->starId, chain, strokeMultiplier.ToDouble(), pinPosition});
 
         //-------------------------------------------------------------
         // この星を端に持ち、もう片方の端も既につながっている線を引く

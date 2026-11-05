@@ -1,0 +1,20 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Toast/Accent/Transform.json"
+        },
+        {
+            "key": "UIRectComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Toast/Accent/UIRect.json"
+        },
+        {
+            "key": "SpriteComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Toast/Accent/Sprite.json"
+        },
+        {
+            "key": "HudPartComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Toast/Accent/HudPart.json"
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+{
+    "Entities": [
+        {
+            "key": "Root",
+            "value": "StardustFever/Assets/Prefabs/Hud/ChartRow/Root/Prefab.json"
+        },
+        {
+            "key": "Icon",
+            "value": "StardustFever/Assets/Prefabs/Hud/ChartRow/Icon/Prefab.json"
+        },
+        {
+            "key": "Name",
+            "value": "StardustFever/Assets/Prefabs/Hud/ChartRow/Name/Prefab.json"
+        },
+        {
+            "key": "Level",
+            "value": "StardustFever/Assets/Prefabs/Hud/ChartRow/Level/Prefab.json"
+        }
+    ]
+}

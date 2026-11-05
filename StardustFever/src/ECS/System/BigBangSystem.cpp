@@ -48,12 +48,14 @@ namespace StardustFever::ECS {
         const Core::BigNumber gain = Core::PrestigeFormula::GainOnBigBang(prestige->universeEarned, config->threshold, config->exponent);
         if(gain.IsZero()) {
             const Core::BigNumber needed = Core::PrestigeFormula::EarnedForNextConstant(gain, config->threshold, config->exponent);
-            m_eventBus->Publish(HudMessageEvent{"まだビッグバンできません  あと " + (needed - prestige->universeEarned).ToJapaneseString() + " 稼ぐ"});
+            m_eventBus->Publish(HudMessageEvent{"まだビッグバンできません  あと " + (needed - prestige->universeEarned).ToJapaneseString() + " 稼ぐ",
+                                                HudMessageImportance::Toast,
+                                                HudMessageTone::Warning});
             return;
         }
 
         if(const FeverStateComponent* fever = FindSingleton<FeverStateComponent>(registry); fever && fever->active) {
-            m_eventBus->Publish(HudMessageEvent{"星詠みタイム中はビッグバンできません"});
+            m_eventBus->Publish(HudMessageEvent{"星詠みタイム中はビッグバンできません", HudMessageImportance::Toast, HudMessageTone::Warning});
             return;
         }
 
@@ -87,7 +89,7 @@ namespace StardustFever::ECS {
 
         m_eventBus->Publish(BigBangEvent{gain, prestige->cosmicConstants});
         m_eventBus->Publish(
-            HudMessageEvent{"★ ビッグバン ★  宇宙定数 +" + gain.ToJapaneseString() + "（合計 " + prestige->cosmicConstants.ToJapaneseString() + "）"});
+            HudMessageEvent{"★ ビッグバン ★\n宇宙定数 +" + gain.ToJapaneseString() + "（合計 " + prestige->cosmicConstants.ToJapaneseString() + "）", HudMessageImportance::Headline});
     }
 
-}    // namespace StardustFever::ECS
+    }    // namespace StardustFever::ECS

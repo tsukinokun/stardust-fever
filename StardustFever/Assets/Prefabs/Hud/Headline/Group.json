@@ -1,0 +1,28 @@
+{
+    "Entities": [
+        {
+            "key": "Root",
+            "value": "StardustFever/Assets/Prefabs/Hud/Headline/Root/Prefab.json"
+        },
+        {
+            "key": "Glow",
+            "value": "StardustFever/Assets/Prefabs/Hud/Headline/Glow/Prefab.json"
+        },
+        {
+            "key": "Band",
+            "value": "StardustFever/Assets/Prefabs/Hud/Headline/Band/Prefab.json"
+        },
+        {
+            "key": "BandFrame",
+            "value": "StardustFever/Assets/Prefabs/Hud/Headline/BandFrame/Prefab.json"
+        },
+        {
+            "key": "Title",
+            "value": "StardustFever/Assets/Prefabs/Hud/Headline/Title/Prefab.json"
+        },
+        {
+            "key": "Sub",
+            "value": "StardustFever/Assets/Prefabs/Hud/Headline/Sub/Prefab.json"
+        }
+    ]
+}

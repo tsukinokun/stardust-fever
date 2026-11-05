@@ -1,0 +1,20 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/LaunchMarker/Transform.json"
+        },
+        {
+            "key": "UIRectComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/LaunchMarker/UIRect.json"
+        },
+        {
+            "key": "SpriteComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/LaunchMarker/Sprite.json"
+        },
+        {
+            "key": "HudGaugeMarkerComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/LaunchMarker/HudGaugeMarker.json"
+        }
+    ]
+}

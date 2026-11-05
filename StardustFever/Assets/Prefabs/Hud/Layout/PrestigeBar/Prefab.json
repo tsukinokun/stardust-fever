@@ -1,0 +1,20 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/PrestigeBar/Transform.json"
+        },
+        {
+            "key": "UIRectComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/PrestigeBar/UIRect.json"
+        },
+        {
+            "key": "SpriteComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/PrestigeBar/Sprite.json"
+        },
+        {
+            "key": "HudGaugeComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/PrestigeBar/HudGauge.json"
+        }
+    ]
+}

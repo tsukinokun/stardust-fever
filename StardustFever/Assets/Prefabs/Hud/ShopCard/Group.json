@@ -1,0 +1,36 @@
+{
+    "Entities": [
+        {
+            "key": "Root",
+            "value": "StardustFever/Assets/Prefabs/Hud/ShopCard/Root/Prefab.json"
+        },
+        {
+            "key": "Frame",
+            "value": "StardustFever/Assets/Prefabs/Hud/ShopCard/Frame/Prefab.json"
+        },
+        {
+            "key": "KeyBadge",
+            "value": "StardustFever/Assets/Prefabs/Hud/ShopCard/KeyBadge/Prefab.json"
+        },
+        {
+            "key": "Key",
+            "value": "StardustFever/Assets/Prefabs/Hud/ShopCard/Key/Prefab.json"
+        },
+        {
+            "key": "Name",
+            "value": "StardustFever/Assets/Prefabs/Hud/ShopCard/Name/Prefab.json"
+        },
+        {
+            "key": "Effect",
+            "value": "StardustFever/Assets/Prefabs/Hud/ShopCard/Effect/Prefab.json"
+        },
+        {
+            "key": "Level",
+            "value": "StardustFever/Assets/Prefabs/Hud/ShopCard/Level/Prefab.json"
+        },
+        {
+            "key": "Cost",
+            "value": "StardustFever/Assets/Prefabs/Hud/ShopCard/Cost/Prefab.json"
+        }
+    ]
+}

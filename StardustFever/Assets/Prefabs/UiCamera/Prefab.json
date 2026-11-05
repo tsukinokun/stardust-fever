@@ -1,0 +1,12 @@
+{
+    "Components": [
+        {
+            "key": "CameraComponent",
+            "value": "StardustFever/Assets/Prefabs/UiCamera/Camera.json"
+        },
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/UiCamera/Transform.json"
+        }
+    ]
+}

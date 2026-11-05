@@ -1,0 +1,15 @@
+{
+    "RollingNumberComponent": {
+        "catchUpRate": 6.0,
+        "punchRatio": 0.25,
+        "punchAmount": 0.12,
+        "punchCooldown": 0.18,
+        "spendColor": {
+            "x": 1.0,
+            "y": 0.45,
+            "z": 0.45,
+            "w": 1.0
+        },
+        "spendFlashSeconds": 0.35
+    }
+}

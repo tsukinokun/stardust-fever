@@ -1,0 +1,16 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChipKey1/Transform.json"
+        },
+        {
+            "key": "FontComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChipKey1/Font.json"
+        },
+        {
+            "key": "HudTextComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChipKey1/HudText.json"
+        }
+    ]
+}

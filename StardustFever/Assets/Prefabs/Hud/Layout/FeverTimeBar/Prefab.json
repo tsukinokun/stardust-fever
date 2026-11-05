@@ -1,0 +1,20 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/FeverTimeBar/Transform.json"
+        },
+        {
+            "key": "UIRectComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/FeverTimeBar/UIRect.json"
+        },
+        {
+            "key": "SpriteComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/FeverTimeBar/Sprite.json"
+        },
+        {
+            "key": "HudGaugeComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/FeverTimeBar/HudGauge.json"
+        }
+    ]
+}

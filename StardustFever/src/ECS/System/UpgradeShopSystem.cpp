@@ -64,20 +64,22 @@ namespace StardustFever::ECS {
         const Data::UpgradeDef& upgrade = table.upgrades[static_cast<size_t>(pressedIndex)];
         int&                    level   = levels->levels[upgrade.id];
         if(Core::UpgradeFormula::IsMaxed(level, upgrade.maxLevel)) {
-            m_eventBus->Publish(HudMessageEvent{upgrade.name + " は最大レベルです"});
+            m_eventBus->Publish(HudMessageEvent{upgrade.name + " は最大レベルです", HudMessageImportance::Toast, HudMessageTone::Warning});
             return;
         }
 
         const Core::BigNumber cost = upgrade.CostAt(level);
         if(wallet->stardust < cost) {
-            m_eventBus->Publish(HudMessageEvent{upgrade.name + "  星屑が足りません  あと " + (cost - wallet->stardust).ToJapaneseString()});
+            m_eventBus->Publish(HudMessageEvent{upgrade.name + "  星屑が足りません  あと " + (cost - wallet->stardust).ToJapaneseString(),
+                                                HudMessageImportance::Toast,
+                                                HudMessageTone::Warning});
             return;
         }
 
         wallet->stardust -= cost;
         ++level;
         m_eventBus->Publish(UpgradePurchasedEvent{upgrade.id, level});
-        m_eventBus->Publish(HudMessageEvent{upgrade.name + " Lv" + std::to_string(level) + " ！"});
+        m_eventBus->Publish(HudMessageEvent{upgrade.name + " Lv" + std::to_string(level) + " ！", HudMessageImportance::Toast, HudMessageTone::Positive});
     }
 
 }    // namespace StardustFever::ECS

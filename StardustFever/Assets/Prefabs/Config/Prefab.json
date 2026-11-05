@@ -21,10 +21,6 @@
             "value": "StardustFever/Assets/Prefabs/Config/PayoutConfig.json"
         },
         {
-            "key": "HudConfigComponent",
-            "value": "StardustFever/Assets/Prefabs/Config/HudConfig.json"
-        },
-        {
             "key": "PhysicsConfigComponent",
             "value": "StardustFever/Assets/Prefabs/Config/PhysicsConfig.json"
         },
@@ -35,6 +31,14 @@
         {
             "key": "SaveConfigComponent",
             "value": "StardustFever/Assets/Prefabs/Config/SaveConfig.json"
+        },
+        {
+            "key": "HudFxConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/HudFxConfig.json"
+        },
+        {
+            "key": "HudLayoutConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/HudLayoutConfig.json"
         }
     ]
 }

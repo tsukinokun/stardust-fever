@@ -1,0 +1,16 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/ChartRow/Level/Transform.json"
+        },
+        {
+            "key": "FontComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/ChartRow/Level/Font.json"
+        },
+        {
+            "key": "HudPartComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/ChartRow/Level/HudPart.json"
+        }
+    ]
+}

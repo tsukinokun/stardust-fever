@@ -1,0 +1,16 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/LaunchPercent/Transform.json"
+        },
+        {
+            "key": "FontComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/LaunchPercent/Font.json"
+        },
+        {
+            "key": "HudTextComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/LaunchPercent/HudText.json"
+        }
+    ]
+}

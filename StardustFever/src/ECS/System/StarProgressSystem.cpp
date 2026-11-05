@@ -58,7 +58,7 @@ namespace StardustFever::ECS {
             std::string          message = (star ? star->name : linked.starId) + " ★" + std::to_string(level);
             if(linked.chain >= 2)
                 message += "  一筆書き " + std::to_string(linked.chain) + "連 " + FormatMultiplier(linked.strokeMultiplier);
-            m_eventBus->Publish(HudMessageEvent{message});
+            m_eventBus->Publish(HudMessageEvent{message, HudMessageImportance::Toast, HudMessageTone::Positive});
         }
 
         for(const ConstellationCompletedEvent& completed : completions) {
@@ -71,10 +71,11 @@ namespace StardustFever::ECS {
             const double bonusRate = completed.perfect ? config->perfectMultiplier : 1.0;
             m_eventBus->Publish(StardustEarnedEvent{Core::BigNumber(constellation->completionPayout * bonusRate)});
 
-            std::string message = constellation->name + " 完成！  全体倍率 " + FormatMultiplier(constellation->completionMultiplier);
+            // 1行目が大見出し、2行目が補足になる
+            std::string message = "★ " + constellation->name + " 完成 ★\n全体倍率 " + FormatMultiplier(constellation->completionMultiplier);
             if(completed.perfect)
-                message += "\n一筆書きパーフェクト！ 完成ボーナス " + FormatMultiplier(config->perfectMultiplier);
-            m_eventBus->Publish(HudMessageEvent{message});
+                message += "  一筆書きパーフェクト！ 完成ボーナス " + FormatMultiplier(config->perfectMultiplier);
+            m_eventBus->Publish(HudMessageEvent{message, HudMessageImportance::Headline});
         }
     }
 

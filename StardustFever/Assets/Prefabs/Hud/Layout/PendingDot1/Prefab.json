@@ -1,0 +1,24 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/PendingDot1/Transform.json"
+        },
+        {
+            "key": "UIRectComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/PendingDot1/UIRect.json"
+        },
+        {
+            "key": "SpriteComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/PendingDot1/Sprite.json"
+        },
+        {
+            "key": "HudPendingDotComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/PendingDot1/HudPendingDot.json"
+        },
+        {
+            "key": "UICanvasGroupComponent",
+            "value": "null"
+        }
+    ]
+}

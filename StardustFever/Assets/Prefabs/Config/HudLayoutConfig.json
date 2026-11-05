@@ -1,0 +1,85 @@
+{
+    "HudLayoutConfigComponent": {
+        "shopCardGroup": "StardustFever/Assets/Prefabs/Hud/ShopCard/Group.json",
+        "shopX": 215.0,
+        "shopY": 370.0,
+        "shopSpacing": 52.0,
+        "shopStagger": 0.045,
+        "chartHeaderGroup": "StardustFever/Assets/Prefabs/Hud/ChartHeader/Group.json",
+        "chartRowGroup": "StardustFever/Assets/Prefabs/Hud/ChartRow/Group.json",
+        "chartX": 1214.0,
+        "chartY": 100.0,
+        "chartRowSpacing": 26.0,
+        "chartHeaderSpacing": 38.0,
+        "chartIndent": 10.0,
+        "colorO": {
+            "x": 0.6,
+            "y": 0.72,
+            "z": 1.0,
+            "w": 1.0
+        },
+        "colorB": {
+            "x": 0.72,
+            "y": 0.82,
+            "z": 1.0,
+            "w": 1.0
+        },
+        "colorA": {
+            "x": 0.95,
+            "y": 0.97,
+            "z": 1.0,
+            "w": 1.0
+        },
+        "colorF": {
+            "x": 1.0,
+            "y": 0.97,
+            "z": 0.85,
+            "w": 1.0
+        },
+        "colorG": {
+            "x": 1.0,
+            "y": 0.9,
+            "z": 0.6,
+            "w": 1.0
+        },
+        "colorK": {
+            "x": 1.0,
+            "y": 0.72,
+            "z": 0.42,
+            "w": 1.0
+        },
+        "colorM": {
+            "x": 1.0,
+            "y": 0.5,
+            "z": 0.38,
+            "w": 1.0
+        },
+        "undiscoveredColor": {
+            "x": 0.45,
+            "y": 0.48,
+            "z": 0.62,
+            "w": 0.55
+        },
+        "affordableColor": {
+            "x": 1.0,
+            "y": 0.86,
+            "z": 0.42,
+            "w": 1.0
+        },
+        "unaffordableColor": {
+            "x": 0.62,
+            "y": 0.58,
+            "z": 0.72,
+            "w": 1.0
+        },
+        "maxedColor": {
+            "x": 1.0,
+            "y": 0.7,
+            "z": 0.3,
+            "w": 1.0
+        },
+        "unaffordableAlpha": 0.55,
+        "starIconTexture": "StardustFever/Assets/Textures/UI/star.png",
+        "starOutlineTexture": "StardustFever/Assets/Textures/UI/star_outline.png"
+    }
+}

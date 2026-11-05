@@ -1,0 +1,25 @@
+{
+    "HudGaugeComponent": {
+        "source": 1,
+        "colorLow": {
+            "x": 1.0,
+            "y": 0.35,
+            "z": 0.3,
+            "w": 1.0
+        },
+        "colorMid": {
+            "x": 1.0,
+            "y": 0.82,
+            "z": 0.35,
+            "w": 1.0
+        },
+        "colorHigh": {
+            "x": 0.55,
+            "y": 0.85,
+            "z": 1.0,
+            "w": 1.0
+        },
+        "smoothing": 10.0,
+        "pulseAmount": 0.0
+    }
+}

@@ -18,5 +18,6 @@ namespace StardustFever::ECS {
         bool  charging      = false;    //!< Space を押して溜めているか（LauncherInputSystem が書く）
         float chargeTime    = 0.0f;     //!< 溜め始めてからの時間（秒）
         bool  fireRequested = false;    //!< 離して打つ要求。打てるようになるまで残し、打ったら LaunchSystem が下ろす
+        float lastShotPower = -1.0f;    //!< 最後に打った強さ（ゲージの印に使う。まだ打っていなければ負）
     };
 }    // namespace StardustFever::ECS

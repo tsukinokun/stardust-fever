@@ -3,25 +3,30 @@
 //! @brief  HudTextComponent の宣言
 //-------------------------------------------------------------
 #pragma once
+#include <string>
 
 // 名前空間 : StardustFever::ECS
 namespace StardustFever::ECS {
     //-------------------------------------------------------------
     //! @enum   HudTextKind
     //! @brief  HUDの文字が何を表示するか（JSON には整数で書く）
+    //! @note   1つの文字は1つの値だけを出す。ラベルと数字を別の文字にして、大きさと色に差を付けるため
     //-------------------------------------------------------------
     enum class HudTextKind : int {
-        Stardust   = 0,     //!< 所持している星屑
-        Multiplier = 1,     //!< 全体倍率
-        Handle     = 2,     //!< ハンドルの強さ
-        AutoFire   = 3,     //!< 自動発射の状態
-        Lottery    = 4,     //!< 抽選リールと保留
-        Fever      = 5,     //!< フィーバーの状態
-        Message    = 6,     //!< 一時的なメッセージ
-        Help       = 7,     //!< 操作説明
-        Collection = 8,     //!< 集めた星
-        Upgrades   = 9,     //!< 強化の一覧と値段
-        Prestige   = 10,    //!< 宇宙定数とビッグバンの獲得量
+        Static         = 0,     //!< text をそのまま出す（ラベルやキーの名前）
+        Stardust       = 1,     //!< 所持している星屑（RollingNumberComponent が付いていれば転がる値）
+        Multiplier     = 2,     //!< 全体倍率（"×4.50"）
+        Constants      = 3,     //!< 宇宙定数（"Λ2"）
+        ConstantsBonus = 4,     //!< 宇宙定数の倍率（"×1.20"）
+        PrestigeHint   = 5,     //!< ビッグバンで得られる量、または次までの残り
+        Reel           = 6,     //!< index 番目のリールの絵柄
+        LaunchState    = 7,     //!< 発射の状態（"溜め中" / "強さ"）
+        LaunchPercent  = 8,     //!< 発射の強さ（"63%"）
+        AutoFire       = 9,     //!< 自動発射の状態
+        FeverTitle     = 10,    //!< フィーバー中の星座名
+        FeverProgress  = 11,    //!< つないだ星の数（"3 / 7"）
+        FeverTime      = 12,    //!< フィーバーの残り秒数
+        FeverChain     = 13,    //!< 一筆書きの最大連数
     };
 
     //-------------------------------------------------------------
@@ -30,6 +35,8 @@ namespace StardustFever::ECS {
     //! @note   kind ごとに HudSystem が FontComponent::text を書き換える
     //-------------------------------------------------------------
     struct HudTextComponent {
-        HudTextKind kind = HudTextKind::Stardust;    //!< 表示する内容
+        HudTextKind kind  = HudTextKind::Static;    //!< 表示する内容
+        int         index = 0;                      //!< 何番目か（リールなど、同じ種類が複数あるもの）
+        std::string text;                           //!< Static のときに出す文字（UTF-8）
     };
 }    // namespace StardustFever::ECS

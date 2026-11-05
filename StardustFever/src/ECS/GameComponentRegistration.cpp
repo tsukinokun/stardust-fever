@@ -9,14 +9,16 @@
 // 値を JSON から読まない（付けるだけの）コンポーネント
 #include <StardustFever/ECS/Component/BallComponent.hpp>
 #include <StardustFever/ECS/Component/FeverStateComponent.hpp>
-#include <StardustFever/ECS/Component/HudStateComponent.hpp>
 #include <StardustFever/ECS/Component/LinkLineComponent.hpp>
 #include <StardustFever/ECS/Component/LotteryStateComponent.hpp>
 #include <StardustFever/ECS/Component/PinComponent.hpp>
 #include <StardustFever/ECS/Component/PrestigeStateComponent.hpp>
 #include <StardustFever/ECS/Component/ScoreMultiplierComponent.hpp>
 #include <StardustFever/ECS/Component/StarCollectionComponent.hpp>
+#include <StardustFever/ECS/Component/ShopCardComponent.hpp>
+#include <StardustFever/ECS/Component/StarChartEntryComponent.hpp>
 #include <StardustFever/ECS/Component/StarPinComponent.hpp>
+#include <StardustFever/ECS/Component/ToastComponent.hpp>
 #include <StardustFever/ECS/Component/UpgradeLevelsComponent.hpp>
 #include <StardustFever/ECS/Component/UpgradeModifiersComponent.hpp>
 
@@ -25,7 +27,13 @@
 #include <StardustFever/ECS/Serialization/BoardBuildRequestComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/DrainComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/FeverConfigComponentSerialization.hpp>
-#include <StardustFever/ECS/Serialization/HudConfigComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/HudFxConfigComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/HudGaugeComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/HudGaugeMarkerComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/HudIdleMotionComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/HudLayoutConfigComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/HudPartComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/HudPendingDotComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/HudTextComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/LauncherComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/LauncherConfigComponentSerialization.hpp>
@@ -34,6 +42,7 @@
 #include <StardustFever/ECS/Serialization/PhysicsConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/PocketComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/PrestigeConfigComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/RollingNumberComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/SaveConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/StarLinkConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/WalletComponentSerialization.hpp>
@@ -57,7 +66,17 @@ namespace StardustFever::ECS {
         factory.RegisterComponent<LauncherComponent>("LauncherComponent");
         factory.RegisterComponent<AutoFireComponent>("AutoFireComponent");
         factory.RegisterComponent<BoardBuildRequestComponent>("BoardBuildRequestComponent");
+        // HUD
         factory.RegisterComponent<HudTextComponent>("HudTextComponent");
+        factory.RegisterComponent<HudPartComponent>("HudPartComponent");
+        factory.RegisterComponent<HudGaugeComponent>("HudGaugeComponent");
+        factory.RegisterComponent<HudGaugeMarkerComponent>("HudGaugeMarkerComponent");
+        factory.RegisterComponent<HudIdleMotionComponent>("HudIdleMotionComponent");
+        factory.RegisterComponent<HudPendingDotComponent>("HudPendingDotComponent");
+        factory.RegisterComponent<RollingNumberComponent>("RollingNumberComponent");
+        factory.RegisterComponent<ShopCardComponent>("ShopCardComponent");
+        factory.RegisterComponent<StarChartEntryComponent>("StarChartEntryComponent");
+        factory.RegisterComponent<ToastComponent>("ToastComponent");
 
         // ゲームの状態
         factory.RegisterComponent<WalletComponent>("WalletComponent");
@@ -65,7 +84,6 @@ namespace StardustFever::ECS {
         factory.RegisterComponent<StarCollectionComponent>("StarCollectionComponent");
         factory.RegisterComponent<LotteryStateComponent>("LotteryStateComponent");
         factory.RegisterComponent<FeverStateComponent>("FeverStateComponent");
-        factory.RegisterComponent<HudStateComponent>("HudStateComponent");
         factory.RegisterComponent<UpgradeLevelsComponent>("UpgradeLevelsComponent");
         factory.RegisterComponent<UpgradeModifiersComponent>("UpgradeModifiersComponent");
         factory.RegisterComponent<PrestigeStateComponent>("PrestigeStateComponent");
@@ -76,7 +94,8 @@ namespace StardustFever::ECS {
         factory.RegisterComponent<FeverConfigComponent>("FeverConfigComponent");
         factory.RegisterComponent<StarLinkConfigComponent>("StarLinkConfigComponent");
         factory.RegisterComponent<PayoutConfigComponent>("PayoutConfigComponent");
-        factory.RegisterComponent<HudConfigComponent>("HudConfigComponent");
+        factory.RegisterComponent<HudFxConfigComponent>("HudFxConfigComponent");
+        factory.RegisterComponent<HudLayoutConfigComponent>("HudLayoutConfigComponent");
         factory.RegisterComponent<PhysicsConfigComponent>("PhysicsConfigComponent");
         factory.RegisterComponent<PrestigeConfigComponent>("PrestigeConfigComponent");
         factory.RegisterComponent<SaveConfigComponent>("SaveConfigComponent");
@@ -91,7 +110,8 @@ namespace StardustFever::ECS {
         reloadSystem.RegisterType<FeverConfigComponent>("FeverConfigComponent");
         reloadSystem.RegisterType<StarLinkConfigComponent>("StarLinkConfigComponent");
         reloadSystem.RegisterType<PayoutConfigComponent>("PayoutConfigComponent");
-        reloadSystem.RegisterType<HudConfigComponent>("HudConfigComponent");
+        reloadSystem.RegisterType<HudFxConfigComponent>("HudFxConfigComponent");
+        reloadSystem.RegisterType<HudLayoutConfigComponent>("HudLayoutConfigComponent");
         reloadSystem.RegisterType<PhysicsConfigComponent>("PhysicsConfigComponent");
         reloadSystem.RegisterType<PrestigeConfigComponent>("PrestigeConfigComponent");
         reloadSystem.RegisterType<SaveConfigComponent>("SaveConfigComponent");

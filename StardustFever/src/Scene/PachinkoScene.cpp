@@ -10,26 +10,40 @@
 #include <StardustFever/ECS/System/BoardBuildSystem.hpp>
 #include <StardustFever/ECS/System/ConfigReloadSystem.hpp>
 #include <StardustFever/ECS/System/FeverSystem.hpp>
+#include <StardustFever/ECS/System/FxSystem.hpp>
+#include <StardustFever/ECS/System/HudGaugeSystem.hpp>
+#include <StardustFever/ECS/System/HudIdleMotionSystem.hpp>
+#include <StardustFever/ECS/System/HudReactionSystem.hpp>
 #include <StardustFever/ECS/System/HudSystem.hpp>
 #include <StardustFever/ECS/System/LaunchSystem.hpp>
 #include <StardustFever/ECS/System/LauncherInputSystem.hpp>
 #include <StardustFever/ECS/System/LotterySystem.hpp>
+#include <StardustFever/ECS/System/LotteryViewSystem.hpp>
 #include <StardustFever/ECS/System/PayoutSystem.hpp>
 #include <StardustFever/ECS/System/PhysicsStepSystem.hpp>
+#include <StardustFever/ECS/System/RollingNumberSystem.hpp>
 #include <StardustFever/ECS/System/SaveSystem.hpp>
 #include <StardustFever/ECS/System/ScoreMultiplierSystem.hpp>
+#include <StardustFever/ECS/System/ShopViewSystem.hpp>
+#include <StardustFever/ECS/System/StarChartViewSystem.hpp>
 #include <StardustFever/ECS/System/StarLinkSystem.hpp>
 #include <StardustFever/ECS/System/StarProgressSystem.hpp>
+#include <StardustFever/ECS/System/ToastSystem.hpp>
 #include <StardustFever/ECS/System/UpgradeEffectSystem.hpp>
 #include <StardustFever/ECS/System/UpgradeShopSystem.hpp>
 
 #include <Tsukino/EngineIntegration/ECS/System/AmbientParticleSystem.hpp>
 #include <Tsukino/EngineIntegration/ECS/System/BloomSystem.hpp>
+#include <Tsukino/EngineIntegration/ECS/System/BurstParticleSystem.hpp>
 #include <Tsukino/EngineIntegration/ECS/System/CameraSystem.hpp>
 #include <Tsukino/EngineIntegration/ECS/System/FontRendererSystem.hpp>
+#include <Tsukino/EngineIntegration/ECS/System/LifetimeSystem.hpp>
 #include <Tsukino/EngineIntegration/ECS/System/LightSystem.hpp>
 #include <Tsukino/EngineIntegration/ECS/System/ModelSystem.hpp>
+#include <Tsukino/EngineIntegration/ECS/System/SpriteRendererSystem.hpp>
 #include <Tsukino/EngineIntegration/ECS/System/TransformSystem.hpp>
+#include <Tsukino/EngineIntegration/ECS/System/UITweenSystem.hpp>
+#include <Tsukino/EngineIntegration/ECS/System/WorldAnchorSystem.hpp>
 #include <Tsukino/EngineIntegration/EngineContext.hpp>
 #include <Tsukino/Engine/ECS/Prefab/PrefabFactory.hpp>
 #include <Tsukino/Core/Log.hpp>
@@ -51,14 +65,20 @@ namespace StardustFever::Scene {
         constexpr const char* kConfigPrefabPath = "StardustFever/Assets/Prefabs/Config/Prefab.json";
 
         //-------------------------------------------------------------
+        // HUD の固定のパネル（財布・リール・ゲージ・帯・閃光など）。部品の親子は
+        // TransformComponent.parent の "#名前" で結ぶので、1つのグループにまとめて生成する
+        //-------------------------------------------------------------
+        constexpr const char* kHudLayoutPath = "StardustFever/Assets/Prefabs/Hud/Layout/Group.json";
+
+        //-------------------------------------------------------------
         // System の実行順。値の小さい順に Update される。
         // イベントは受け取る側の Update でまとめて処理するので、
         // 出す側を先に並べると同じフレームのうちに反映される
         //-------------------------------------------------------------
         enum class SystemOrder : int {
             ConfigReload = 0,    // 設定を読み直してから、そのフレームの処理を始める
+            BoardBuild,          // 発射台（自動発射の ON/OFF を持つ）もここで作られるので、セーブより先に組み立てる
             Save,                // 最初のフレームでセーブを読み、他の System が見る前に進行を戻す
-            BoardBuild,
             LauncherInput,
             BigBang,
             UpgradeShop,
@@ -72,13 +92,27 @@ namespace StardustFever::Scene {
             StarProgress,       // つないだ・完成 → レベル・完成ボーナス
             ScoreMultiplier,    // 星・星座・宇宙定数 → 全体倍率（払い出しより前に計算する）
             Payout,             // 全ての獲得 → 財布
-            Hud,
+            Hud,                // 文字の中身
+            ShopView,           // ここから下は HUD の見た目と動き（ゲームの状態を読むだけ）
+            StarChartView,
+            LotteryView,
+            HudGauge,
+            RollingNumber,
+            Toast,
+            Fx,
+            HudReaction,
+            HudIdleMotion,
+            UITween,        // トゥイーン → UIMotion。Transform が行列を作る前に済ませる
+            WorldAnchor,    // ワールドに付いていく文字の位置（浮かぶ数字）
+            BurstParticle,
+            Lifetime,
             Transform,
             Light,
             Camera,
             AmbientParticle,
             Bloom,
             Font,
+            Sprite,
             Model,
         };
 
@@ -122,7 +156,20 @@ namespace StardustFever::Scene {
         m_scene.AddSystem(std::make_shared<ECS::StarProgressSystem>(eventBus), Order(SystemOrder::StarProgress));
         m_scene.AddSystem(std::make_shared<ECS::ScoreMultiplierSystem>(), Order(SystemOrder::ScoreMultiplier));
         m_scene.AddSystem(std::make_shared<ECS::PayoutSystem>(eventBus), Order(SystemOrder::Payout));
-        m_scene.AddSystem(std::make_shared<ECS::HudSystem>(eventBus), Order(SystemOrder::Hud));
+        m_scene.AddSystem(std::make_shared<ECS::HudSystem>(), Order(SystemOrder::Hud));
+        m_scene.AddSystem(std::make_shared<ECS::ShopViewSystem>(eventBus), Order(SystemOrder::ShopView));
+        m_scene.AddSystem(std::make_shared<ECS::StarChartViewSystem>(), Order(SystemOrder::StarChartView));
+        m_scene.AddSystem(std::make_shared<ECS::LotteryViewSystem>(eventBus), Order(SystemOrder::LotteryView));
+        m_scene.AddSystem(std::make_shared<ECS::HudGaugeSystem>(), Order(SystemOrder::HudGauge));
+        m_scene.AddSystem(std::make_shared<ECS::RollingNumberSystem>(), Order(SystemOrder::RollingNumber));
+        m_scene.AddSystem(std::make_shared<ECS::ToastSystem>(eventBus), Order(SystemOrder::Toast));
+        m_scene.AddSystem(std::make_shared<ECS::FxSystem>(m_scene, eventBus), Order(SystemOrder::Fx));
+        m_scene.AddSystem(std::make_shared<ECS::HudReactionSystem>(eventBus), Order(SystemOrder::HudReaction));
+        m_scene.AddSystem(std::make_shared<ECS::HudIdleMotionSystem>(), Order(SystemOrder::HudIdleMotion));
+        m_scene.AddSystem(std::make_shared<Tsukino::BuiltIn::ECS::UITweenSystem>(), Order(SystemOrder::UITween));
+        m_scene.AddSystem(std::make_shared<Tsukino::BuiltIn::ECS::WorldAnchorSystem>(), Order(SystemOrder::WorldAnchor));
+        m_scene.AddSystem(std::make_shared<Tsukino::BuiltIn::ECS::BurstParticleSystem>(), Order(SystemOrder::BurstParticle));
+        m_scene.AddSystem(std::make_shared<Tsukino::BuiltIn::ECS::LifetimeSystem>(), Order(SystemOrder::Lifetime));
 
         m_scene.AddSystem(std::make_shared<Tsukino::BuiltIn::ECS::TransformSystem>(), Order(SystemOrder::Transform));
         m_scene.AddSystem(std::make_shared<Tsukino::BuiltIn::ECS::LightSystem>(), Order(SystemOrder::Light));
@@ -130,6 +177,7 @@ namespace StardustFever::Scene {
         m_scene.AddSystem(std::make_shared<Tsukino::BuiltIn::ECS::AmbientParticleSystem>(), Order(SystemOrder::AmbientParticle));
         m_scene.AddSystem(std::make_shared<Tsukino::BuiltIn::ECS::BloomSystem>(), Order(SystemOrder::Bloom));
         m_scene.AddSystem(std::make_shared<Tsukino::BuiltIn::ECS::FontRendererSystem>(), Order(SystemOrder::Font));
+        m_scene.AddSystem(std::make_shared<Tsukino::BuiltIn::ECS::SpriteRenderSystem>(), Order(SystemOrder::Sprite));
         m_scene.AddSystem(std::make_shared<Tsukino::BuiltIn::ECS::ModelSystem>(), Order(SystemOrder::Model));
 
         //--------------------------------------------------------------
@@ -140,6 +188,9 @@ namespace StardustFever::Scene {
             Tsukino::Core::Log::Error(std::string("Scene group could not be instantiated: ") + kSceneGroupPath);
             return;
         }
+
+        if(factory.InstantiateGroup(kHudLayoutPath, registry).empty())
+            Tsukino::Core::Log::Error(std::string("HUD layout could not be instantiated: ") + kHudLayoutPath);
 
         const auto config = instance.find(kConfigEntityName);
         if(config != instance.end())

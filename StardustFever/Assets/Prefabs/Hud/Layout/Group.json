@@ -1,0 +1,280 @@
+{
+    "Entities": [
+        {
+            "key": "WalletCard",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/WalletCard/Prefab.json"
+        },
+        {
+            "key": "WalletCardFrame",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/WalletCardFrame/Prefab.json"
+        },
+        {
+            "key": "WalletGlow",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/WalletGlow/Prefab.json"
+        },
+        {
+            "key": "WalletIcon",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/WalletIcon/Prefab.json"
+        },
+        {
+            "key": "WalletLabel",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/WalletLabel/Prefab.json"
+        },
+        {
+            "key": "WalletValue",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/WalletValue/Prefab.json"
+        },
+        {
+            "key": "MultPill",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/MultPill/Prefab.json"
+        },
+        {
+            "key": "MultLabel",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/MultLabel/Prefab.json"
+        },
+        {
+            "key": "MultValue",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/MultValue/Prefab.json"
+        },
+        {
+            "key": "ConstPill",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ConstPill/Prefab.json"
+        },
+        {
+            "key": "ConstValue",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ConstValue/Prefab.json"
+        },
+        {
+            "key": "ConstBonus",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ConstBonus/Prefab.json"
+        },
+        {
+            "key": "PrestigeBarBg",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/PrestigeBarBg/Prefab.json"
+        },
+        {
+            "key": "PrestigeBar",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/PrestigeBar/Prefab.json"
+        },
+        {
+            "key": "PrestigeHint",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/PrestigeHint/Prefab.json"
+        },
+        {
+            "key": "ReelGlow",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ReelGlow/Prefab.json"
+        },
+        {
+            "key": "ReelPanel",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ReelPanel/Prefab.json"
+        },
+        {
+            "key": "ReelPanelFrame",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ReelPanelFrame/Prefab.json"
+        },
+        {
+            "key": "ReelLabel",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ReelLabel/Prefab.json"
+        },
+        {
+            "key": "ReelWindow0",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ReelWindow0/Prefab.json"
+        },
+        {
+            "key": "Reel0",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/Reel0/Prefab.json"
+        },
+        {
+            "key": "ReelWindow1",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ReelWindow1/Prefab.json"
+        },
+        {
+            "key": "Reel1",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/Reel1/Prefab.json"
+        },
+        {
+            "key": "ReelWindow2",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ReelWindow2/Prefab.json"
+        },
+        {
+            "key": "Reel2",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/Reel2/Prefab.json"
+        },
+        {
+            "key": "PendingDot0",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/PendingDot0/Prefab.json"
+        },
+        {
+            "key": "PendingDot1",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/PendingDot1/Prefab.json"
+        },
+        {
+            "key": "PendingDot2",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/PendingDot2/Prefab.json"
+        },
+        {
+            "key": "PendingDot3",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/PendingDot3/Prefab.json"
+        },
+        {
+            "key": "FeverBanner",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/FeverBanner/Prefab.json"
+        },
+        {
+            "key": "FeverBannerFrame",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/FeverBannerFrame/Prefab.json"
+        },
+        {
+            "key": "FeverHeading",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/FeverHeading/Prefab.json"
+        },
+        {
+            "key": "FeverName",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/FeverName/Prefab.json"
+        },
+        {
+            "key": "FeverProgress",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/FeverProgress/Prefab.json"
+        },
+        {
+            "key": "FeverTime",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/FeverTime/Prefab.json"
+        },
+        {
+            "key": "FeverChain",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/FeverChain/Prefab.json"
+        },
+        {
+            "key": "FeverTimeBar",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/FeverTimeBar/Prefab.json"
+        },
+        {
+            "key": "ShopPanel",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ShopPanel/Prefab.json"
+        },
+        {
+            "key": "ShopPanelFrame",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ShopPanelFrame/Prefab.json"
+        },
+        {
+            "key": "ShopTitle",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ShopTitle/Prefab.json"
+        },
+        {
+            "key": "ShopHint",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ShopHint/Prefab.json"
+        },
+        {
+            "key": "ChartPanel",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChartPanel/Prefab.json"
+        },
+        {
+            "key": "ChartPanelFrame",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChartPanelFrame/Prefab.json"
+        },
+        {
+            "key": "ChartTitle",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChartTitle/Prefab.json"
+        },
+        {
+            "key": "ChartHint",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChartHint/Prefab.json"
+        },
+        {
+            "key": "LaunchPanel",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/LaunchPanel/Prefab.json"
+        },
+        {
+            "key": "LaunchPanelFrame",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/LaunchPanelFrame/Prefab.json"
+        },
+        {
+            "key": "LaunchState",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/LaunchState/Prefab.json"
+        },
+        {
+            "key": "LaunchPercent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/LaunchPercent/Prefab.json"
+        },
+        {
+            "key": "LaunchBarBg",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/LaunchBarBg/Prefab.json"
+        },
+        {
+            "key": "LaunchBar",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/LaunchBar/Prefab.json"
+        },
+        {
+            "key": "LaunchMarker",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/LaunchMarker/Prefab.json"
+        },
+        {
+            "key": "AutoFire",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/AutoFire/Prefab.json"
+        },
+        {
+            "key": "Chip0",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/Chip0/Prefab.json"
+        },
+        {
+            "key": "ChipKey0",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChipKey0/Prefab.json"
+        },
+        {
+            "key": "ChipText0",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChipText0/Prefab.json"
+        },
+        {
+            "key": "Chip1",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/Chip1/Prefab.json"
+        },
+        {
+            "key": "ChipKey1",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChipKey1/Prefab.json"
+        },
+        {
+            "key": "ChipText1",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChipText1/Prefab.json"
+        },
+        {
+            "key": "Chip2",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/Chip2/Prefab.json"
+        },
+        {
+            "key": "ChipKey2",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChipKey2/Prefab.json"
+        },
+        {
+            "key": "ChipText2",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChipText2/Prefab.json"
+        },
+        {
+            "key": "Chip3",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/Chip3/Prefab.json"
+        },
+        {
+            "key": "ChipKey3",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChipKey3/Prefab.json"
+        },
+        {
+            "key": "ChipText3",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChipText3/Prefab.json"
+        },
+        {
+            "key": "Chip4",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/Chip4/Prefab.json"
+        },
+        {
+            "key": "ChipKey4",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChipKey4/Prefab.json"
+        },
+        {
+            "key": "ChipText4",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/ChipText4/Prefab.json"
+        },
+        {
+            "key": "Flash",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/Flash/Prefab.json"
+        }
+    ]
+}

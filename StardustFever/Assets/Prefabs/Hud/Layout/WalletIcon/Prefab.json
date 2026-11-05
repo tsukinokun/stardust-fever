@@ -1,0 +1,20 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/WalletIcon/Transform.json"
+        },
+        {
+            "key": "UIRectComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/WalletIcon/UIRect.json"
+        },
+        {
+            "key": "SpriteComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/WalletIcon/Sprite.json"
+        },
+        {
+            "key": "HudIdleMotionComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/WalletIcon/HudIdleMotion.json"
+        }
+    ]
+}

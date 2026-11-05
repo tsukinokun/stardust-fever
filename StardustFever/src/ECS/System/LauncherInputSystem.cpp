@@ -71,7 +71,8 @@ namespace StardustFever::ECS {
                         autoFire->enabled = !autoFire->enabled;
                         m_eventBus->Publish(HudMessageEvent{autoFire->enabled ? "自動発射 ON" : "自動発射 OFF"});
                     } else {
-                        m_eventBus->Publish(HudMessageEvent{"自動発射はまだ解禁されていません（U で解禁）"});
+                        m_eventBus->Publish(
+                            HudMessageEvent{"自動発射はまだ解禁されていません（強化で解禁）", HudMessageImportance::Toast, HudMessageTone::Warning});
                     }
                 }
             }

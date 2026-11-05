@@ -1,0 +1,20 @@
+{
+    "Components": [
+        {
+            "key": "TransformComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/WalletValue/Transform.json"
+        },
+        {
+            "key": "FontComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/WalletValue/Font.json"
+        },
+        {
+            "key": "HudTextComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/WalletValue/HudText.json"
+        },
+        {
+            "key": "RollingNumberComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/WalletValue/RollingNumber.json"
+        }
+    ]
+}

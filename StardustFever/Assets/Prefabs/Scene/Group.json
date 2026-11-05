@@ -29,48 +29,8 @@
             "value": "StardustFever/Assets/Prefabs/Board/Prefab.json"
         },
         {
-            "key": "HudStardust",
-            "value": "StardustFever/Assets/Prefabs/Hud/Stardust/Prefab.json"
-        },
-        {
-            "key": "HudMultiplier",
-            "value": "StardustFever/Assets/Prefabs/Hud/Multiplier/Prefab.json"
-        },
-        {
-            "key": "HudLottery",
-            "value": "StardustFever/Assets/Prefabs/Hud/Lottery/Prefab.json"
-        },
-        {
-            "key": "HudHandle",
-            "value": "StardustFever/Assets/Prefabs/Hud/Handle/Prefab.json"
-        },
-        {
-            "key": "HudAutoFire",
-            "value": "StardustFever/Assets/Prefabs/Hud/AutoFire/Prefab.json"
-        },
-        {
-            "key": "HudHelp",
-            "value": "StardustFever/Assets/Prefabs/Hud/Help/Prefab.json"
-        },
-        {
-            "key": "HudFever",
-            "value": "StardustFever/Assets/Prefabs/Hud/Fever/Prefab.json"
-        },
-        {
-            "key": "HudMessage",
-            "value": "StardustFever/Assets/Prefabs/Hud/Message/Prefab.json"
-        },
-        {
-            "key": "HudCollection",
-            "value": "StardustFever/Assets/Prefabs/Hud/Collection/Prefab.json"
-        },
-        {
-            "key": "HudUpgrades",
-            "value": "StardustFever/Assets/Prefabs/Hud/Upgrades/Prefab.json"
-        },
-        {
-            "key": "HudPrestige",
-            "value": "StardustFever/Assets/Prefabs/Hud/Prestige/Prefab.json"
+            "key": "UiCamera",
+            "value": "StardustFever/Assets/Prefabs/UiCamera/Prefab.json"
         }
     ]
 }

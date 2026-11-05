@@ -177,6 +177,7 @@ namespace StardustFever::ECS {
         state->active                             = true;
         const UpgradeModifiersComponent* upgrades = FindSingleton<UpgradeModifiersComponent>(registry);
         state->timeRemaining                      = config->duration + (upgrades ? upgrades->feverDurationBonus : 0.0f);
+        state->timeTotal                          = state->timeRemaining;
         state->constellationId                    = constellation.id;
         state->starsLinked                        = 0;
         state->starsTotal                         = static_cast<int>(constellation.stars.size());
@@ -187,28 +188,28 @@ namespace StardustFever::ECS {
         state->bestChain                          = 0;
 
         m_eventBus->Publish(FeverStartedEvent{constellation.id});
-        m_eventBus->Publish(HudMessageEvent{"★ 星詠みタイム ★  " + constellation.name + "を描け！"});
+        m_eventBus->Publish(HudMessageEvent{"★ 星詠みタイム ★\n" + constellation.name + "を描け！", HudMessageImportance::Headline});
     }
 
     //-------------------------------------------------------------
     // 星釘と線を片付ける
     //-------------------------------------------------------------
     void FeverSystem::EndFever(Tsukino::ECS::Registry& registry) {
-        FeverStateComponent* state = FindSingleton<FeverStateComponent>(registry);
-        if(!state)
-            return;
+            FeverStateComponent* state = FindSingleton<FeverStateComponent>(registry);
+            if(!state)
+                return;
 
-        for(const auto entity : registry.View<StarPinComponent>()) {
-            registry.QueueDestroy(entity);
-        }
-        for(const auto entity : registry.View<LinkLineComponent>()) {
-            registry.QueueDestroy(entity);
-        }
+            for(const auto entity : registry.View<StarPinComponent>()) {
+                registry.QueueDestroy(entity);
+            }
+            for(const auto entity : registry.View<LinkLineComponent>()) {
+                registry.QueueDestroy(entity);
+            }
 
-        state->active = false;
-        m_eventBus->Publish(FeverEndedEvent{state->constellationId, state->completed});
-        if(!state->completed)
-            m_eventBus->Publish(HudMessageEvent{"星詠みタイム終了  " + std::to_string(state->starsLinked) + " / " + std::to_string(state->starsTotal)});
+            state->active = false;
+            m_eventBus->Publish(FeverEndedEvent{state->constellationId, state->completed});
+            if(!state->completed)
+                m_eventBus->Publish(HudMessageEvent{"星詠みタイム終了  " + std::to_string(state->starsLinked) + " / " + std::to_string(state->starsTotal)});
     }
 
-}    // namespace StardustFever::ECS
+    }    // namespace StardustFever::ECS
