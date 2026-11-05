@@ -25,6 +25,22 @@
             "value": "StardustFever/Assets/Prefabs/SpaceBackdrop/Prefab.json"
         },
         {
+            "key": "SpaceStarfield",
+            "value": "StardustFever/Assets/Prefabs/SpaceStarfield/Prefab.json"
+        },
+        {
+            "key": "SpaceNebulaViolet",
+            "value": "StardustFever/Assets/Prefabs/SpaceNebulaViolet/Prefab.json"
+        },
+        {
+            "key": "SpaceNebulaBlue",
+            "value": "StardustFever/Assets/Prefabs/SpaceNebulaBlue/Prefab.json"
+        },
+        {
+            "key": "BoardStarfield",
+            "value": "StardustFever/Assets/Prefabs/BoardStarfield/Prefab.json"
+        },
+        {
             "key": "Board",
             "value": "StardustFever/Assets/Prefabs/Board/Prefab.json"
         },

@@ -15,6 +15,10 @@
         {
             "key": "PocketComponent",
             "value": "StardustFever/Assets/Prefabs/StartPocket/Pocket.json"
+        },
+        {
+            "key": "RimGlowComponent",
+            "value": "StardustFever/Assets/Prefabs/StartPocket/RimGlow.json"
         }
     ]
 }

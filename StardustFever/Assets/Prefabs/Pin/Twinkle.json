@@ -1,0 +1,23 @@
+{
+    "TwinkleComponent": {
+        "baseEmissive": {
+            "x": 0.6,
+            "y": 0.45,
+            "z": 0.15
+        },
+        "peakEmissive": {
+            "x": 2.8,
+            "y": 2.3,
+            "z": 1.2
+        },
+        "flashEmissive": {
+            "x": 5.0,
+            "y": 4.4,
+            "z": 2.6
+        },
+        "intervalMin": 1.5,
+        "intervalMax": 8.0,
+        "twinkleSeconds": 0.5,
+        "flashDecay": 5.0
+    }
+}

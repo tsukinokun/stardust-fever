@@ -1,0 +1,68 @@
+{
+    "CosmicFxConfigComponent": {
+        "sparkTexture": "StardustFever/Assets/Textures/Space/sparkle.png",
+        "pinSparkChance": 0.45,
+        "pinSpark": {
+            "count": 4,
+            "speedMin": 8.0,
+            "speedMax": 22.0,
+            "upwardBias": 0.6,
+            "spread": 1.0,
+            "lifeMin": 0.2,
+            "lifeMax": 0.45,
+            "sizeMin": 0.8,
+            "sizeMax": 1.8,
+            "endSizeScale": 0.1,
+            "gravity": 30.0,
+            "drag": 3.0,
+            "radius": 0.5,
+            "delayMax": 0.0,
+            "colorA": {
+                "x": 2.6,
+                "y": 2.1,
+                "z": 1.0,
+                "w": 1.0
+            },
+            "colorB": {
+                "x": 1.6,
+                "y": 1.8,
+                "z": 2.6,
+                "w": 1.0
+            },
+            "endAlpha": 0.0,
+            "additive": true,
+            "texturePixels": 64.0
+        },
+        "streakTexture": "StardustFever/Assets/Textures/Space/streak.png",
+        "streakPixels": 256.0,
+        "shootingIntervalMin": 2.5,
+        "shootingIntervalMax": 7.0,
+        "feverIntervalScale": 0.3,
+        "shootingSpawnMin": {
+            "x": -80.0,
+            "y": 70.0,
+            "z": 95.0
+        },
+        "shootingSpawnMax": {
+            "x": 200.0,
+            "y": 150.0,
+            "z": 105.0
+        },
+        "shootingDirection": {
+            "x": -1.0,
+            "y": -1.0,
+            "z": 0.0
+        },
+        "shootingSpeedMin": 150.0,
+        "shootingSpeedMax": 260.0,
+        "shootingSizeMin": 35.0,
+        "shootingSizeMax": 70.0,
+        "shootingLife": 0.9,
+        "shootingColor": {
+            "x": 1.8,
+            "y": 1.9,
+            "z": 2.4,
+            "w": 1.0
+        }
+    }
+}

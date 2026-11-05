@@ -1,0 +1,21 @@
+{
+    "SpriteComponent": {
+        "textureHandle": "StardustFever/Assets/Textures/Space/nebula_blue.png",
+        "blendMode": 1,
+        "space": 1,
+        "tintColor": {
+            "x": 1.6,
+            "y": 1.8,
+            "z": 2.0,
+            "w": 1.0
+        },
+        "uvRect": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1.0,
+            "w": 1.0
+        },
+        "sortOrder": 2,
+        "raycastTarget": false
+    }
+}

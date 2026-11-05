@@ -39,6 +39,10 @@
         {
             "key": "HudLayoutConfigComponent",
             "value": "StardustFever/Assets/Prefabs/Config/HudLayoutConfig.json"
+        },
+        {
+            "key": "CosmicFxConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/CosmicFxConfig.json"
         }
     ]
 }

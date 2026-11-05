@@ -15,6 +15,10 @@
         {
             "key": "ModelComponent",
             "value": "StardustFever/Assets/Prefabs/Wall/Model.json"
+        },
+        {
+            "key": "RimGlowComponent",
+            "value": "StardustFever/Assets/Prefabs/Wall/RimGlow.json"
         }
     ]
 }

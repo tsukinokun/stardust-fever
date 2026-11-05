@@ -15,6 +15,10 @@
         {
             "key": "StarPinComponent",
             "value": "null"
+        },
+        {
+            "key": "GlowHaloComponent",
+            "value": "StardustFever/Assets/Prefabs/StarPin/GlowHalo.json"
         }
     ]
 }

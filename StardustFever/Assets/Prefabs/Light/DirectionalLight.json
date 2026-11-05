@@ -11,6 +11,6 @@
             "z": 1.0
         },
         "intensity": 3.0,
-        "castShadow": false
+        "castShadow": true
     }
 }

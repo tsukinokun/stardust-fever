@@ -1,0 +1,21 @@
+{
+    "SpriteComponent": {
+        "textureHandle": "StardustFever/Assets/Textures/Space/starfield.png",
+        "blendMode": 1,
+        "space": 1,
+        "tintColor": {
+            "x": 0.6,
+            "y": 0.65,
+            "z": 0.9,
+            "w": 0.6
+        },
+        "uvRect": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1.0,
+            "w": 1.0
+        },
+        "sortOrder": 3,
+        "raycastTarget": false
+    }
+}

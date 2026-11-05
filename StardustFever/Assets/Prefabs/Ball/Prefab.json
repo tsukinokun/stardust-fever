@@ -19,6 +19,14 @@
         {
             "key": "BallComponent",
             "value": "null"
+        },
+        {
+            "key": "RimGlowComponent",
+            "value": "StardustFever/Assets/Prefabs/Ball/RimGlow.json"
+        },
+        {
+            "key": "SparkleTrailComponent",
+            "value": "StardustFever/Assets/Prefabs/Ball/SparkleTrail.json"
         }
     ]
 }
