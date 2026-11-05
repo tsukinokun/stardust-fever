@@ -5,6 +5,17 @@
         "maxStarLevel": 5,
         "linkLinePrefab": "StardustFever/Assets/Prefabs/LinkLine/Prefab.json",
         "litStarModel": "StardustFever/Assets/Models/StarLit.obj",
-        "lineThickness": 0.3
+        "lineThickness": 0.35,
+        "guideThickness": 0.12,
+        "litEmissive": {
+            "x": 3.0,
+            "y": 2.4,
+            "z": 1.1
+        },
+        "guideEmissive": {
+            "x": 0.15,
+            "y": 0.2,
+            "z": 0.45
+        }
     }
 }

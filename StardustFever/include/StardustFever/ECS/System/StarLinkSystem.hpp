@@ -4,6 +4,7 @@
 //-------------------------------------------------------------
 #pragma once
 #include <StardustFever/ECS/Event/BallTouchedStarEvent.hpp>
+#include <StardustFever/ECS/Event/FeverStartedEvent.hpp>
 #include <StardustFever/ECS/Utility/EventQueue.hpp>
 
 #include <Tsukino/Core/ECS/System/ISystem.hpp>
@@ -13,7 +14,8 @@ namespace StardustFever::ECS {
     //-------------------------------------------------------------
     //! @class  StarLinkSystem
     //! @brief  星釘に触れた玉ごとに「何個目の星か」を数え、一筆書きの倍率で星屑を出す。
-    //!         両端の星がつながった星座の線を引き、全ての星がつながったら完成を知らせる
+    //!         フィーバー開始時に星座の線を薄いガイドとして全部引き、両端の星がつながった線を灯す。
+    //!         全ての星がつながったら完成を知らせる
     //! @note   どの玉で触れても星はつながる。同じ玉で続けてつなぐほど倍率が上がる
     //-------------------------------------------------------------
     class StarLinkSystem final : public Tsukino::ECS::ISystem {
@@ -33,6 +35,13 @@ namespace StardustFever::ECS {
 
     private:
         //-------------------------------------------------------------
+        //! @brief  星座の線を全部ガイドとして引く
+        //! @param  registry [in] レジストリ
+        //! @param  started  [in] 始まったフィーバーの星座
+        //-------------------------------------------------------------
+        void SpawnGuideLines(Tsukino::ECS::Registry& registry, const FeverStartedEvent& started);
+
+        //-------------------------------------------------------------
         //! @brief  星釘1つをつなぐ
         //! @param  registry [in] レジストリ
         //! @param  touch    [in] 触れた玉と星釘
@@ -41,5 +50,6 @@ namespace StardustFever::ECS {
 
         Tsukino::ECS::EventBus*          m_eventBus = nullptr;
         EventQueue<BallTouchedStarEvent> m_touches;
+        EventQueue<FeverStartedEvent>    m_starts;
     };
 }    // namespace StardustFever::ECS

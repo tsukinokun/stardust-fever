@@ -8,10 +8,12 @@
 namespace StardustFever::ECS {
     //-------------------------------------------------------------
     //! @struct LinkLineComponent
-    //! @brief  つながった星同士を結ぶ光の線
-    //! @note   フィーバー終了時にまとめて片付けるためのタグ
+    //! @brief  星座の線。フィーバー開始時に薄いガイドとして引き、両端の星がつながったら灯す
+    //! @note   値は実行時に StarLinkSystem が入れる（Prefab には書かない）。フィーバー終了時にまとめて片付ける
     //-------------------------------------------------------------
     struct LinkLineComponent {
-        bool tag = true;    //!< EnTT の空型の特別扱いを避けるための値（PrefabFactory が GetComponent するため）
+        int  from = -1;       //!< 片方の端の星（ConstellationDef::stars の添字）
+        int  to   = -1;       //!< もう片方の端の星
+        bool lit  = false;    //!< 両端がつながって灯ったか
     };
 }    // namespace StardustFever::ECS

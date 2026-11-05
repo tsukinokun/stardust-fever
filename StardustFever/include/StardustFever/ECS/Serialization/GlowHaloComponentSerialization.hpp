@@ -20,6 +20,7 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("texture", component.texture));
         archive(cereal::make_nvp("texturePixels", component.texturePixels));
         archive(cereal::make_nvp("size", component.size));
+        archive(cereal::make_nvp("linkedSizeScale", component.linkedSizeScale));
         archive(cereal::make_nvp("color", component.color));
         archive(cereal::make_nvp("linkedColor", component.linkedColor));
         archive(cereal::make_nvp("offset", component.offset));
@@ -37,6 +38,7 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "texture", component.texture);
         Tsukino::IO::LoadOptional(archive, "texturePixels", component.texturePixels);
         Tsukino::IO::LoadOptional(archive, "size", component.size);
+        Tsukino::IO::LoadOptional(archive, "linkedSizeScale", component.linkedSizeScale);
         Tsukino::IO::LoadOptional(archive, "color", component.color);
         Tsukino::IO::LoadOptional(archive, "linkedColor", component.linkedColor);
         Tsukino::IO::LoadOptional(archive, "offset", component.offset);

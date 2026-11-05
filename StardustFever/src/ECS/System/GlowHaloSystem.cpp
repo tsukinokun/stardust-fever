@@ -83,7 +83,7 @@ namespace StardustFever::ECS {
             const bool              linked = pin && pin->linked;
 
             const float breath = 1.0f + glow.pulseAmplitude * std::sin(m_time * kTwoPi / std::max(glow.period, 0.01f) + glow.phase);
-            const float scale  = glow.size * (linked ? 1.35f : 1.0f) * breath / std::max(glow.texturePixels, 1.0f);
+            const float scale  = glow.size * (linked ? glow.linkedSizeScale : 1.0f) * breath / std::max(glow.texturePixels, 1.0f);
 
             TransformComponent& haloTransform = registry.GetComponent<TransformComponent>(glow.halo);
             haloTransform.position            = transform.position + glow.offset;

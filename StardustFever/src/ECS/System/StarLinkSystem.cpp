@@ -7,6 +7,7 @@
 #include <StardustFever/Data/GameDatabase.hpp>
 #include <StardustFever/ECS/Component/BallComponent.hpp>
 #include <StardustFever/ECS/Component/FeverStateComponent.hpp>
+#include <StardustFever/ECS/Component/LinkLineComponent.hpp>
 #include <StardustFever/ECS/Component/StarLinkConfigComponent.hpp>
 #include <StardustFever/ECS/Component/StarPinComponent.hpp>
 #include <StardustFever/ECS/Component/UpgradeModifiersComponent.hpp>
@@ -16,6 +17,7 @@
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
 
+#include <Tsukino/BuiltIn/ECS/Component/MaterialPropertyBlockComponent.hpp>
 #include <Tsukino/BuiltIn/ECS/Component/ModelComponent.hpp>
 #include <Tsukino/BuiltIn/ECS/Component/TransformComponent.hpp>
 #include <Tsukino/Engine/Asset/AssetManager.hpp>
@@ -24,7 +26,7 @@
 
 #include <algorithm>
 #include <cmath>
-#include <unordered_map>
+#include <unordered_set>
 
 // 名前空間 : StardustFever::ECS
 namespace StardustFever::ECS {
@@ -33,52 +35,109 @@ namespace StardustFever::ECS {
         using Tsukino::BuiltIn::ECS::TransformComponent;
 
         //-------------------------------------------------------------
+        //! @brief  線の太さと自己発光を、ガイドか灯った線かに合わせる
+        //! @param  registry [in] レジストリ
+        //! @param  entity   [in] 線
+        //! @param  config   [in] 太さと色
+        //! @param  lit      [in] 灯った線か
+        //-------------------------------------------------------------
+        void ApplyLineLook(Tsukino::ECS::Registry& registry, entt::entity entity, const StarLinkConfigComponent& config, bool lit) {
+            if(TransformComponent* transform = registry.try_get<TransformComponent>(entity)) {
+                transform->scale = hlslpp::float3(transform->scale.x, lit ? config.lineThickness : config.guideThickness, transform->scale.z);
+                transform->dirty = true;
+            }
+            using Tsukino::BuiltIn::ECS::MaterialPropertyBlockComponent;
+            MaterialPropertyBlockComponent& block = registry.HasComponent<MaterialPropertyBlockComponent>(entity)
+                                                        ? registry.GetComponent<MaterialPropertyBlockComponent>(entity)
+                                                        : registry.AddComponent<MaterialPropertyBlockComponent>(entity);
+            block.emissive                        = lit ? config.litEmissive : config.guideEmissive;
+        }
+
+        //-------------------------------------------------------------
         //! @brief  2つの星の間に線の Prefab を伸ばして置く
         //! @param  factory  [in] Prefab の生成元
         //! @param  registry [in] レジストリ
-        //! @param  config   [in] 線の Prefab と太さ
+        //! @param  config   [in] 線の Prefab
         //! @param  from     [in] 始点
         //! @param  to       [in] 終点
+        //! @return 置いた線（作れなければ entt::null）
         //! @note   線のモデルはX方向に長さ2（±1）の箱。中点へ置き、Z軸回りに向けて、半分の長さだけ伸ばす。
         //!         Z は Prefab の値のまま（星より奥に置き、星に重ならないようにしてある）
         //-------------------------------------------------------------
-        void SpawnLine(Tsukino::Engine::ECS::Prefab::PrefabFactory& factory,
-                       Tsukino::ECS::Registry&                      registry,
-                       const StarLinkConfigComponent&               config,
-                       const hlslpp::float3&                        from,
-                       const hlslpp::float3&                        to) {
+        entt::entity SpawnLine(Tsukino::Engine::ECS::Prefab::PrefabFactory& factory,
+                               Tsukino::ECS::Registry&                      registry,
+                               const StarLinkConfigComponent&               config,
+                               float                                        fromX,
+                               float                                        fromY,
+                               float                                        toX,
+                               float                                        toY) {
             const entt::entity entity = factory.Instantiate(config.linkLinePrefab, registry);
             if(entity == entt::null)
-                return;
+                return entt::null;
             TransformComponent* transform = registry.try_get<TransformComponent>(entity);
             if(!transform)
-                return;
+                return entity;
 
-            const float dx     = static_cast<float>(to.x) - static_cast<float>(from.x);
-            const float dy     = static_cast<float>(to.y) - static_cast<float>(from.y);
+            const float dx     = toX - fromX;
+            const float dy     = toY - fromY;
             const float length = std::sqrt(dx * dx + dy * dy);
             const float z      = transform->position.z;
             const float depth  = transform->scale.z;
 
-            transform->position = hlslpp::float3(
-                (static_cast<float>(from.x) + static_cast<float>(to.x)) * 0.5f, (static_cast<float>(from.y) + static_cast<float>(to.y)) * 0.5f, z);
+            transform->position = hlslpp::float3((fromX + toX) * 0.5f, (fromY + toY) * 0.5f, z);
             transform->rotation = hlslpp::quaternion::rotation_z(std::atan2(dy, dx));
-            transform->scale    = hlslpp::float3(length * 0.5f, config.lineThickness, depth);
+            transform->scale    = hlslpp::float3(length * 0.5f, config.guideThickness, depth);
             transform->dirty    = true;
+            return entity;
         }
     }    // namespace
 
     StarLinkSystem::StarLinkSystem(Tsukino::ECS::EventBus& eventBus)
         : m_eventBus(&eventBus)
-        , m_touches(eventBus) {
+        , m_touches(eventBus)
+        , m_starts(eventBus) {
     }
 
     //-------------------------------------------------------------
-    // 溜まった接触を処理する
+    // ガイドを引いてから、溜まった接触を処理する
     //-------------------------------------------------------------
     void StarLinkSystem::Update(Tsukino::ECS::Registry& registry, float) {
+        // 開始と同じフレームに触れた星も、ガイドを引いた後に処理して灯せるようにする
+        for(const FeverStartedEvent& started : m_starts.Drain()) {
+            SpawnGuideLines(registry, started);
+        }
         for(const BallTouchedStarEvent& touch : m_touches.Drain()) {
             LinkStar(registry, touch);
+        }
+    }
+
+    //-------------------------------------------------------------
+    // 星座の線を全部ガイドとして引く
+    //-------------------------------------------------------------
+    void StarLinkSystem::SpawnGuideLines(Tsukino::ECS::Registry& registry, const FeverStartedEvent& started) {
+        const StarLinkConfigComponent*             config        = FindSingleton<StarLinkConfigComponent>(registry);
+        Tsukino::EngineIntegration::EngineContext* context       = GetEngineContext(registry);
+        const Data::ConstellationDef*              constellation = Data::GetConstellationTable().Find(started.constellationId);
+        if(!config || !context || !context->prefabFactory || !constellation)
+            return;
+
+        // 星釘は星座データの x, y に置かれるので、端の位置もデータから取る
+        const int starCount = static_cast<int>(constellation->stars.size());
+        for(const Data::ConstellationLineDef& line : constellation->lines) {
+            if(line.from < 0 || line.to < 0 || line.from >= starCount || line.to >= starCount || line.from == line.to)
+                continue;
+            const Data::ConstellationStarDef& from   = constellation->stars[line.from];
+            const Data::ConstellationStarDef& to     = constellation->stars[line.to];
+            const entt::entity                entity = SpawnLine(*context->prefabFactory, registry, *config, from.x, from.y, to.x, to.y);
+            if(entity == entt::null)
+                continue;
+
+            LinkLineComponent& link = registry.HasComponent<LinkLineComponent>(entity) ? registry.GetComponent<LinkLineComponent>(entity)
+                                                                                       : registry.AddComponent<LinkLineComponent>(entity);
+            link.from               = line.from;
+            link.to                 = line.to;
+            link.lit                = false;
+            ApplyLineLook(registry, entity, *config, false);
         }
     }
 
@@ -130,27 +189,25 @@ namespace StardustFever::ECS {
         m_eventBus->Publish(StarLinkedEvent{pin->starId, chain, strokeMultiplier.ToDouble(), pinPosition});
 
         //-------------------------------------------------------------
-        // この星を端に持ち、もう片方の端も既につながっている線を引く
+        // この星を端に持ち、もう片方の端も既につながっているガイドを灯す
         //-------------------------------------------------------------
-        const Data::ConstellationDef* constellation = Data::GetConstellationTable().Find(fever->constellationId);
-        if(constellation && context->prefabFactory) {
-            std::unordered_map<int, hlslpp::float3> linkedPositions;
-            for(const auto entity : registry.View<StarPinComponent, TransformComponent>()) {
-                const StarPinComponent& other = registry.GetComponent<StarPinComponent>(entity);
-                if(other.linked)
-                    linkedPositions.emplace(other.starIndex, registry.GetComponent<TransformComponent>(entity).position);
-            }
+        std::unordered_set<int> linkedIndices;
+        for(const auto entity : registry.View<StarPinComponent>()) {
+            const StarPinComponent& other = registry.GetComponent<StarPinComponent>(entity);
+            if(other.linked)
+                linkedIndices.insert(other.starIndex);
+        }
 
-            const int index = pin->starIndex;
-            for(const Data::ConstellationLineDef& line : constellation->lines) {
-                if(line.from != index && line.to != index)
-                    continue;
-                const int  otherIndex = (line.from == index) ? line.to : line.from;
-                const auto self       = linkedPositions.find(index);
-                const auto other      = linkedPositions.find(otherIndex);
-                if(self != linkedPositions.end() && other != linkedPositions.end() && otherIndex != index)
-                    SpawnLine(*context->prefabFactory, registry, *config, self->second, other->second);
-            }
+        const int index = pin->starIndex;
+        for(const auto entity : registry.View<LinkLineComponent>()) {
+            LinkLineComponent& line = registry.GetComponent<LinkLineComponent>(entity);
+            if(line.lit || (line.from != index && line.to != index))
+                continue;
+            const int otherIndex = (line.from == index) ? line.to : line.from;
+            if(!linkedIndices.contains(otherIndex))
+                continue;
+            line.lit = true;
+            ApplyLineLook(registry, entity, *config, true);
         }
 
         if(!fever->completed && fever->starsLinked >= fever->starsTotal) {

@@ -21,6 +21,7 @@ namespace StardustFever::ECS {
         std::string    texture;                                                           //!< 光芒の画像
         float          texturePixels        = 256.0f;                                     //!< 画像の一辺のピクセル数
         float          size                 = 9.0f;                                       //!< 光輪の大きさ（ワールド単位）
+        float          linkedSizeScale      = 1.2f;                                       //!< つないだ後の大きさの倍率（大きすぎると星座の線を覆う）
         hlslpp::float4 color                = hlslpp::float4(0.6f, 0.75f, 1.6f, 0.8f);    //!< 光輪の色（HDR）
         hlslpp::float4 linkedColor          = hlslpp::float4(2.6f, 2.2f, 1.2f, 1.0f);     //!< つないだ後の光輪の色
         hlslpp::float3 offset               = hlslpp::float3(0.0f, 0.0f, -0.6f);          //!< 持ち主からのずれ（手前へ出して埋もれないようにする）

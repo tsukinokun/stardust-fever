@@ -9,6 +9,7 @@
 #include <StardustFever/ECS/Component/StarLinkConfigComponent.hpp>
 
 #include <cereal/types/string.hpp>
+#include <Tsukino/Core/Math/Serialization/HlslppSerialization.hpp>
 #include <Tsukino/Core/IO/CerealOptional.hpp>
 
 #include <cereal/cereal.hpp>
@@ -24,6 +25,9 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("linkLinePrefab", component.linkLinePrefab));
         archive(cereal::make_nvp("litStarModel", component.litStarModel));
         archive(cereal::make_nvp("lineThickness", component.lineThickness));
+        archive(cereal::make_nvp("guideThickness", component.guideThickness));
+        archive(cereal::make_nvp("litEmissive", component.litEmissive));
+        archive(cereal::make_nvp("guideEmissive", component.guideEmissive));
     }
 
     template <class Archive>
@@ -34,6 +38,9 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "linkLinePrefab", component.linkLinePrefab);
         Tsukino::IO::LoadOptional(archive, "litStarModel", component.litStarModel);
         Tsukino::IO::LoadOptional(archive, "lineThickness", component.lineThickness);
+        Tsukino::IO::LoadOptional(archive, "guideThickness", component.guideThickness);
+        Tsukino::IO::LoadOptional(archive, "litEmissive", component.litEmissive);
+        Tsukino::IO::LoadOptional(archive, "guideEmissive", component.guideEmissive);
     }
 
 }    // namespace StardustFever::ECS
