@@ -150,7 +150,7 @@ TsukinoEngine（EnTT ECS / Jolt Physics / cereal Prefab JSON）上で作る。
 
 | もの | 見た目 | 調整する場所 |
 |---|---|---|
-| 玉 | 青白く光る輪郭（RimGlow）と、動いている間の星屑の尾。フィーバー中は尾が金と紫になる | `Prefabs/Ball/RimGlow.json` / `SparkleTrail.json` |
+| 玉 | 金色に光る五芒星（転がると回る）。金の輪郭（RimGlow）と、動いている間の星屑の尾。フィーバー中は尾が金と紫になる。当たり判定は球のまま（星の先が釘に引っかからないように） | `Models/StarBall.*`（`Tools/GenerateStarBall.py`）/ `Prefabs/Ball/RimGlow.json` / `SparkleTrail.json` |
 | 釘 | 1本ずつばらばらの間隔でふっと明るくなる。玉が当たると一瞬閃き、ときどき火花が散る | `Prefabs/Pin/Twinkle.json`、火花は `CosmicFxConfig.json` |
 | 星釘 | 十字の光芒が呼吸し、周りを点光源で照らす。つなぐと金色に強まる | `Prefabs/StarPin/GlowHalo.json` |
 | 星座の線 | フィーバー開始時に全部の線が薄い青で現れ、両端の星がつながると金色に灯ってブルームでにじむ | `Prefabs/Config/StarLinkConfig.json`（太さと色） |
