@@ -76,19 +76,20 @@ namespace StardustFever::ECS {
         float inertiaFriction   = 3.5f;     //!< 手を離した後の回転の止まりやすさ（1秒あたり）
         float focusSpeed        = 4.0f;     //!< 選んだ星座へ回る速さ（1秒あたり）
         // 名前と文章
-        std::string    objectTexture;                                                      //!< 天体の絵
-        float          objectPixels       = 64.0f;                                         //!< 天体の絵の幅
-        float          objectSize         = 24.0f;                                         //!< 天体の大きさ（UI のピクセル）
-        float          objectMissingAlpha = 0.4f;                                          //!< 持っていない天体の濃さ
-        float          hoverRadius        = 14.0f;                                         //!< マウスがこの距離まで近づくと星の吹き出しを出す（UI のピクセル）
-        float          tooltipWidth       = 330.0f;                                        //!< 吹き出しの幅
-        float          tooltipHeight      = 84.0f;                                         //!< 吹き出しの高さ
-        float          tooltipScale       = 0.42f;                                         //!< 吹き出しの文字の大きさ
-        hlslpp::float4 tooltipColor       = hlslpp::float4(0.01f, 0.012f, 0.04f, 0.9f);    //!< 吹き出しの板の色
-        int            maxStarLabels      = 14;                                            //!< 選んだ星座に添える星の名前の数
-        float          starLabelScale     = 0.34f;                                         //!< 星の名前の大きさ
-        float          starLabelOffset    = 12.0f;                                         //!< 星の名前を星から右へずらす量（ピクセル）
-        hlslpp::float4 starLabelColor     = hlslpp::float4(0.85f, 0.9f, 1.0f, 0.95f);      //!< 星の名前の色
-        int            captionWidth       = 54;                                            //!< 図鑑の文章の1行の幅（全角1文字を2と数える）
+        std::string    reticleTexture;                                                      //!< 照準の絵
+        float          reticleSize         = 56.0f;                                         //!< 照準の大きさ（UI のピクセル）
+        float          objectReticleRadius = 60.0f;                                         //!< 中央の照準が天体を拾う距離（UI のピクセル）
+        float          objectPixels        = 256.0f;                                        //!< 天体の絵の幅
+        float          objectMissingAlpha  = 0.4f;                                          //!< 持っていない天体の濃さ
+        float          hoverRadius         = 14.0f;                                         //!< マウスがこの距離まで近づくと星の吹き出しを出す（UI のピクセル）
+        float          tooltipWidth        = 330.0f;                                        //!< 吹き出しの幅
+        float          tooltipHeight       = 84.0f;                                         //!< 吹き出しの高さ
+        float          tooltipScale        = 0.42f;                                         //!< 吹き出しの文字の大きさ
+        hlslpp::float4 tooltipColor        = hlslpp::float4(0.01f, 0.012f, 0.04f, 0.9f);    //!< 吹き出しの板の色
+        int            maxStarLabels       = 14;                                            //!< 選んだ星座に添える星の名前の数
+        float          starLabelScale      = 0.34f;                                         //!< 星の名前の大きさ
+        float          starLabelOffset     = 12.0f;                                         //!< 星の名前を星から右へずらす量（ピクセル）
+        hlslpp::float4 starLabelColor      = hlslpp::float4(0.85f, 0.9f, 1.0f, 0.95f);      //!< 星の名前の色
+        int            captionWidth        = 54;                                            //!< 図鑑の文章の1行の幅（全角1文字を2と数える）
     };
 }    // namespace StardustFever::ECS

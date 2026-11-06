@@ -233,13 +233,23 @@ namespace StardustFever::ECS {
         UpdateTooltip(registry);
 
         // 照準が指す星座の名前。変わったときだけ書き換える
-        if(state->reticleId != m_reticleId || state->selectedId != m_reticleSelected) {
+        if(state->reticleId != m_reticleId || state->selectedId != m_reticleSelected || state->reticleObject != m_reticleObject
+           || state->objectMode != m_reticleInCatalogue || state->selectedObject != m_reticleSelectedObject) {
             m_reticleId                                 = state->reticleId;
             m_reticleSelected                           = state->selectedId;
+            m_reticleObject                             = state->reticleObject;
+            m_reticleInCatalogue                        = state->objectMode;
+            m_reticleSelectedObject                     = state->selectedObject;
             const Data::ConstellationDef* constellation = Data::GetConstellationTable().Find(m_reticleId);
+            const Data::SkyObjectTable&   objects       = Data::GetSkyObjectTable();
             std::string                   text;
-            if(constellation && m_reticleId != m_reticleSelected)    // 選んだ星座は空に名前が出ている
+            if(m_reticleObject >= 0 && m_reticleObject < static_cast<int>(objects.objects.size())) {
+                // 図鑑で今見ている天体は、パネルに名前が出ている
+                if(!(m_reticleInCatalogue && m_reticleObject == m_reticleSelectedObject))
+                    text = objects.objects[static_cast<size_t>(m_reticleObject)].name + "  Space で見る";
+            } else if(constellation && m_reticleId != m_reticleSelected) {    // 選んだ星座は空に名前が出ている
                 text = constellation->name + "  Space で選ぶ";
+            }
             HudUi::SetText(registry, m_reticleText, text);
         }
     }
@@ -549,11 +559,10 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         // 天体: 星とは違う形の板。大きさと色は Layout が決める
         //-------------------------------------------------------------
-        const Tsukino::Asset::AssetHandle objectImage = context->assetManager->Load(Tsukino::Core::Path(config->objectTexture));
-        const Data::SkyObjectTable&       skyObjects  = Data::GetSkyObjectTable();
+        const Data::SkyObjectTable& skyObjects = Data::GetSkyObjectTable();
         for(size_t i = 0; i < skyObjects.objects.size(); ++i) {
             const entt::entity object = MakeElement(*m_scene, registry, m_root, StarMapElementKind::SkyObject, static_cast<int>(i));
-            AddSprite(registry, object, objectImage, 2, true, SpriteSpace::World);
+            AddSprite(registry, object, context->assetManager->Load(Tsukino::Core::Path(skyObjects.objects[i].texture)), 2, true, SpriteSpace::World);
             TransformComponent& transform = registry.GetComponent<TransformComponent>(object);
             transform.position = SkyPoint(*config, Core::SkyMath::ToDirection(skyObjects.objects[i].ra * 15.0, skyObjects.objects[i].dec), config->skyRadius);
         }
@@ -624,20 +633,21 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         // 画面の中央の照準。キーで星座を選ぶときの目印
         //-------------------------------------------------------------
-        if(const SettingsConfigComponent* reticleStyle = FindSingleton<SettingsConfigComponent>(registry)) {
+        {
             const entt::entity reticle = MakeElement(*m_scene, registry, m_root, StarMapElementKind::Reticle, 0);
             Place(registry, reticle, 800.0f, 500.0f, 1.0f, 1.0f);
             UiParts::AddImage(registry,
                               reticle,
-                              context->assetManager->Load(Tsukino::Core::Path(reticleStyle->starOutlineTexture)),
-                              34.0f,
-                              34.0f,
+                              context->assetManager->Load(Tsukino::Core::Path(config->reticleTexture)),
+                              config->reticleSize,
+                              config->reticleSize,
                               order,
                               hlslpp::float4(0.8f, 0.86f, 1.0f, 0.55f));
             m_reticleText = MakeElement(*m_scene, registry, m_root, StarMapElementKind::ReticleText, 0);
             AddText(registry, m_reticleText, config->labelScale, order, true);
             Place(registry, m_reticleText, 800.0f, 534.0f, 1.0f, 1.0f);
             m_reticleId.clear();
+            m_reticleObject   = -2;
             m_reticleSelected = "\n";    // 必ず一度書く
         }
 
@@ -779,25 +789,21 @@ namespace StardustFever::ECS {
             //-------------------------------------------------------------
             case StarMapElementKind::SkyObject:
                 {
-                    const Data::SkyObjectTable&     objects = Data::GetSkyObjectTable();
-                    const SkyObjectConfigComponent* tiers   = FindSingleton<SkyObjectConfigComponent>(registry);
-                    if(!tiers || element.index < 0 || element.index >= static_cast<int>(objects.objects.size()))
+                    const Data::SkyObjectTable& objects = Data::GetSkyObjectTable();
+                    if(element.index < 0 || element.index >= static_cast<int>(objects.objects.size()))
                         break;
                     const Data::SkyObjectDef& object = objects.objects[static_cast<size_t>(element.index)];
                     const bool                owned  = OwnsSkyObject(*collection, object.id);
-                    float                     size   = config->objectSize;
+                    float                     size   = object.size;
                     if(state->objectMode && state->selectedObject == element.index)
-                        size *= 1.8f;
+                        size *= 1.3f;
                     const float         scale     = size * config->worldUnitsPerPixel / std::max(config->objectPixels, 1.0f);
                     TransformComponent& transform = registry.GetComponent<TransformComponent>(entity);
                     transform.scale               = hlslpp::float3(scale, scale, 1.0f);
                     transform.dirty               = true;
                     if(SpriteComponent* sprite = registry.try_get<SpriteComponent>(entity)) {
-                        const size_t   rarity = static_cast<size_t>(object.rarity);
-                        hlslpp::float4 color  = rarity < tiers->rarityColors.size() ? tiers->rarityColors[rarity] : config->labelColor;
-                        if(!owned && !(state->objectMode && state->selectedObject == element.index))
-                            color.w = config->objectMissingAlpha;
-                        sprite->tintColor = color;
+                        const bool bright = owned || (state->objectMode && state->selectedObject == element.index);
+                        sprite->tintColor = hlslpp::float4(1.0f, 1.0f, 1.0f, bright ? 1.0f : config->objectMissingAlpha);
                     }
                     break;
                 }
@@ -954,20 +960,42 @@ namespace StardustFever::ECS {
             HudUi::SetText(registry, effect, (has ? "効果 発動中  " : "ビッグバンで手に入る  ") + CollectionText::Effect(current.effect, current.effect.value));
             HudUi::SetTextColor(registry, effect, has ? config->collectedLabelColor : config->labelColor);
 
-            std::vector<std::pair<std::string, hlslpp::float4>> lines;
+            // 文章はいつも見せ、その下の一覧だけが動く
+            std::vector<std::pair<std::string, hlslpp::float4>> pinned;
             for(const std::string& line : Core::WrapText(current.caption, config->captionWidth)) {
-                lines.emplace_back(line, config->labelColor * hlslpp::float4(1.3f, 1.3f, 1.3f, 1.3f));
+                pinned.emplace_back(line, config->labelColor * hlslpp::float4(1.3f, 1.3f, 1.3f, 1.3f));
             }
-            lines.emplace_back("", config->labelColor);
+            pinned.emplace_back("", config->labelColor);
+            pinned.emplace_back("Z/X 移る  C/V 同じ種類へ  T 星座へ", config->selectedLabelColor);
+
+            std::vector<std::pair<std::string, hlslpp::float4>> list;
+            int                                                 selectedLine = 0;
             for(int i = static_cast<int>(skyObjects.objects.size()) - 1; i >= 0; --i) {    // レア度の高い順に見せる
                 const Data::SkyObjectDef& object = skyObjects.objects[static_cast<size_t>(i)];
                 const bool                owned  = OwnsSkyObject(*collection, object.id);
                 hlslpp::float4            color  = tint(object);
                 if(!owned)
                     color.w = 0.55f;
-                lines.emplace_back(std::string(i == index ? "▶ " : "　 ") + (owned ? "★ " : "☆ ") + object.name + "  " + rarityName(object), color);
+                if(i == index)
+                    selectedLine = static_cast<int>(list.size());
+                list.emplace_back(std::string(i == index ? "▶ " : "　 ") + (owned ? "★ " : "☆ ") + object.name + "  " + rarityName(object), color);
             }
+
+            const int room      = std::max(1, config->maxRows - static_cast<int>(pinned.size()));
+            state->rowScrollMax = std::max(0, static_cast<int>(list.size()) - room);
+            if(state->objectFollow) {
+                state->rowScroll    = selectedLine - room / 2;
+                state->objectFollow = false;
+            }
+            state->rowScroll = std::clamp(state->rowScroll, 0, state->rowScrollMax);
+
+            std::vector<std::pair<std::string, hlslpp::float4>> lines = pinned;
+            for(int i = 0; i < room && state->rowScroll + i < static_cast<int>(list.size()); ++i) {
+                lines.push_back(list[static_cast<size_t>(state->rowScroll + i)]);
+            }
+            const int scrollMax = state->rowScrollMax;
             writeRows(lines);
+            state->rowScrollMax = scrollMax;    // 一覧の分だけ送れる
             return;
         }
 

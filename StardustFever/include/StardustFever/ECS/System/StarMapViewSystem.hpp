@@ -95,13 +95,16 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         void Layout(Tsukino::ECS::Registry& registry);
 
-        Tsukino::ECS::Scene*      m_scene          = nullptr;
-        entt::entity              m_root           = entt::null;                              //!< 空の部品（空を見ている間だけある）
-        entt::entity              m_veil           = entt::null;                              //!< 暗転の幕（開け閉めの間だけある）
-        int                       m_appliedVersion = -1;                                      //!< 最後に並べたときの状態の version
-        entt::entity              m_groupButton    = entt::null;                              //!< 星座とグループの切り替えのボタン
-        entt::entity              m_objectButton   = entt::null;                              //!< 図鑑を切り替えるボタン
-        entt::entity              m_reticleText    = entt::null;                              //!< 照準が指す星座の名前
+        Tsukino::ECS::Scene*      m_scene                 = nullptr;
+        entt::entity              m_root                  = entt::null;                       //!< 空の部品（空を見ている間だけある）
+        entt::entity              m_veil                  = entt::null;                       //!< 暗転の幕（開け閉めの間だけある）
+        int                       m_appliedVersion        = -1;                               //!< 最後に並べたときの状態の version
+        entt::entity              m_groupButton           = entt::null;                       //!< 星座とグループの切り替えのボタン
+        entt::entity              m_objectButton          = entt::null;                       //!< 図鑑を切り替えるボタン
+        entt::entity              m_reticleText           = entt::null;                       //!< 照準が指す星座の名前
+        int                       m_reticleObject         = -2;                               //!< 書いてある天体
+        bool                      m_reticleInCatalogue    = false;                            //!< 書いたときに図鑑を開いていたか
+        int                       m_reticleSelectedObject = -1;                               //!< 書いたときに図鑑で選んでいた天体
         std::string               m_reticleId;                                                //!< 書いてある星座
         std::string               m_reticleSelected;                                          //!< 書いたときに選ばれていた星座
         entt::entity              m_tooltip        = entt::null;                              //!< 吹き出しの板

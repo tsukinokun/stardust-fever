@@ -18,6 +18,23 @@ EFFECT_VALUES = {
     "feverDuration": (0.5, 1.0, 2.0, 4.0),
 }
 
+# 恒星の絵（色）。無ければ天体の id と同じ名前の絵を使う
+STAR_TEXTURES = {
+    "star_red": ("lalande", "kapteyn", "ross128", "luyten", "wolf359", "proxima", "barnard", "gj581", "trappist1"),
+    "star_orange": ("cyg61", "groombridge"),
+    "star_yellow": ("helvetios", "delcep", "rcrb"),
+    "star_white": ("alcor", "vanmaanen", "sigoct"),
+    "star_blue": ("alcyone", "maia", "electra", "merope", "taygeta", "pcyg"),
+}
+
+# 星図での大きさ（UI のピクセル）。無ければ恒星の大きさ
+STAR_SIZE = 44.0
+OBJECT_SIZES = {
+    "m42": 120.0, "m8": 100.0, "m1": 80.0, "m57": 70.0, "m27": 80.0, "coalsack": 170.0, "etacar": 90.0,
+    "m45": 100.0, "hyades": 130.0, "m44": 90.0, "m7": 90.0, "doublecluster": 100.0, "m13": 80.0, "omegacen": 100.0,
+    "m31": 190.0, "lmc": 170.0, "smc": 120.0, "sgra": 90.0, "cygx1": 90.0,
+}
+
 OBJECTS = [
     # コモン
     dict(id="alcor", hip=65477, name="アルコル", nameEn="Alcor", kind="star", rarity=0, effect="pinPayout",

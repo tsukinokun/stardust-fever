@@ -31,6 +31,8 @@ namespace StardustFever::Data {
         double                 magnitude = 5.0;       //!< 見かけの等級
         int                    rarity    = 0;         //!< レア度（0 がコモン）
         std::string            caption;               //!< 図鑑の文章
+        std::string            texture;               //!< 絵のパス
+        float                  size = 44.0f;          //!< 星図での大きさ（UI のピクセル）
         ConstellationEffectDef effect;                //!< 持っている間の効果
     };
 
@@ -65,6 +67,8 @@ namespace StardustFever::Data {
         Tsukino::IO::LoadOptional(archive, "magnitude", object.magnitude);
         Tsukino::IO::LoadOptional(archive, "rarity", object.rarity);
         Tsukino::IO::LoadOptional(archive, "caption", object.caption);
+        Tsukino::IO::LoadOptional(archive, "texture", object.texture);
+        Tsukino::IO::LoadOptional(archive, "size", object.size);
         Tsukino::IO::LoadOptional(archive, "effect", object.effect);
     }
 

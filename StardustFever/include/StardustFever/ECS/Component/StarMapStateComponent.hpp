@@ -38,6 +38,8 @@ namespace StardustFever::ECS {
         bool        objectMode     = false;    //!< 天体の図鑑を出しているか（T で切り替える）
         int         selectedObject = 0;        //!< 図鑑で選んでいる天体（SkyObjectTable::objects の添字）
         int         hoverObject    = -1;       //!< マウスが乗っている天体（同上。無ければ -1）
+        bool        objectFollow   = false;    //!< 図鑑の一覧を選んだ行へ合わせ直す
+        int         reticleObject  = -1;       //!< 画面の中央に一番近い天体（無ければ -1）
         std::string reticleId;                 //!< 画面の中央に一番近い星座（無ければ空）
         int         version = 0;               //!< 見え方が変わるたびに増える（StarMapViewSystem が並べ直す合図）
     };

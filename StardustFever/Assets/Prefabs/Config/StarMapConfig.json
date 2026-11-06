@@ -130,9 +130,10 @@
         },
         "captionWidth": 54,
         "reticleRadius": 170.0,
-        "objectTexture": "StardustFever/Assets/Textures/UI/star.png",
-        "objectPixels": 64.0,
-        "objectSize": 24.0,
-        "objectMissingAlpha": 0.4
+        "objectPixels": 256.0,
+        "objectMissingAlpha": 0.35,
+        "reticleTexture": "StardustFever/Assets/Textures/UI/reticle.png",
+        "reticleSize": 56.0,
+        "objectReticleRadius": 60.0
     }
 }

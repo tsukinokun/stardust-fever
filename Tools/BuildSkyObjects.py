@@ -15,6 +15,7 @@ import SkyObjects as source  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HYG_PATH = os.path.join(ROOT, "Tools", "SkyData", "hygdata_v41.csv")
+TEXTURE_PATH = "StardustFever/Assets/Textures/SkyObjects/{}.png"
 OUTPUT_PATH = os.path.join(ROOT, "StardustFever", "Assets", "Data", "SkyObjects.json")
 
 
@@ -25,6 +26,7 @@ def load_hyg():
 
 def main():
     hyg = load_hyg()
+    star_textures = {star: texture for texture, stars in source.STAR_TEXTURES.items() for star in stars}
     objects = []
     ids = set()
     for item in source.OBJECTS:
@@ -48,6 +50,8 @@ def main():
             "magnitude": magnitude,
             "rarity": item["rarity"],
             "caption": item["caption"],
+            "texture": TEXTURE_PATH.format(star_textures.get(item["id"], item["id"])),
+            "size": source.OBJECT_SIZES.get(item["id"], source.STAR_SIZE),
             "effect": {"type": item["effect"], "value": source.EFFECT_VALUES[item["effect"]][item["rarity"]]},
         })
 

@@ -11,6 +11,8 @@
                 "magnitude": 3.99,
                 "rarity": 0,
                 "caption": "北斗七星の柄にあるミザールのすぐそばに寄り添う4等星です。古代アラビアでは、この星が見えるかどうかで視力を試したと伝えられます。ミザールと一緒に、肉眼で見える二重星として親しまれてきました。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_white.png",
+                "size": 44.0,
                 "effect": {
                     "type": "pinPayout",
                     "value": 0.05
@@ -26,6 +28,8 @@
                 "magnitude": 5.45,
                 "rarity": 0,
                 "caption": "ペガスス座51番星とも呼ばれる、太陽によく似た星です。1995年、太陽以外の普通の星を回る惑星がこの星で初めて見つかりました。発見者は2019年のノーベル物理学賞を受けています。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_yellow.png",
+                "size": 44.0,
                 "effect": {
                     "type": "global",
                     "value": 0.02
@@ -41,6 +45,8 @@
                 "magnitude": 5.2,
                 "rarity": 0,
                 "caption": "1838年、ベッセルが年周視差を測り、恒星までの距離が初めてわかった星です。空の上を動く速さが大きいことから「飛翔星」とも呼ばれました。約11光年先にある、橙色の二重星です。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_orange.png",
+                "size": 44.0,
                 "effect": {
                     "type": "feverDuration",
                     "value": 0.5
@@ -56,6 +62,8 @@
                 "magnitude": 7.49,
                 "rarity": 0,
                 "caption": "おおぐま座にある赤色矮星で、太陽から約8光年の近さにあります。暗くて肉眼では見えませんが、北天で見える恒星の中では特に近い星です。フランスの天文学者ラランドの星表に名前が残ります。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_red.png",
+                "size": 44.0,
                 "effect": {
                     "type": "pocketPayout",
                     "value": 0.05
@@ -71,6 +79,8 @@
                 "magnitude": 8.86,
                 "rarity": 0,
                 "caption": "がか座にある赤色矮星で、空の上を動く速さが全天で2番目に大きい星です。銀河の回転とは逆向きに回っていて、別の小さな銀河から来た星だと考えられています。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_red.png",
+                "size": 44.0,
                 "effect": {
                     "type": "starChance",
                     "value": 0.003
@@ -86,6 +96,8 @@
                 "magnitude": 6.42,
                 "rarity": 0,
                 "caption": "おおぐま座にある古い星で、銀河の円盤を突き抜けるように高速で動いています。19世紀に見つかった当時は、空の上を動く速さが最も大きい星でした。金属の少ない、宇宙の古い世代の星です。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_orange.png",
+                "size": 44.0,
                 "effect": {
                     "type": "lotteryChance",
                     "value": 0.001
@@ -101,6 +113,8 @@
                 "magnitude": 11.12,
                 "rarity": 0,
                 "caption": "おとめ座にある穏やかな赤色矮星です。約11光年先にあり、地球ほどの大きさの惑星が見つかっています。赤色矮星には珍しく激しい爆発が少なく、生命を探す候補として注目されています。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_red.png",
+                "size": 44.0,
                 "effect": {
                     "type": "pinPayout",
                     "value": 0.05
@@ -116,6 +130,8 @@
                 "magnitude": 9.84,
                 "rarity": 0,
                 "caption": "こいぬ座にある赤色矮星で、約12光年先にあります。2017年に宇宙人へ向けて音楽などの信号が送られた星で、返事が届くとしても四半世紀ほど先のことになります。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_red.png",
+                "size": 44.0,
                 "effect": {
                     "type": "pocketPayout",
                     "value": 0.05
@@ -131,6 +147,8 @@
                 "magnitude": 12.37,
                 "rarity": 0,
                 "caption": "うお座にある白色矮星で、単独で輝く白色矮星としては太陽に最も近い星です。太陽ほどの重さが地球ほどの大きさに詰まっています。太陽も遠い未来にこのような姿になります。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_white.png",
+                "size": 44.0,
                 "effect": {
                     "type": "global",
                     "value": 0.02
@@ -146,6 +164,8 @@
                 "magnitude": 4.07,
                 "rarity": 0,
                 "caption": "約5.4日の周期で明るさを変える変光星です。この仲間は周期から本当の明るさがわかるため、宇宙の距離を測るものさしになりました。遠い銀河までの距離もこの星の仲間で測られました。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_yellow.png",
+                "size": 44.0,
                 "effect": {
                     "type": "lotteryChance",
                     "value": 0.001
@@ -161,6 +181,8 @@
                 "magnitude": 5.45,
                 "rarity": 0,
                 "caption": "天の南極に最も近い肉眼の星で、南の北極星とも呼ばれます。ただし5等星とかなり暗く、北のポラリスのような目印にはなりません。南半球の空は、この星のまわりを回ります。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_white.png",
+                "size": 44.0,
                 "effect": {
                     "type": "starChance",
                     "value": 0.003
@@ -176,6 +198,8 @@
                 "magnitude": 5.89,
                 "rarity": 0,
                 "caption": "ふだんは6等星ですが、ある日突然暗くなる変わった星です。星のまわりに炭素のすすが固まって光を隠すためで、数か月かけて元に戻ります。明るくなるのではなく暗くなる、逆の新星です。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_yellow.png",
+                "size": 44.0,
                 "effect": {
                     "type": "feverDuration",
                     "value": 0.5
@@ -191,6 +215,8 @@
                 "magnitude": 2.85,
                 "rarity": 0,
                 "caption": "すばる（プレアデス星団）で一番明るい星です。名前はギリシャ神話のプレアデス七姉妹の一人に由来します。青白い巨星で、星団の中心近くに輝きます。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_blue.png",
+                "size": 44.0,
                 "effect": {
                     "type": "pinPayout",
                     "value": 0.05
@@ -206,6 +232,8 @@
                 "magnitude": 3.87,
                 "rarity": 0,
                 "caption": "すばるの星の一つで、七姉妹の長女とされます。神々の使いヘルメスの母です。5月（May）の名前の由来ともいわれます。星のまわりを青い反射星雲が包んでいます。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_blue.png",
+                "size": 44.0,
                 "effect": {
                     "type": "pocketPayout",
                     "value": 0.05
@@ -221,6 +249,8 @@
                 "magnitude": 3.72,
                 "rarity": 0,
                 "caption": "すばるの星の一つです。七姉妹の中で一人だけ姿を消したとする伝説があり、物語によってはこの星がその一人とされます。肉眼で見えるすばるの星が6つほどなのは、この伝説と結び付けられてきました。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_blue.png",
+                "size": 44.0,
                 "effect": {
                     "type": "global",
                     "value": 0.02
@@ -236,6 +266,8 @@
                 "magnitude": 4.14,
                 "rarity": 0,
                 "caption": "すばるの星の一つで、南側に広がる反射星雲をまとっています。七姉妹の中で一人だけ人間の王と結婚したため、恥じて光が弱いという神話があります。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_blue.png",
+                "size": 44.0,
                 "effect": {
                     "type": "feverDuration",
                     "value": 0.5
@@ -251,6 +283,8 @@
                 "magnitude": 4.3,
                 "rarity": 0,
                 "caption": "すばるの星の一つで、スパルタの近くのタイゲトス山の名の由来となった女神です。実際には互いのまわりを回る連星で、2つの星の光が合わさって見えています。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_blue.png",
+                "size": 44.0,
                 "effect": {
                     "type": "lotteryChance",
                     "value": 0.001
@@ -266,6 +300,8 @@
                 "magnitude": 13.5,
                 "rarity": 0,
                 "caption": "しし座にある赤色矮星で、太陽から約8光年の近さにあります。太陽の1割ほどの重さしかなく、望遠鏡なしでは見えません。近い星として物語の舞台に選ばれることもあります。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_red.png",
+                "size": 44.0,
                 "effect": {
                     "type": "starChance",
                     "value": 0.003
@@ -281,6 +317,8 @@
                 "magnitude": 11.01,
                 "rarity": 1,
                 "caption": "太陽に最も近い恒星で、約4.2光年先にあります。名前はラテン語で「最も近い」の意味です。暗い赤色矮星で肉眼では見えません。地球に似た大きさの惑星が回っていることがわかっています。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_red.png",
+                "size": 44.0,
                 "effect": {
                     "type": "global",
                     "value": 0.04
@@ -296,6 +334,8 @@
                 "magnitude": 9.54,
                 "rarity": 1,
                 "caption": "空の上を動く速さが全天で最も大きい星です。1年で月の直径の約200分の1ほど動き、肉眼には見えませんが、約6光年先で太陽系のすぐ近くを通り過ぎている最中です。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_red.png",
+                "size": 44.0,
                 "effect": {
                     "type": "pinPayout",
                     "value": 0.1
@@ -311,6 +351,8 @@
                 "magnitude": 4.77,
                 "rarity": 1,
                 "caption": "1600年に突然3等星まで明るくなって記録された星です。太陽の数十万倍も明るい青色超巨星で、強い風でガスを噴き出しています。その光の特徴は、同じ仲間の星を調べる手本になりました。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_blue.png",
+                "size": 44.0,
                 "effect": {
                     "type": "feverDuration",
                     "value": 1.0
@@ -326,6 +368,8 @@
                 "magnitude": 10.57,
                 "rarity": 1,
                 "caption": "てんびん座にある赤色矮星で、複数の惑星が見つかっています。生命が住める領域の惑星の候補として話題になりました。地球からこの星へメッセージが送られたこともあります。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_red.png",
+                "size": 44.0,
                 "effect": {
                     "type": "starChance",
                     "value": 0.006
@@ -341,6 +385,8 @@
                 "magnitude": 18.8,
                 "rarity": 1,
                 "caption": "みずがめ座にある小さな赤色矮星で、地球ほどの大きさの惑星が7つも回っています。そのうち数個は水が液体で存在できる範囲にあります。40光年ほど先にある、生命探しの注目の星です。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/star_red.png",
+                "size": 44.0,
                 "effect": {
                     "type": "lotteryChance",
                     "value": 0.002
@@ -356,6 +402,8 @@
                 "magnitude": 1.6,
                 "rarity": 1,
                 "caption": "日本では「すばる」の名で親しまれる、おうし座の散開星団です。清少納言も「星はすばる」と書きました。生まれて1億年ほどの若い星が、青い光で輝いています。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/m45.png",
+                "size": 100.0,
                 "effect": {
                     "type": "pinPayout",
                     "value": 0.1
@@ -371,6 +419,8 @@
                 "magnitude": 0.5,
                 "rarity": 1,
                 "caption": "おうし座の顔にあたるV字形の星団で、地球に最も近い散開星団の一つです。約150光年先にあります。距離が正確に測れるので、宇宙の距離の物差しの土台として使われてきました。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/hyades.png",
+                "size": 130.0,
                 "effect": {
                     "type": "pocketPayout",
                     "value": 0.1
@@ -386,6 +436,8 @@
                 "magnitude": 3.7,
                 "rarity": 1,
                 "caption": "かに座の中央にある散開星団で、英語では「蜂の巣」と呼ばれます。肉眼ではぼんやりした雲に見え、古代から知られていました。望遠鏡を初めて向けたガリレオが、星の集まりだと確かめました。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/m44.png",
+                "size": 90.0,
                 "effect": {
                     "type": "pocketPayout",
                     "value": 0.1
@@ -401,6 +453,8 @@
                 "magnitude": 4.3,
                 "rarity": 1,
                 "caption": "ペルセウス座とカシオペヤ座の間に、2つの星団が並んでいます。どちらも約7500光年先にあり、肉眼でも見えるほど明るく輝く、若い星の大きな集まりです。小さな双眼鏡で見ると見事です。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/doublecluster.png",
+                "size": 100.0,
                 "effect": {
                     "type": "global",
                     "value": 0.04
@@ -416,6 +470,8 @@
                 "magnitude": 3.3,
                 "rarity": 1,
                 "caption": "さそり座の尾にある明るい散開星団です。西暦130年ごろに天文学者プトレマイオス（トレミー）が記録し、その名が付きました。肉眼で見える星団として、古くから知られていました。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/m7.png",
+                "size": 90.0,
                 "effect": {
                     "type": "starChance",
                     "value": 0.006
@@ -431,6 +487,8 @@
                 "magnitude": 6.0,
                 "rarity": 1,
                 "caption": "いて座にある、星が生まれている巨大なガスの雲です。中央を横切る暗い帯が、潮が引いた干潟のように見えることからこの名があります。条件が良ければ肉眼でもぼんやり見えます。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/m8.png",
+                "size": 100.0,
                 "effect": {
                     "type": "feverDuration",
                     "value": 1.0
@@ -446,6 +504,8 @@
                 "magnitude": 7.5,
                 "rarity": 1,
                 "caption": "こぎつね座にある惑星状星雲で、星の一生の終わりにガスが広がった姿です。鉄アレイのような形からこの名が付きました。1764年に初めて見つかった惑星状星雲です。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/m27.png",
+                "size": 80.0,
                 "effect": {
                     "type": "lotteryChance",
                     "value": 0.002
@@ -461,6 +521,8 @@
                 "magnitude": 9.0,
                 "rarity": 1,
                 "caption": "南十字星のすぐそばで、天の川にぽっかり穴が開いたように見える暗黒星雲です。名前は「石炭袋」の意味です。冷たいちりが後ろの星の光を隠し、南半球では肉眼ではっきり見えます。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/coalsack.png",
+                "size": 170.0,
                 "effect": {
                     "type": "global",
                     "value": 0.04
@@ -476,6 +538,8 @@
                 "magnitude": 4.0,
                 "rarity": 2,
                 "caption": "オリオン座の三つ星の下にある、肉眼でも見える星の誕生の現場です。約1300光年先の巨大なガスの雲の中で、今まさに星が生まれています。冬の空で一番有名な星雲です。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/m42.png",
+                "size": 120.0,
                 "effect": {
                     "type": "feverDuration",
                     "value": 2.0
@@ -491,6 +555,8 @@
                 "magnitude": 4.3,
                 "rarity": 2,
                 "caption": "太陽の100倍を超える重さの星を含む、銀河でも指折りの巨星です。1840年代に大爆発を起こし、一時は全天で2番目に明るくなりました。いつか超新星になると考えられています。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/etacar.png",
+                "size": 90.0,
                 "effect": {
                     "type": "global",
                     "value": 0.08
@@ -506,6 +572,8 @@
                 "magnitude": 8.84,
                 "rarity": 2,
                 "caption": "ブラックホールとして初めて広く認められた天体です。青い超巨星のガスを吸い込み、強いX線を放っています。ホーキングが「ブラックホールではない」方に賭け、後に負けを認めた話が有名です。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/cygx1.png",
+                "size": 90.0,
                 "effect": {
                     "type": "pocketPayout",
                     "value": 0.2
@@ -521,6 +589,8 @@
                 "magnitude": 8.4,
                 "rarity": 2,
                 "caption": "1054年に爆発した超新星の残骸です。藤原定家の『明月記』にもこの時の「客星」の記録が残ります。中心には1秒に約30回転する中性子星があり、今も星雲を光らせています。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/m1.png",
+                "size": 80.0,
                 "effect": {
                     "type": "pinPayout",
                     "value": 0.2
@@ -536,6 +606,8 @@
                 "magnitude": 8.8,
                 "rarity": 2,
                 "caption": "こと座にある、輪の形をした惑星状星雲です。太陽のような星が一生の終わりに外側のガスを放った姿で、輪の中心には白色矮星が残っています。小さな望遠鏡でも輪の形が見えます。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/m57.png",
+                "size": 70.0,
                 "effect": {
                     "type": "lotteryChance",
                     "value": 0.005
@@ -551,6 +623,8 @@
                 "magnitude": 5.8,
                 "rarity": 2,
                 "caption": "数十万の古い星が球のように集まった星団で、北半球で最も見事な球状星団です。1974年、この星団へ向けて電波のメッセージが送られました。届くのは約2万5千年後です。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/m13.png",
+                "size": 80.0,
                 "effect": {
                     "type": "starChance",
                     "value": 0.015
@@ -566,6 +640,8 @@
                 "magnitude": 3.9,
                 "rarity": 2,
                 "caption": "銀河で最大の球状星団で、約1000万個の星が集まっています。プトレマイオスは星として記録しました。銀河に飲み込まれた小さな銀河の中心が残ったものとも考えられています。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/omegacen.png",
+                "size": 100.0,
                 "effect": {
                     "type": "pinPayout",
                     "value": 0.2
@@ -581,6 +657,8 @@
                 "magnitude": 2.7,
                 "rarity": 2,
                 "caption": "天の川銀河のそばを回る小さな銀河で、南半球では肉眼で雲のように見えます。名前はマゼランの世界一周の航海から付きました。この銀河の変光星が、宇宙の距離を測る鍵になりました。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/smc.png",
+                "size": 120.0,
                 "effect": {
                     "type": "global",
                     "value": 0.08
@@ -596,6 +674,8 @@
                 "magnitude": 3.4,
                 "rarity": 3,
                 "caption": "肉眼で見える最も遠い天体の一つで、約250万光年先の巨大な渦巻銀河です。1兆個ほどの星が集まっています。天の川銀河と近づき合っていて、数十億年後には一つになるといわれます。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/m31.png",
+                "size": 190.0,
                 "effect": {
                     "type": "global",
                     "value": 0.2
@@ -611,6 +691,8 @@
                 "magnitude": 0.9,
                 "rarity": 3,
                 "caption": "天の川銀河の最大の伴銀河で、約16万光年先にあります。1987年にここで起きた超新星では、ニュートリノが日本のカミオカンデで捉えられ、小柴昌俊のノーベル賞につながりました。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/lmc.png",
+                "size": 170.0,
                 "effect": {
                     "type": "feverDuration",
                     "value": 4.0
@@ -626,6 +708,8 @@
                 "magnitude": 30.0,
                 "rarity": 3,
                 "caption": "天の川銀河の中心にある、太陽の約400万倍の重さの巨大ブラックホールです。まわりの星の動きからその存在が確かめられ、2020年のノーベル物理学賞になりました。2022年にはその影の姿が写されました。",
+                "texture": "StardustFever/Assets/Textures/SkyObjects/sgra.png",
+                "size": 90.0,
                 "effect": {
                     "type": "pinPayout",
                     "value": 0.6

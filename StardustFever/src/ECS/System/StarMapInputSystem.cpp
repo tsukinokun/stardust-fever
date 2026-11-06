@@ -96,7 +96,7 @@ namespace StardustFever::ECS {
             state.groupMode      = false;
             state.objectMode     = true;
             state.selectedObject = index;
-            state.rowScroll      = 0;
+            state.objectFollow   = true;
             TurnTo(state, objects[static_cast<size_t>(index)].ra * 15.0, objects[static_cast<size_t>(index)].dec, maxDec);
         }
 
@@ -397,7 +397,7 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         if(state->objectMode && (previous || next) && !skyObjects.empty()) {
             const int count = static_cast<int>(skyObjects.size());
-            SelectObject(*state, skyObjects, (std::clamp(state->selectedObject, 0, count - 1) + (next ? 1 : count - 1)) % count, config->maxDec);
+            SelectObject(*state, skyObjects, (std::clamp(state->selectedObject, 0, count - 1) + (next ? count - 1 : 1)) % count, config->maxDec);
             changed = true;
         }
         if(!state->groupMode && !state->objectMode && (previous || next) && !table.constellations.empty()) {
@@ -440,8 +440,28 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         // 中央の照準。一番近い星座を拾い、Space・Enter で選ぶ
         //-------------------------------------------------------------
-        state->reticleId = PickConstellation(*state, *config, 0.0, 0.0, config->reticleRadius);
-        if((input.IsKeyPressed(KeyCode::Space) || input.IsKeyPressed(KeyCode::Enter)) && !state->reticleId.empty()) {
+        state->reticleId     = PickConstellation(*state, *config, 0.0, 0.0, config->reticleRadius);
+        state->reticleObject = -1;
+        {
+            double       best = static_cast<double>(config->objectReticleRadius) * config->objectReticleRadius;
+            const double view = config->baseFov / std::max(state->zoom, 0.1);
+            for(size_t i = 0; i < skyObjects.size(); ++i) {
+                Core::SkyMath::Point point;
+                if(!Core::SkyMath::ProjectToScreen(
+                       state->raCenter, state->decCenter, view, kScreenHalfHeight, skyObjects[i].ra * 15.0, skyObjects[i].dec, point))
+                    continue;
+                if(point.x * point.x + point.y * point.y <= best) {
+                    best                 = point.x * point.x + point.y * point.y;
+                    state->reticleObject = static_cast<int>(i);
+                }
+            }
+        }
+        const bool pressedSelect = input.IsKeyPressed(KeyCode::Space) || input.IsKeyPressed(KeyCode::Enter);
+        if(pressedSelect && state->reticleObject >= 0) {
+            // 天体は星座より優先する。星座の線に重なっていても選べるように
+            SelectObject(*state, skyObjects, state->reticleObject, config->maxDec);
+            changed = true;
+        } else if(pressedSelect && !state->reticleId.empty()) {
             if(const Data::ConstellationDef* picked = table.Find(state->reticleId)) {
                 state->selectedId = picked->id;
                 state->groupMode  = false;
@@ -461,7 +481,21 @@ namespace StardustFever::ECS {
         }
         const bool previousStar = input.IsKeyPressed(KeyCode::C);
         const bool nextStar     = input.IsKeyPressed(KeyCode::V);
-        if(previousStar || nextStar) {
+        if((previousStar || nextStar) && state->objectMode && !skyObjects.empty()) {
+            // 図鑑では、同じ種類の前後へ移る。向きは Z / X と同じく一覧の順
+            const int          count   = static_cast<int>(skyObjects.size());
+            const int          current = std::clamp(state->selectedObject, 0, count - 1);
+            const int          step    = nextStar ? count - 1 : 1;
+            const std::string& kind    = skyObjects[static_cast<size_t>(current)].kind;
+            for(int i = 1; i < count; ++i) {
+                const int candidate = (current + step * i) % count;
+                if(skyObjects[static_cast<size_t>(candidate)].kind == kind) {
+                    SelectObject(*state, skyObjects, candidate, config->maxDec);
+                    changed = true;
+                    break;
+                }
+            }
+        } else if(previousStar || nextStar) {
             if(const Data::ConstellationDef* selected = table.Find(state->selectedId)) {
                 const Data::StarTable&            starTable = Data::GetStarTable();
                 std::vector<const Data::StarDef*> members;

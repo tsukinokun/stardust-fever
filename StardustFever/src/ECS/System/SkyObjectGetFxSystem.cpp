@@ -115,21 +115,18 @@ namespace StardustFever::ECS {
             registry.GetComponent<Tsukino::BuiltIn::ECS::FontComponent>(line).maxWidth = width - 80.0f;
         };
 
-        // レア度の色の光と星
-        hlslpp::float4 glowColor = color;
-        glowColor.w              = 0.55f;
-        const entt::entity glow  = UiParts::MakeNode(*m_scene, registry, card, 0.0f, top + 92.0f);
-        UiParts::AddImage(registry, glow, assets.Load(Tsukino::Core::Path(style->glowTexture)), 300.0f, 300.0f, order + 3, glowColor);
-        const entt::entity star = UiParts::MakeNode(*m_scene, registry, card, 0.0f, top + 92.0f);
-        UiParts::AddImage(registry, star, assets.Load(Tsukino::Core::Path(style->starTexture)), 96.0f, 96.0f, order + 4, color);
-        HudUi::PlayPingPong(registry, star, Tsukino::BuiltIn::ECS::UITweenProperty::Scale, 1.0f, 1.12f, 1.4f, 0.0f, HudUi::Tag::kPulse);
+        // 天体の絵。ゆっくり呼吸するように大きさを動かす
+        const entt::entity image = UiParts::MakeNode(*m_scene, registry, card, 0.0f, top + 126.0f);
+        UiParts::AddImage(
+            registry, image, assets.Load(Tsukino::Core::Path(object->texture)), 230.0f, 230.0f, order + 4, hlslpp::float4(1.0f, 1.0f, 1.0f, 1.0f));
+        HudUi::PlayPingPong(registry, image, Tsukino::BuiltIn::ECS::UITweenProperty::Scale, 1.0f, 1.05f, 5.0f, 0.0f, HudUi::Tag::kPulse);
 
-        text(rarity < config->rarityNames.size() ? config->rarityNames[rarity] : std::string(), 168.0f, style->textScale * 1.1f, color);
-        text(object->name, 214.0f, style->titleScale, style->titleColor);
-        text(object->nameEn + "  " + CollectionText::SkyObjectKind(object->kind), 258.0f, style->textScale * 0.8f, style->textColor);
-        text(CollectionText::Effect(object->effect, object->effect.value), 294.0f, style->textScale, color);
+        text(rarity < config->rarityNames.size() ? config->rarityNames[rarity] : std::string(), 254.0f, style->textScale * 1.1f, color);
+        text(object->name, 298.0f, style->titleScale, style->titleColor);
+        text(object->nameEn + "  " + CollectionText::SkyObjectKind(object->kind), 342.0f, style->textScale * 0.8f, style->textColor);
+        text(CollectionText::Effect(object->effect, object->effect.value), 376.0f, style->textScale, color);
 
-        float y = 338.0f;
+        float y = 416.0f;
         for(const std::string& line : Core::WrapText(object->caption, config->captionColumns)) {
             text(line, y, style->textScale * 0.8f, style->textColor);
             y += 26.0f;
