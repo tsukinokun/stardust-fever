@@ -49,9 +49,10 @@ namespace StardustFever::ECS {
 
         //-------------------------------------------------------------
         //! @brief  部品を今の値に合わせる
-        //! @param  registry [in] レジストリ
+        //! @param  registry  [in] レジストリ
+        //! @param  deltaTime [in] 経過時間（秒）
         //-------------------------------------------------------------
-        void Sync(Tsukino::ECS::Registry& registry);
+        void Sync(Tsukino::ECS::Registry& registry, float deltaTime);
 
         Tsukino::ECS::Scene* m_scene      = nullptr;
         entt::entity         m_openButton = entt::null;    //!< 遊んでいる画面の「設定」のボタン

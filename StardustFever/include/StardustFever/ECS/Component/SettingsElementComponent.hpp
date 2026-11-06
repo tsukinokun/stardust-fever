@@ -19,6 +19,7 @@ namespace StardustFever::ECS {
         Knob,           //!< スライダーのつまみ
         Percent,        //!< 音量の文字
         Toggle,         //!< 切り替えのボタン（index は SettingsItem）
+        ToggleKnob,     //!< 切り替えの星
         ToggleText,     //!< 切り替えの文字
     };
 
