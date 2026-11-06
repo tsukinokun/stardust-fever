@@ -321,6 +321,12 @@ namespace StardustFever::ECS {
         const Data::StarDef&          star  = stars.stars[static_cast<size_t>(m_tooltipStar)];
         const Data::ConstellationDef* home  = Data::GetConstellationTable().Find(star.constellationId);
         const auto                    found = collection->starLevels.find(star.id);
+        if(found == collection->starLevels.end()) {
+            HudUi::SetText(registry, m_tooltipText[0], "未発見の星");
+            HudUi::SetText(registry, m_tooltipText[1], home ? home->name : std::string());
+            HudUi::SetText(registry, m_tooltipText[2], "星ゲットチャンスで手に入る");
+            return;
+        }
         HudUi::SetText(registry, m_tooltipText[0], star.name);
         HudUi::SetText(registry, m_tooltipText[1], CollectionText::StarFacts(star));
         HudUi::SetText(
@@ -757,7 +763,8 @@ namespace StardustFever::ECS {
         std::vector<const Data::StarDef*> labelled;
         if(selected && !group) {
             for(const Data::ConstellationStarDef& member : selected->stars) {
-                if(const Data::StarDef* star = stars.Find(member.starId))
+                // まだ手に入れていない星には札を付けない
+                if(const Data::StarDef* star = stars.Find(member.starId); star && collection->starLevels.contains(star->id))
                     labelled.push_back(star);
             }
             std::sort(labelled.begin(), labelled.end(), [](const Data::StarDef* a, const Data::StarDef* b) {
@@ -828,7 +835,7 @@ namespace StardustFever::ECS {
                     const bool           owned  = collection->starLevels.contains(star.id);
                     float                size   = config->faintStarSize + (config->brightStarSize - config->faintStarSize) * bright;
                     if(!owned)
-                        size *= 0.7f;
+                        size = config->unknownStarSize;    // 明るさがわからないよう、全部同じ大きさにする
                     const bool unseen = std::find(collection->unseenStars.begin(), collection->unseenStars.end(), star.id) != collection->unseenStars.end();
                     if(unseen)
                         size *= 2.2f;    // まだ見ていない星は大きくして、見つけやすくする
@@ -1131,7 +1138,12 @@ namespace StardustFever::ECS {
             if(const Data::StarDef* star = stars.Find(member.starId))
                 members.push_back(star);
         }
-        std::sort(members.begin(), members.end(), [](const Data::StarDef* a, const Data::StarDef* b) { return a->magnitude < b->magnitude; });
+        // 持っている星を明るい順に並べ、まだ手に入れていない星はその後に続ける
+        std::sort(members.begin(), members.end(), [&](const Data::StarDef* a, const Data::StarDef* b) {
+            const bool ownedA = collection->starLevels.contains(a->id);
+            const bool ownedB = collection->starLevels.contains(b->id);
+            return ownedA != ownedB ? ownedA : a->magnitude < b->magnitude;
+        });
 
         //-------------------------------------------------------------
         // 図鑑の文章の下に星の一覧を続け、入りきらない分はホイールで送る
@@ -1143,8 +1155,12 @@ namespace StardustFever::ECS {
         if(!lines.empty())
             lines.emplace_back("", config->labelColor);
         for(const Data::StarDef* star : members) {
-            const auto  found = collection->starLevels.find(star->id);
-            const int   level = found == collection->starLevels.end() ? 0 : found->second;
+            const auto found = collection->starLevels.find(star->id);
+            const int  level = found == collection->starLevels.end() ? 0 : found->second;
+            if(level <= 0) {
+                lines.emplace_back("☆ ？？？", config->missingStarColor * hlslpp::float4(1.4f, 1.4f, 1.4f, 1.0f));
+                continue;
+            }
             std::string marks;
             for(int i = 0; i < maxLevel; ++i) {
                 marks += i < level ? "★" : "☆";

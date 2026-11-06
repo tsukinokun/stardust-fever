@@ -82,6 +82,7 @@ namespace StardustFever::ECS {
         float          objectPixels        = 256.0f;                                       //!< 天体の絵の幅
         std::string    objectUnknownTexture;                                               //!< まだ手に入れていない天体の絵
         float          objectUnknownSize  = 40.0f;                                         //!< まだ手に入れていない天体の大きさ（UI のピクセル）
+        float          unknownStarSize    = 4.0f;                                          //!< まだ手に入れていない星の大きさ（UI のピクセル）
         float          objectMissingAlpha = 0.4f;                                          //!< 持っていない天体の濃さ
         float          hoverRadius        = 14.0f;                                         //!< マウスがこの距離まで近づくと星の吹き出しを出す（UI のピクセル）
         float          tooltipWidth       = 330.0f;                                        //!< 吹き出しの幅

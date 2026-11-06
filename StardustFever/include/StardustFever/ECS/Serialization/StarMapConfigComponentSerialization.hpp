@@ -83,6 +83,7 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("objectPixels", component.objectPixels));
         archive(cereal::make_nvp("objectUnknownTexture", component.objectUnknownTexture));
         archive(cereal::make_nvp("objectUnknownSize", component.objectUnknownSize));
+        archive(cereal::make_nvp("unknownStarSize", component.unknownStarSize));
         archive(cereal::make_nvp("objectMissingAlpha", component.objectMissingAlpha));
         archive(cereal::make_nvp("hoverRadius", component.hoverRadius));
         archive(cereal::make_nvp("tooltipWidth", component.tooltipWidth));
@@ -161,6 +162,7 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "objectPixels", component.objectPixels);
         Tsukino::IO::LoadOptional(archive, "objectUnknownTexture", component.objectUnknownTexture);
         Tsukino::IO::LoadOptional(archive, "objectUnknownSize", component.objectUnknownSize);
+        Tsukino::IO::LoadOptional(archive, "unknownStarSize", component.unknownStarSize);
         Tsukino::IO::LoadOptional(archive, "objectMissingAlpha", component.objectMissingAlpha);
         Tsukino::IO::LoadOptional(archive, "hoverRadius", component.hoverRadius);
         Tsukino::IO::LoadOptional(archive, "tooltipWidth", component.tooltipWidth);

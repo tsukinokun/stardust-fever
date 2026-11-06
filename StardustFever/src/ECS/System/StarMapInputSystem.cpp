@@ -501,9 +501,11 @@ namespace StardustFever::ECS {
         } else if(previousStar || nextStar) {
             if(const Data::ConstellationDef* selected = table.Find(state->selectedId)) {
                 const Data::StarTable&            starTable = Data::GetStarTable();
+                const StarCollectionComponent*    held      = FindSingleton<StarCollectionComponent>(registry);
                 std::vector<const Data::StarDef*> members;
                 for(const Data::ConstellationStarDef& member : selected->stars) {
-                    if(const Data::StarDef* star = starTable.Find(member.starId))
+                    // まだ手に入れていない星は飛ばす
+                    if(const Data::StarDef* star = starTable.Find(member.starId); star && held && held->starLevels.contains(star->id))
                         members.push_back(star);
                 }
                 std::sort(members.begin(), members.end(), [](const Data::StarDef* a, const Data::StarDef* b) { return a->magnitude < b->magnitude; });
