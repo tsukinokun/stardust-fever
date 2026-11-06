@@ -77,6 +77,10 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("revealLookDegrees", component.revealLookDegrees));
         archive(cereal::make_nvp("inertiaFriction", component.inertiaFriction));
         archive(cereal::make_nvp("focusSpeed", component.focusSpeed));
+        archive(cereal::make_nvp("objectTexture", component.objectTexture));
+        archive(cereal::make_nvp("objectPixels", component.objectPixels));
+        archive(cereal::make_nvp("objectSize", component.objectSize));
+        archive(cereal::make_nvp("objectMissingAlpha", component.objectMissingAlpha));
         archive(cereal::make_nvp("hoverRadius", component.hoverRadius));
         archive(cereal::make_nvp("tooltipWidth", component.tooltipWidth));
         archive(cereal::make_nvp("tooltipHeight", component.tooltipHeight));
@@ -148,6 +152,10 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "revealLookDegrees", component.revealLookDegrees);
         Tsukino::IO::LoadOptional(archive, "inertiaFriction", component.inertiaFriction);
         Tsukino::IO::LoadOptional(archive, "focusSpeed", component.focusSpeed);
+        Tsukino::IO::LoadOptional(archive, "objectTexture", component.objectTexture);
+        Tsukino::IO::LoadOptional(archive, "objectPixels", component.objectPixels);
+        Tsukino::IO::LoadOptional(archive, "objectSize", component.objectSize);
+        Tsukino::IO::LoadOptional(archive, "objectMissingAlpha", component.objectMissingAlpha);
         Tsukino::IO::LoadOptional(archive, "hoverRadius", component.hoverRadius);
         Tsukino::IO::LoadOptional(archive, "tooltipWidth", component.tooltipWidth);
         Tsukino::IO::LoadOptional(archive, "tooltipHeight", component.tooltipHeight);

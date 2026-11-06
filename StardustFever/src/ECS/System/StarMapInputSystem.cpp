@@ -86,6 +86,21 @@ namespace StardustFever::ECS {
         }
 
         //-------------------------------------------------------------
+        //! @brief  天体の図鑑でその天体を選び、その方へ回る
+        //! @param  state   [in,out] 星図の状態
+        //! @param  objects [in] 天体の一覧
+        //! @param  index   [in] 選ぶ天体の添字
+        //! @param  maxDec  [in] 見られる赤緯の上限
+        //-------------------------------------------------------------
+        void SelectObject(StarMapStateComponent& state, const std::vector<Data::SkyObjectDef>& objects, int index, float maxDec) {
+            state.groupMode      = false;
+            state.objectMode     = true;
+            state.selectedObject = index;
+            state.rowScroll      = 0;
+            TurnTo(state, objects[static_cast<size_t>(index)].ra * 15.0, objects[static_cast<size_t>(index)].dec, maxDec);
+        }
+
+        //-------------------------------------------------------------
         //! @brief  星座の方へ回る
         //! @param  state         [in,out] 星図の状態
         //! @param  constellation [in] 星座
@@ -142,6 +157,7 @@ namespace StardustFever::ECS {
         bool openGroups   = false;
         bool closeMap     = false;
         bool toggleGroups = false;
+        bool toggleObject = false;
         bool previousItem = false;
         bool nextItem     = false;
         int  pickedGroup  = -1;
@@ -150,6 +166,7 @@ namespace StardustFever::ECS {
             openGroups   = openGroups || action.action == UiAction::OpenGroups;
             closeMap     = closeMap || action.action == UiAction::MapClose;
             toggleGroups = toggleGroups || action.action == UiAction::MapToggleGroups;
+            toggleObject = toggleObject || action.action == UiAction::MapToggleObjects;
             previousItem = previousItem || action.action == UiAction::MapPrevious;
             nextItem     = nextItem || action.action == UiAction::MapNext;
             if(action.action == UiAction::MapSelectGroup)
@@ -171,9 +188,10 @@ namespace StardustFever::ECS {
 
         const bool tabPressed = input.IsKeyPressed(KeyCode::Tab) || openMap;
         if(tabPressed || (state->open && (closeMap || input.IsKeyPressed(KeyCode::Escape)))) {
-            state->open      = !state->open && tabPressed;
-            state->groupMode = false;    // Tab はいつも星座の画面から始める
-            state->dragging  = false;
+            state->open       = !state->open && tabPressed;
+            state->groupMode  = false;    // Tab はいつも星座の画面から始める
+            state->objectMode = false;
+            state->dragging   = false;
             ++state->version;
 
             //-------------------------------------------------------------
@@ -182,6 +200,20 @@ namespace StardustFever::ECS {
             if(StarCollectionComponent* collection = FindSingleton<StarCollectionComponent>(registry)) {
                 if(!state->open) {
                     collection->unseenStars.clear();
+                    collection->unseenObjects.clear();
+                } else if(!collection->unseenObjects.empty()) {
+                    // 新しい天体を先に見せる。図鑑を開いて、その方を向く
+                    const std::vector<Data::SkyObjectDef>& objects = Data::GetSkyObjectTable().objects;
+                    for(size_t i = 0; i < objects.size(); ++i) {
+                        if(objects[i].id != collection->unseenObjects.back())
+                            continue;
+                        state->objectMode     = true;
+                        state->selectedObject = static_cast<int>(i);
+                        state->raCenter       = objects[i].ra * 15.0;
+                        state->decCenter      = std::clamp(objects[i].dec, -static_cast<double>(config->maxDec), static_cast<double>(config->maxDec));
+                        state->rowScroll      = 0;
+                        state->focusing       = false;
+                    }
                 } else if(!collection->unseenStars.empty()) {
                     if(const Data::StarDef* star = Data::GetStarTable().Find(collection->unseenStars.back())) {
                         state->raCenter   = star->ra * 15.0;
@@ -253,14 +285,22 @@ namespace StardustFever::ECS {
             if(state->dragMoved < config->dragThreshold) {
                 state->raVelocity  = 0.0;
                 state->decVelocity = 0.0;
-                // クリックで星座を選んだら、星座の詳しい中身に戻し、その方へ回る
-                state->selectedId = PickConstellation(*state, *config, x - 800.0, y - kScreenHalfHeight, config->clickRadius);
-                state->rowScroll  = 0;
-                if(const Data::ConstellationDef* picked = table.Find(state->selectedId)) {
-                    state->groupMode = false;
-                    TurnToConstellation(*state, *picked, config->maxDec);
+                // 天体の上なら図鑑を開き、それ以外は星座を選ぶ
+                const std::vector<Data::SkyObjectDef>& objects = Data::GetSkyObjectTable().objects;
+                if(state->hoverObject >= 0 && state->hoverObject < static_cast<int>(objects.size())) {
+                    SelectObject(*state, objects, state->hoverObject, config->maxDec);
+                    changed = true;
+                } else {
+                    // クリックで星座を選んだら、星座の詳しい中身に戻し、その方へ回る
+                    state->selectedId = PickConstellation(*state, *config, x - 800.0, y - kScreenHalfHeight, config->clickRadius);
+                    state->rowScroll  = 0;
+                    if(const Data::ConstellationDef* picked = table.Find(state->selectedId)) {
+                        state->groupMode  = false;
+                        state->objectMode = false;
+                        TurnToConstellation(*state, *picked, config->maxDec);
+                    }
+                    changed = true;
                 }
-                changed = true;
             }
         }
 
@@ -316,8 +356,24 @@ namespace StardustFever::ECS {
         // G でグループの一覧と星座の詳しい中身を切り替える。グループの一覧では Z / X で前後のグループへ移る
         //-------------------------------------------------------------
         if(input.IsKeyPressed(KeyCode::G) || toggleGroups) {
-            state->groupMode = !state->groupMode;
-            changed          = true;
+            state->groupMode  = !state->groupMode;
+            state->objectMode = false;
+            state->rowScroll  = 0;
+            changed           = true;
+        }
+
+        //-------------------------------------------------------------
+        // T で天体の図鑑と星座の詳しい中身を切り替える。図鑑では Z / X で天体を移る
+        //-------------------------------------------------------------
+        const std::vector<Data::SkyObjectDef>& skyObjects = Data::GetSkyObjectTable().objects;
+        if((input.IsKeyPressed(KeyCode::T) || toggleObject) && !skyObjects.empty()) {
+            const bool show   = !state->objectMode;
+            state->groupMode  = false;
+            state->objectMode = show;
+            state->rowScroll  = 0;
+            if(show)
+                SelectObject(*state, skyObjects, std::clamp(state->selectedObject, 0, static_cast<int>(skyObjects.size()) - 1), config->maxDec);
+            changed = true;
         }
         const bool previous = input.IsKeyPressed(KeyCode::Z) || previousItem;
         const bool next     = input.IsKeyPressed(KeyCode::X) || nextItem;
@@ -339,7 +395,12 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         // Z / X で前後の星座へ移る（並びは Constellations.json の順＝和名の五十音順）
         //-------------------------------------------------------------
-        if(!state->groupMode && (previous || next) && !table.constellations.empty()) {
+        if(state->objectMode && (previous || next) && !skyObjects.empty()) {
+            const int count = static_cast<int>(skyObjects.size());
+            SelectObject(*state, skyObjects, (std::clamp(state->selectedObject, 0, count - 1) + (next ? 1 : count - 1)) % count, config->maxDec);
+            changed = true;
+        }
+        if(!state->groupMode && !state->objectMode && (previous || next) && !table.constellations.empty()) {
             const int count   = static_cast<int>(table.constellations.size());
             int       current = -1;
             for(int i = 0; i < count; ++i) {
@@ -384,6 +445,7 @@ namespace StardustFever::ECS {
             if(const Data::ConstellationDef* picked = table.Find(state->reticleId)) {
                 state->selectedId = picked->id;
                 state->groupMode  = false;
+                state->objectMode = false;
                 state->rowScroll  = 0;
                 TurnToConstellation(*state, *picked, config->maxDec);
                 changed = true;
@@ -442,6 +504,26 @@ namespace StardustFever::ECS {
                 if(dx * dx + dy * dy <= best) {
                     best             = dx * dx + dy * dy;
                     state->hoverStar = static_cast<int>(i);
+                }
+            }
+        }
+
+        // 天体は星より先に見せる。星の間に埋もれて見つからないのを避ける
+        state->hoverObject = -1;
+        if(inSky && !state->dragging) {
+            const std::vector<Data::SkyObjectDef>& objects = Data::GetSkyObjectTable().objects;
+            double                                 best    = static_cast<double>(config->hoverRadius) * config->hoverRadius;
+            const double                           view    = config->baseFov / std::max(state->zoom, 0.1);
+            for(size_t i = 0; i < objects.size(); ++i) {
+                Core::SkyMath::Point point;
+                if(!Core::SkyMath::ProjectToScreen(state->raCenter, state->decCenter, view, kScreenHalfHeight, objects[i].ra * 15.0, objects[i].dec, point))
+                    continue;
+                const double dx = point.x - (x - 800.0);
+                const double dy = point.y - (y - kScreenHalfHeight);
+                if(dx * dx + dy * dy <= best) {
+                    best               = dx * dx + dy * dy;
+                    state->hoverObject = static_cast<int>(i);
+                    state->hoverStar   = -1;
                 }
             }
         }

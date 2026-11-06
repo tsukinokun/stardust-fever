@@ -100,6 +100,7 @@ namespace StardustFever::ECS {
         entt::entity              m_veil           = entt::null;                              //!< 暗転の幕（開け閉めの間だけある）
         int                       m_appliedVersion = -1;                                      //!< 最後に並べたときの状態の version
         entt::entity              m_groupButton    = entt::null;                              //!< 星座とグループの切り替えのボタン
+        entt::entity              m_objectButton   = entt::null;                              //!< 図鑑を切り替えるボタン
         entt::entity              m_reticleText    = entt::null;                              //!< 照準が指す星座の名前
         std::string               m_reticleId;                                                //!< 書いてある星座
         std::string               m_reticleSelected;                                          //!< 書いたときに選ばれていた星座

@@ -18,6 +18,7 @@ namespace StardustFever::ECS {
         ReticleText,    //!< 照準が指す星座の名前
         Tooltip,        //!< マウスを乗せた星の吹き出しの板
         TooltipText,    //!< 吹き出しの文字（index は行の番号）
+        SkyObject,      //!< 天体（index は SkyObjectTable::objects の添字）
         Star,           //!< 星の点（index は StarTable::stars の添字）
         Line,           //!< 星座の線（index は星座の添字、subIndex は線の添字）
         Label,          //!< 星座名（index は星座の添字）

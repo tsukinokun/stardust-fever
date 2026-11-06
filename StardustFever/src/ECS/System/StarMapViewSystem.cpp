@@ -18,6 +18,7 @@
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
 #include <StardustFever/ECS/Utility/HudUi.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
+#include <StardustFever/ECS/Utility/SkyObjectOdds.hpp>
 #include <StardustFever/ECS/Utility/StarColor.hpp>
 #include <StardustFever/ECS/Utility/UiParts.hpp>
 #include <StardustFever/ECS/Utility/StarMapGeometry.hpp>
@@ -255,9 +256,12 @@ namespace StardustFever::ECS {
 
         const Data::StarTable& stars = Data::GetStarTable();
         // マウスが乗った星を優先し、無ければキーで選んだ星を見せる
-        const bool byMouse                                                                     = state->hoverStar >= 0;
-        const int  target                                                                      = byMouse ? state->hoverStar : state->focusStar;
-        const bool shown                                                                       = target >= 0 && target < static_cast<int>(stars.stars.size());
+        const Data::SkyObjectTable& objects  = Data::GetSkyObjectTable();
+        const bool                  onObject = state->hoverObject >= 0 && state->hoverObject < static_cast<int>(objects.objects.size());
+        const bool                  byMouse  = state->hoverStar >= 0 || onObject;
+        // 天体は星の添字と重ならないよう、星の数の後ろの番号で覚える
+        const int target = onObject ? static_cast<int>(stars.stars.size()) + state->hoverObject : (state->hoverStar >= 0 ? state->hoverStar : state->focusStar);
+        const bool shown = onObject || (target >= 0 && target < static_cast<int>(stars.stars.size()));
         registry.GetComponent<Tsukino::BuiltIn::ECS::UIVisibilityComponent>(m_tooltip).visible = shown;
         if(!shown) {
             m_tooltipStar = -1;
@@ -281,6 +285,22 @@ namespace StardustFever::ECS {
         if(target == m_tooltipStar)
             return;
         m_tooltipStar = target;
+
+        if(onObject) {
+            const Data::SkyObjectDef&       object = objects.objects[static_cast<size_t>(state->hoverObject)];
+            const SkyObjectConfigComponent* tiers  = FindSingleton<SkyObjectConfigComponent>(registry);
+            const size_t                    rarity = static_cast<size_t>(object.rarity);
+            HudUi::SetText(registry, m_tooltipText[0], object.name);
+            HudUi::SetText(
+                registry,
+                m_tooltipText[1],
+                (tiers && rarity < tiers->rarityNames.size() ? tiers->rarityNames[rarity] + "  " : std::string()) + CollectionText::SkyObjectKind(object.kind));
+            HudUi::SetText(registry,
+                           m_tooltipText[2],
+                           (OwnsSkyObject(*collection, object.id) ? "効果 発動中  " : "ビッグバンで手に入る  ")
+                               + CollectionText::Effect(object.effect, object.effect.value));
+            return;
+        }
 
         const Data::StarDef&          star  = stars.stars[static_cast<size_t>(m_tooltipStar)];
         const Data::ConstellationDef* home  = Data::GetConstellationTable().Find(star.constellationId);
@@ -381,6 +401,7 @@ namespace StardustFever::ECS {
         m_tooltip        = entt::null;
         m_groupButton    = entt::null;
         m_reticleText    = entt::null;
+        m_objectButton   = entt::null;
         m_appliedVersion = -1;
 
         using Tsukino::BuiltIn::ECS::UIVisibilityComponent;
@@ -526,6 +547,18 @@ namespace StardustFever::ECS {
         }
 
         //-------------------------------------------------------------
+        // 天体: 星とは違う形の板。大きさと色は Layout が決める
+        //-------------------------------------------------------------
+        const Tsukino::Asset::AssetHandle objectImage = context->assetManager->Load(Tsukino::Core::Path(config->objectTexture));
+        const Data::SkyObjectTable&       skyObjects  = Data::GetSkyObjectTable();
+        for(size_t i = 0; i < skyObjects.objects.size(); ++i) {
+            const entt::entity object = MakeElement(*m_scene, registry, m_root, StarMapElementKind::SkyObject, static_cast<int>(i));
+            AddSprite(registry, object, objectImage, 2, true, SpriteSpace::World);
+            TransformComponent& transform = registry.GetComponent<TransformComponent>(object);
+            transform.position = SkyPoint(*config, Core::SkyMath::ToDirection(skyObjects.objects[i].ra * 15.0, skyObjects.objects[i].dec), config->skyRadius);
+        }
+
+        //-------------------------------------------------------------
         // 星座名: 画面の文字を天球の一点に貼り付ける。後ろへ回ると隠れる
         //-------------------------------------------------------------
         for(size_t c = 0; c < table.constellations.size(); ++c) {
@@ -584,8 +617,9 @@ namespace StardustFever::ECS {
         const entt::entity hintMouse                                           = MakeElement(*m_scene, registry, m_root, StarMapElementKind::Root, 30);
         AddText(registry, hintMouse, config->rowScale, order + 5, false).color = hintColor;
         Place(registry, hintMouse, config->mapX, config->mapY + config->mapHeight + 14.0f, 1.0f, 1.0f);
-        HudUi::SetText(
-            registry, hintMouse, "ドラッグ 見回す   ホイール 拡大   クリック 星座を選ぶ   G グループの一覧   Tab・Esc 閉じる（遊びは止まっています）");
+        HudUi::SetText(registry,
+                       hintMouse,
+                       "ドラッグ 見回す   ホイール 拡大   クリック 星座を選ぶ   G グループの一覧   T 天体の図鑑   Tab・Esc 閉じる（遊びは止まっています）");
 
         //-------------------------------------------------------------
         // 画面の中央の照準。キーで星座を選ぶときの目印
@@ -631,10 +665,11 @@ namespace StardustFever::ECS {
                 return UiParts::MakeButton(
                     *m_scene, registry, *context->assetManager, *style, m_root, left + x + width * 0.5f, buttonY, width, 36.0f, order + 6, text, action);
             };
-            button(0.0f, 52.0f, "◀", UiAction::MapPrevious);
-            button(60.0f, 52.0f, "▶", UiAction::MapNext);
-            m_groupButton = button(120.0f, 130.0f, "グループ", UiAction::MapToggleGroups);
-            button(258.0f, 112.0f, "閉じる", UiAction::MapClose);
+            button(0.0f, 46.0f, "◀", UiAction::MapPrevious);
+            button(52.0f, 46.0f, "▶", UiAction::MapNext);
+            m_groupButton  = button(104.0f, 96.0f, "グループ", UiAction::MapToggleGroups);
+            m_objectButton = button(206.0f, 76.0f, "天体", UiAction::MapToggleObjects);
+            button(288.0f, 82.0f, "閉じる", UiAction::MapClose);
 
             // グループの一覧の行の当たり。文字の行に重ねる
             const int   groupCount = static_cast<int>(Data::GetConstellationGroupTable().groups.size());
@@ -694,6 +729,9 @@ namespace StardustFever::ECS {
         if(m_groupButton != entt::null)
             HudUi::SetText(registry, registry.GetComponent<UiActionComponent>(m_groupButton).label, state->groupMode ? "星座へ" : "グループ");
 
+        if(m_objectButton != entt::null)
+            HudUi::SetText(registry, registry.GetComponent<UiActionComponent>(m_objectButton).label, state->objectMode ? "星座へ" : "天体");
+
         //-------------------------------------------------------------
         // 選んだ星座の、名前を添える星。固有名のある星を先に、その中は明るい順に選ぶ
         //-------------------------------------------------------------
@@ -734,6 +772,33 @@ namespace StardustFever::ECS {
                         font->outlineWidth = 1.0f;
                     if(auto* anchor = registry.try_get<Tsukino::BuiltIn::ECS::WorldAnchorComponent>(entity))
                         anchor->fixedWorldPosition = SkyPoint(*config, Core::SkyMath::ToDirection(star.ra * 15.0, star.dec), config->skyRadius);
+                    break;
+                }
+            //-------------------------------------------------------------
+            // 天体: 持っていればレア度の色で光り、無ければ薄く。図鑑で選んでいる天体は大きく
+            //-------------------------------------------------------------
+            case StarMapElementKind::SkyObject:
+                {
+                    const Data::SkyObjectTable&     objects = Data::GetSkyObjectTable();
+                    const SkyObjectConfigComponent* tiers   = FindSingleton<SkyObjectConfigComponent>(registry);
+                    if(!tiers || element.index < 0 || element.index >= static_cast<int>(objects.objects.size()))
+                        break;
+                    const Data::SkyObjectDef& object = objects.objects[static_cast<size_t>(element.index)];
+                    const bool                owned  = OwnsSkyObject(*collection, object.id);
+                    float                     size   = config->objectSize;
+                    if(state->objectMode && state->selectedObject == element.index)
+                        size *= 1.8f;
+                    const float         scale     = size * config->worldUnitsPerPixel / std::max(config->objectPixels, 1.0f);
+                    TransformComponent& transform = registry.GetComponent<TransformComponent>(entity);
+                    transform.scale               = hlslpp::float3(scale, scale, 1.0f);
+                    transform.dirty               = true;
+                    if(SpriteComponent* sprite = registry.try_get<SpriteComponent>(entity)) {
+                        const size_t   rarity = static_cast<size_t>(object.rarity);
+                        hlslpp::float4 color  = rarity < tiers->rarityColors.size() ? tiers->rarityColors[rarity] : config->labelColor;
+                        if(!owned && !(state->objectMode && state->selectedObject == element.index))
+                            color.w = config->objectMissingAlpha;
+                        sprite->tintColor = color;
+                    }
                     break;
                 }
             //-------------------------------------------------------------
@@ -820,16 +885,18 @@ namespace StardustFever::ECS {
             return entt::entity(entt::null);
         };
         if(modifiers) {
-            char buffer[128];
+            char buffer[192];
             std::snprintf(buffer,
                           sizeof(buffer),
-                          "88星座の星図   そろった星座 %d / %d   集めた星 %d / %d   そろったグループ %d / %d",
+                          "88星座の星図   そろった星座 %d / %d   集めた星 %d / %d   そろったグループ %d / %d   集めた天体 %d / %d",
                           modifiers->collectedConstellations,
                           modifiers->totalConstellations,
                           modifiers->ownedStars,
                           modifiers->totalStars,
                           modifiers->collectedGroups,
-                          modifiers->totalGroups);
+                          modifiers->totalGroups,
+                          modifiers->ownedObjects,
+                          modifiers->totalObjects);
             HudUi::SetText(registry, findText(StarMapElementKind::Summary, 0), buffer);
         }
 
@@ -844,6 +911,64 @@ namespace StardustFever::ECS {
         for(int row = 0; row < config->maxRows; ++row) {
             if(FontComponent* font = registry.try_get<FontComponent>(findText(StarMapElementKind::Row, row)))
                 font->scale = config->rowScale;
+        }
+
+        //-------------------------------------------------------------
+        // 行を書く。入りきらない分はホイールと R / F で送る
+        //-------------------------------------------------------------
+        const auto writeRows = [&](const std::vector<std::pair<std::string, hlslpp::float4>>& lines) {
+            state->rowScrollMax = std::max(0, static_cast<int>(lines.size()) - config->maxRows);
+            state->rowScroll    = std::clamp(state->rowScroll, 0, state->rowScrollMax);
+            for(int row = 0; row < config->maxRows; ++row) {
+                const entt::entity text  = findText(StarMapElementKind::Row, row);
+                const int          index = row + state->rowScroll;
+                if(index >= static_cast<int>(lines.size())) {
+                    HudUi::SetText(registry, text, "");
+                    continue;
+                }
+                const bool more = row == config->maxRows - 1 && index + 1 < static_cast<int>(lines.size());
+                HudUi::SetText(registry, text, more ? std::string("▼ ホイール・R/F で続き") : lines[static_cast<size_t>(index)].first);
+                HudUi::SetTextColor(registry, text, more ? config->selectedLabelColor : lines[static_cast<size_t>(index)].second);
+            }
+        };
+
+        //-------------------------------------------------------------
+        // 天体の図鑑: 選んだ天体の文章の下に、全部の天体を並べる
+        //-------------------------------------------------------------
+        const Data::SkyObjectTable&     skyObjects = Data::GetSkyObjectTable();
+        const SkyObjectConfigComponent* tiers      = FindSingleton<SkyObjectConfigComponent>(registry);
+        if(state->objectMode && tiers && !skyObjects.objects.empty()) {
+            const int                 index   = std::clamp(state->selectedObject, 0, static_cast<int>(skyObjects.objects.size()) - 1);
+            const Data::SkyObjectDef& current = skyObjects.objects[static_cast<size_t>(index)];
+            const bool                has     = OwnsSkyObject(*collection, current.id);
+            const auto                tint    = [&](const Data::SkyObjectDef& object) {
+                return static_cast<size_t>(object.rarity) < tiers->rarityColors.size() ? tiers->rarityColors[static_cast<size_t>(object.rarity)]
+                                                                                                         : config->labelColor;
+            };
+            const auto rarityName = [&](const Data::SkyObjectDef& object) {
+                return static_cast<size_t>(object.rarity) < tiers->rarityNames.size() ? tiers->rarityNames[static_cast<size_t>(object.rarity)] : std::string();
+            };
+            HudUi::SetText(registry, title, current.name);
+            HudUi::SetTextColor(registry, title, tint(current));
+            HudUi::SetText(registry, subtitle, current.nameEn + "   " + rarityName(current) + "  " + CollectionText::SkyObjectKind(current.kind));
+            HudUi::SetText(registry, effect, (has ? "効果 発動中  " : "ビッグバンで手に入る  ") + CollectionText::Effect(current.effect, current.effect.value));
+            HudUi::SetTextColor(registry, effect, has ? config->collectedLabelColor : config->labelColor);
+
+            std::vector<std::pair<std::string, hlslpp::float4>> lines;
+            for(const std::string& line : Core::WrapText(current.caption, config->captionWidth)) {
+                lines.emplace_back(line, config->labelColor * hlslpp::float4(1.3f, 1.3f, 1.3f, 1.3f));
+            }
+            lines.emplace_back("", config->labelColor);
+            for(int i = static_cast<int>(skyObjects.objects.size()) - 1; i >= 0; --i) {    // レア度の高い順に見せる
+                const Data::SkyObjectDef& object = skyObjects.objects[static_cast<size_t>(i)];
+                const bool                owned  = OwnsSkyObject(*collection, object.id);
+                hlslpp::float4            color  = tint(object);
+                if(!owned)
+                    color.w = 0.55f;
+                lines.emplace_back(std::string(i == index ? "▶ " : "　 ") + (owned ? "★ " : "☆ ") + object.name + "  " + rarityName(object), color);
+            }
+            writeRows(lines);
+            return;
         }
 
         //-------------------------------------------------------------
@@ -924,7 +1049,7 @@ namespace StardustFever::ECS {
         if(!selected) {
             HudUi::SetText(registry, title, "星座を選んでください");
             HudUi::SetTextColor(registry, title, config->labelColor);
-            HudUi::SetText(registry, subtitle, "クリックで星座を選ぶ  G でグループ一覧");
+            HudUi::SetText(registry, subtitle, "クリックで星座を選ぶ  G でグループ一覧  T で天体");
             HudUi::SetText(registry, effect, "");
             for(int row = 0; row < config->maxRows; ++row) {
                 HudUi::SetText(registry, findText(StarMapElementKind::Row, row), "");
@@ -989,19 +1114,7 @@ namespace StardustFever::ECS {
                                level > 0 ? SpectralColor(layout, star->spectralType) : config->missingStarColor * hlslpp::float4(1.4f, 1.4f, 1.4f, 1.4f));
         }
 
-        state->rowScrollMax = std::max(0, static_cast<int>(lines.size()) - config->maxRows);
-        state->rowScroll    = std::clamp(state->rowScroll, 0, state->rowScrollMax);
-        for(int row = 0; row < config->maxRows; ++row) {
-            const entt::entity text  = findText(StarMapElementKind::Row, row);
-            const int          index = row + state->rowScroll;
-            if(index >= static_cast<int>(lines.size())) {
-                HudUi::SetText(registry, text, "");
-                continue;
-            }
-            const bool more = row == config->maxRows - 1 && index + 1 < static_cast<int>(lines.size());
-            HudUi::SetText(registry, text, more ? std::string("▼ ホイール・R/F で続き") : lines[static_cast<size_t>(index)].first);
-            HudUi::SetTextColor(registry, text, more ? config->selectedLabelColor : lines[static_cast<size_t>(index)].second);
-        }
+        writeRows(lines);
     }
 
 }    // namespace StardustFever::ECS

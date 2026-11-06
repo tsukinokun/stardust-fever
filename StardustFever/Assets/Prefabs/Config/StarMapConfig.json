@@ -129,6 +129,10 @@
             "w": 0.95
         },
         "captionWidth": 54,
-        "reticleRadius": 170.0
+        "reticleRadius": 170.0,
+        "objectTexture": "StardustFever/Assets/Textures/UI/star.png",
+        "objectPixels": 64.0,
+        "objectSize": 24.0,
+        "objectMissingAlpha": 0.4
     }
 }
