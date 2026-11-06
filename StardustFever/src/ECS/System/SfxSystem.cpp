@@ -39,6 +39,7 @@ namespace StardustFever::ECS {
         , m_draws(eventBus)
         , m_constellations(eventBus)
         , m_bigBangs(eventBus)
+        , m_bigBangReadies(eventBus)
         , m_purchases(eventBus)
         , m_denials(eventBus)
         , m_starFx(eventBus)
@@ -115,6 +116,7 @@ namespace StardustFever::ECS {
         const auto draws          = m_draws.Drain();
         const auto constellations = m_constellations.Drain();
         const auto bigBangs       = m_bigBangs.Drain();
+        const auto bigBangReadies = m_bigBangReadies.Drain();
         const auto purchases      = m_purchases.Drain();
         const auto denials        = m_denials.Drain();
         const auto starFx         = m_starFx.Drain();
@@ -223,6 +225,8 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         // 操作
         //-------------------------------------------------------------
+        if(!bigBangReadies.empty())
+            Play(registry, *config, "bigBangReady");
         if(!bigBangs.empty())
             Play(registry, *config, "bigBang");
         if(!purchases.empty())

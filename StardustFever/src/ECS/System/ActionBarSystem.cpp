@@ -73,6 +73,18 @@ namespace StardustFever::ECS {
                           order,
                           hlslpp::float4(0.0f, 0.0f, 0.0f, 0.0f));
         UiParts::MakeClickable(registry, row, UiAction::OpenGroups);
+
+        // 星屑の下の案内文。押すとビッグバンのボタンと同じ働きをする
+        if(const PrestigeConfigComponent* prestige = FindSingleton<PrestigeConfigComponent>(registry)) {
+            const hlslpp::float4& area = prestige->hintArea;
+            const float           left = static_cast<float>(area.x);
+            const float           top  = static_cast<float>(area.y);
+            const float           wide = static_cast<float>(area.z);
+            const float           tall = static_cast<float>(area.w);
+            const entt::entity    hint = UiParts::MakeNode(*m_scene, registry, entt::null, left + wide * 0.5f, top + tall * 0.5f);
+            UiParts::AddImage(registry, hint, assets.Load(Tsukino::Core::Path(style->whiteTexture)), wide, tall, order, hlslpp::float4(0.0f, 0.0f, 0.0f, 0.0f));
+            UiParts::MakeClickable(registry, hint, UiAction::BigBang);
+        }
     }
 
     //-------------------------------------------------------------

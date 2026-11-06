@@ -34,14 +34,15 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         //! @brief  倍率を表示用にする
         //! @param  value [in] 倍率
-        //! @return 1万未満は小数2桁（"×1.35"）、それ以上は和風の単位（"×12.3万"）
+        //! @return 桁が増えるほど小数を減らす（"×1.35"、"×106.8"、"×1068"）。1万以上は和風の単位（"×12.3万"）
         //! @note   BigNumber::ToJapaneseString は1万未満を整数にするため、倍率の小数が消えてしまう
         //-------------------------------------------------------------
         std::string FormatMultiplier(const Core::BigNumber& value) {
             if(value.Exponent() >= 4)
                 return "×" + value.ToJapaneseString();
-            char buffer[32];
-            std::snprintf(buffer, sizeof(buffer), "×%.2f", value.ToDouble());
+            char         buffer[32];
+            const double number = value.ToDouble();
+            std::snprintf(buffer, sizeof(buffer), number < 100.0 ? "×%.2f" : (number < 1000.0 ? "×%.1f" : "×%.0f"), number);
             return buffer;
         }
 
@@ -56,7 +57,24 @@ namespace StardustFever::ECS {
                 const Core::BigNumber needed = Core::PrestigeFormula::EarnedForNextConstant(gain, config->threshold, config->exponent);
                 return "次の宇宙定数まで あと " + (needed - prestige->universeEarned).ToJapaneseString();
             }
-            return "ビッグバンで Λ+" + gain.ToJapaneseString();
+
+            // 実行できない間は、いつできるかを伝える
+            const FeverStateComponent*      fever  = FindSingleton<FeverStateComponent>(registry);
+            const StarChanceStateComponent* chance = FindSingleton<StarChanceStateComponent>(registry);
+            if(fever && fever->active)
+                return "星詠みタイムが終わるとビッグバンできます";
+            if(chance && chance->active)
+                return "星ゲットチャンスが終わるとビッグバンできます";
+
+            // 得を数字で見せる。実行後の倍率は、宇宙定数の分だけを置き換えて求める
+            std::string hint = "ビッグバンで Λ+" + gain.ToJapaneseString();
+            if(const ScoreMultiplierComponent* multiplier = FindSingleton<ScoreMultiplierComponent>(registry)) {
+                namespace Prestige         = Core::PrestigeFormula;
+                const Core::BigNumber next = multiplier->total * Prestige::Multiplier(prestige->cosmicConstants + gain, config->bonusPerConstant)
+                                             / Prestige::Multiplier(prestige->cosmicConstants, config->bonusPerConstant);
+                hint += "  全体倍率 " + FormatMultiplier(multiplier->total) + " → " + FormatMultiplier(next);
+            }
+            return hint;
         }
 
         std::string BuildReel(Tsukino::ECS::Registry& registry, int index) {

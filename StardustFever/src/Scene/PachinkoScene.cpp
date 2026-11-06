@@ -14,6 +14,7 @@
 #include <StardustFever/ECS/System/ActionBarSystem.hpp>
 #include <StardustFever/ECS/System/AudioSettingsSystem.hpp>
 #include <StardustFever/ECS/System/BigBangDialogSystem.hpp>
+#include <StardustFever/ECS/System/BigBangGuideSystem.hpp>
 #include <StardustFever/ECS/System/UiButtonSystem.hpp>
 #include <StardustFever/ECS/System/UpgradeTooltipSystem.hpp>
 #include <StardustFever/ECS/System/BgmSystem.hpp>
@@ -143,6 +144,7 @@ namespace StardustFever::Scene {
             StarGateFx,        // 星の門の抽選の演出
             StarGetFx,         // 星を手に入れた演出
             ActionBar,         // 左下の操作ボタン
+            BigBangGuide,      // ビッグバンができることの案内
             UpgradeTooltip,    // 強化のカードの吹き出し
             BigBangDialog,     // ビッグバンの確認画面
             LotteryView,
@@ -232,6 +234,7 @@ namespace StardustFever::Scene {
         m_scene.AddSystem(std::make_shared<ECS::StarGateFxSystem>(m_scene, eventBus), Order(SystemOrder::StarGateFx));
         m_scene.AddSystem(std::make_shared<ECS::StarGetFxSystem>(m_scene, eventBus), Order(SystemOrder::StarGetFx));
         m_scene.AddSystem(std::make_shared<ECS::ActionBarSystem>(m_scene), Order(SystemOrder::ActionBar));
+        m_scene.AddSystem(std::make_shared<ECS::BigBangGuideSystem>(eventBus), Order(SystemOrder::BigBangGuide));
         m_scene.AddSystem(std::make_shared<ECS::UpgradeTooltipSystem>(m_scene), Order(SystemOrder::UpgradeTooltip));
         m_scene.AddSystem(std::make_shared<ECS::BigBangDialogSystem>(m_scene), Order(SystemOrder::BigBangDialog));
         m_scene.AddSystem(std::make_shared<ECS::LotteryViewSystem>(eventBus), Order(SystemOrder::LotteryView));

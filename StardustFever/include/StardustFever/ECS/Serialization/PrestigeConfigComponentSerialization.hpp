@@ -9,6 +9,7 @@
 #include <StardustFever/ECS/Component/PrestigeConfigComponent.hpp>
 
 #include <Tsukino/Core/IO/CerealOptional.hpp>
+#include <Tsukino/Core/Math/Serialization/HlslppSerialization.hpp>
 
 #include <cereal/cereal.hpp>
 
@@ -20,6 +21,10 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("threshold", component.threshold));
         archive(cereal::make_nvp("exponent", component.exponent));
         archive(cereal::make_nvp("bonusPerConstant", component.bonusPerConstant));
+        archive(cereal::make_nvp("readyPulseScale", component.readyPulseScale));
+        archive(cereal::make_nvp("readyPulsePeriod", component.readyPulsePeriod));
+        archive(cereal::make_nvp("readyHintColor", component.readyHintColor));
+        archive(cereal::make_nvp("hintArea", component.hintArea));
     }
 
     template <class Archive>
@@ -27,6 +32,10 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "threshold", component.threshold);
         Tsukino::IO::LoadOptional(archive, "exponent", component.exponent);
         Tsukino::IO::LoadOptional(archive, "bonusPerConstant", component.bonusPerConstant);
+        Tsukino::IO::LoadOptional(archive, "readyPulseScale", component.readyPulseScale);
+        Tsukino::IO::LoadOptional(archive, "readyPulsePeriod", component.readyPulsePeriod);
+        Tsukino::IO::LoadOptional(archive, "readyHintColor", component.readyHintColor);
+        Tsukino::IO::LoadOptional(archive, "hintArea", component.hintArea);
     }
 
 }    // namespace StardustFever::ECS

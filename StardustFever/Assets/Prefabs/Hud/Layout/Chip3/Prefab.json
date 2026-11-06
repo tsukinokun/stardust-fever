@@ -13,6 +13,10 @@
             "value": "StardustFever/Assets/Prefabs/Hud/Layout/Chip3/Sprite.json"
         },
         {
+            "key": "HudPartComponent",
+            "value": "StardustFever/Assets/Prefabs/Hud/Layout/Chip3/HudPart.json"
+        },
+        {
             "key": "KeyHintComponent",
             "value": "null"
         }

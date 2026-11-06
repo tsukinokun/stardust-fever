@@ -162,6 +162,9 @@ def main():
     mix(bang, echo(arpeggio(["C6", "G6", "C7", "G7"], 0.06, 1.4, 3.0, GLASS)), 1.4, 0.5)
     save("BigBang", bang, 0.9)
 
+    # ビッグバンができるようになった: 澄んだ音が駆け上がる
+    save("BigBangReady", echo(arpeggio(["G5", "C6", "E6", "G6", "C7"], 0.09, 1.2, 4.0, GLASS)), 0.7)
+
     # 操作の音
     save("Purchase", arpeggio(["G5", "C6"], 0.07, 0.4, 9.0), 0.6)
     save("Denied", arpeggio(["A3", "A3"], 0.1, 0.12, 25.0, SOFT), 0.5)

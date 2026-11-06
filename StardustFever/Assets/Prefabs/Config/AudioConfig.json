@@ -148,6 +148,11 @@
                 "volume": 0.7
             },
             {
+                "id": "bigBangReady",
+                "path": "StardustFever/Assets/Audio/Sfx/BigBangReady.wav",
+                "volume": 0.7
+            },
+            {
                 "id": "purchase",
                 "path": "StardustFever/Assets/Audio/Sfx/Purchase.wav",
                 "volume": 0.8
