@@ -233,14 +233,14 @@ namespace StardustFever::ECS {
             return;
 
         //-------------------------------------------------------------
-        // 星が線に入っている星座を探す。線は境界の別の星座に使われることがあるので、属する星座を優先する
+        // つないだ星座を見せる。無ければ星が線に入っている星座を探す（線は境界の別の星座に使われることがある）
         //-------------------------------------------------------------
         const Data::ConstellationTable& table    = Data::GetConstellationTable();
         const auto                      contains = [&](const Data::ConstellationDef& constellation) {
             return std::any_of(
                 constellation.stars.begin(), constellation.stars.end(), [&](const Data::ConstellationStarDef& member) { return member.starId == star.id; });
         };
-        const Data::ConstellationDef* home = table.Find(star.constellationId);
+        const Data::ConstellationDef* home = table.Find(m_current.constellationId.empty() ? star.constellationId : m_current.constellationId);
         if(!home || !contains(*home)) {
             home = nullptr;
             for(const Data::ConstellationDef& constellation : table.constellations) {

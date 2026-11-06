@@ -68,17 +68,32 @@ namespace StardustFever::ECS {
             }
 
             //-------------------------------------------------------------
-            // 明るい星ほど出にくい重みで1つ引く
+            // つないだ星座の星から、明るい星ほど出にくい重みで1つ引く。
+            // 88星座すべてがチャンスに出て、星はどれかの星座の線に入っているので、全ての星が手に入る
             //-------------------------------------------------------------
+            std::vector<const Data::StarDef*> candidates;
+            if(const Data::ConstellationDef* linked = constellations.Find(end.constellationId)) {
+                for(const Data::ConstellationStarDef& member : linked->stars) {
+                    if(const Data::StarDef* found = stars.Find(member.starId))
+                        candidates.push_back(found);
+                }
+            }
+            // 星座が見つからないのはデータの不備。チャンスの成功を無駄にしないよう全体から引く
+            if(candidates.empty()) {
+                for(const Data::StarDef& any : stars.stars) {
+                    candidates.push_back(&any);
+                }
+            }
+
             std::vector<double> weights;
-            weights.reserve(stars.stars.size());
-            for(const Data::StarDef& star : stars.stars) {
-                weights.push_back(Core::StarDraw::Weight(star.magnitude, config->rarityBase));
+            weights.reserve(candidates.size());
+            for(const Data::StarDef* candidate : candidates) {
+                weights.push_back(Core::StarDraw::Weight(candidate->magnitude, config->rarityBase));
             }
             const size_t index = Core::StarDraw::PickIndex(weights, std::uniform_real_distribution<double>(0.0, 1.0)(m_random));
-            if(index >= stars.stars.size())
+            if(index >= candidates.size())
                 continue;
-            const Data::StarDef& star = stars.stars[index];
+            const Data::StarDef& star = *candidates[index];
 
             const auto                    owned   = collection->starLevels.find(star.id);
             const int                     current = owned == collection->starLevels.end() ? 0 : owned->second;
@@ -149,7 +164,7 @@ namespace StardustFever::ECS {
                 followUp                            = "★ " + first.name + "がそろった ★\n" + CollectionText::Effect(first.effect, first.effect.value);
             }
 
-            m_eventBus->Publish(StarDrawnEvent{star.id, outcome.level, outcome.isNew, outcome.converted, followUp});
+            m_eventBus->Publish(StarDrawnEvent{star.id, outcome.level, outcome.isNew, outcome.converted, followUp, end.constellationId});
             for(const Data::ConstellationDef* constellation : collected) {
                 m_eventBus->Publish(ConstellationCollectedEvent{constellation->id});
             }
