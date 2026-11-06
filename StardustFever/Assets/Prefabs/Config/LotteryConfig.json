@@ -1,6 +1,6 @@
 {
     "LotteryConfigComponent": {
-        "winProbability": 0.1,
+        "winProbability": 0.5,
         "maxPending": 4,
         "spinDuration": 2.0,
         "symbolInterval": 0.07,

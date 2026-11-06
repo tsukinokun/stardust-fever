@@ -167,10 +167,15 @@ TsukinoEngine（EnTT ECS / Jolt Physics / cereal Prefab JSON）上で作る。
   - リーチ・チャンス・フィーバーの曲は、場面が始まるたびに頭から鳴る。通常と星図の曲は裏で進み続ける
 - リーチになる変動は、右のリールが `reachExtraDuration`（3秒）長く回る。リーチの間を作り、曲を聴かせるため
 - 効果音はイベントと状態の変化から鳴らす（`SfxSystem`）。音と音量は `AudioConfig.json`
-  - 釘とチューリップの音は頻繁に鳴るので、音量を小さくしてある。釘は `pinMinInterval` で間引く
+  - 釘の音は玉が多いと連発するので、`pinMinInterval` で間引く
   - 星をつなぐ音は、つなぐたびに音階を上がる
 - 音量は M で消音、F6 / F7 で BGM、F8 / F9 で効果音を変える。セーブに残る（F5 はエンジンのデバッグ表示が使っている）
+- 音は裏のスレッドで読み（エンジンの `AssetManager::LoadAsync`）、読み終えた音から鳴らす。読めるまでは無音のまま遊べる
 - 曲と効果音の作り方は `Tools/BuildMusic.py` と `Tools/GenerateSfx.py`、権利は `Docs/Credits.md`
+
+## 止まった玉
+
+玉は閉じたチューリップの羽の上などで釣り合って止まることがある。`stuckSeconds` ほぼ動かない玉を左右へ押し、`stuckMaxNudges` 回押しても動かなければアウトにする（`BallStuckSystem`）
 
 ## 盤面の見た目
 

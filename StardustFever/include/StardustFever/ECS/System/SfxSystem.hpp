@@ -19,10 +19,16 @@
 #include <StardustFever/ECS/Utility/EventQueue.hpp>
 
 #include <Tsukino/Core/ECS/System/ISystem.hpp>
+#include <Tsukino/Core/Memory.hpp>
+#include <Tsukino/Engine/Asset/AssetHandle.hpp>
+#include <Tsukino/Engine/Asset/Audio/AudioAsset.hpp>
 
 #include <array>
+#include <future>
 #include <random>
+#include <string>
 #include <string_view>
+#include <unordered_map>
 
 // 名前空間 : StardustFever::ECS
 namespace StardustFever::ECS {
@@ -50,7 +56,14 @@ namespace StardustFever::ECS {
 
     private:
         //-------------------------------------------------------------
-        //! @brief  音を鳴らす
+        //! @brief  まだ依頼していない音を裏で読み始め、読み終えた音を受け取る
+        //! @param  registry [in] レジストリ
+        //! @param  config   [in] 音の設定
+        //-------------------------------------------------------------
+        void UpdateLoading(Tsukino::ECS::Registry& registry, const AudioConfigComponent& config);
+
+        //-------------------------------------------------------------
+        //! @brief  音を鳴らす（読み終えていない音は飛ばす）
         //! @param  registry [in] レジストリ
         //! @param  config   [in] 音の設定
         //! @param  id       [in] 音の名前
@@ -72,11 +85,12 @@ namespace StardustFever::ECS {
         EventQueue<UpgradePurchasedEvent>       m_purchases;
         EventQueue<UpgradeDeniedEvent>          m_denials;
 
-        bool                m_preloaded    = false;                 //!< 全ての音を読み終えたか（再生の瞬間の変換を避ける）
-        float               m_pinCooldown  = 0.0f;                  //!< 次の釘の音までの時間（秒）
-        int                 m_linkCount    = 0;                     //!< このチャンスでつないだ数（音階を上げる）
-        bool                m_wasReach     = false;                 //!< 前のフレームでリーチだったか
-        bool                m_wasMapOpen   = false;                 //!< 前のフレームで星図が開いていたか
+        std::unordered_map<std::string, std::shared_future<Tsukino::Asset::AssetHandle>> m_loading;               //!< 読んでいる音（パス → 結果）
+        std::unordered_map<std::string, Tsukino::Core::Ref<Tsukino::Asset::AudioAsset>>  m_loaded;                //!< 読み終えた音（パス → 音。失敗は nullptr）
+        float                                                                            m_pinCooldown = 0.0f;    //!< 次の釘の音までの時間（秒）
+        int                                                                              m_linkCount   = 0;       //!< このチャンスでつないだ数（音階を上げる）
+        bool                                                                             m_wasReach    = false;    //!< 前のフレームでリーチだったか
+        bool                                                                             m_wasMapOpen  = false;    //!< 前のフレームで星図が開いていたか
         float               m_lastSfxLevel = -1.0f;                 //!< 前のフレームの効果音の音量（変えた手応えを鳴らす）
         std::array<bool, 3> m_wasStopped   = {true, true, true};    //!< 前のフレームで各リールが止まっていたか
         std::mt19937        m_random;

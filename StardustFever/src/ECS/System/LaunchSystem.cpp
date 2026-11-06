@@ -46,7 +46,6 @@ namespace StardustFever::ECS {
         int ballsOnBoard = 0;
         for([[maybe_unused]] const auto entity : registry.View<BallComponent>()) {
             ++ballsOnBoard;
-            m_eventBus->Publish(BallLaunchedEvent{});
         }
 
         //-------------------------------------------------------------
@@ -112,6 +111,7 @@ namespace StardustFever::ECS {
 
             launcher.cooldown = config->fireInterval;
             ++ballsOnBoard;
+            m_eventBus->Publish(BallLaunchedEvent{});
         }
     }
 

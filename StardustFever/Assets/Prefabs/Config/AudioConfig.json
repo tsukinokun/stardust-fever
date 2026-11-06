@@ -10,47 +10,47 @@
         "bgmBus": 1,
         "sfxBus": 2,
         "volumeStep": 0.1,
-        "pinMinInterval": 0.09,
+        "pinMinInterval": 0.06,
         "sounds": [
             {
                 "id": "launch",
                 "path": "StardustFever/Assets/Audio/Sfx/Launch.wav",
-                "volume": 0.15
+                "volume": 0.35
             },
             {
                 "id": "pin",
                 "path": "StardustFever/Assets/Audio/Sfx/Pin0.wav",
-                "volume": 0.08
+                "volume": 0.25
             },
             {
                 "id": "pin",
                 "path": "StardustFever/Assets/Audio/Sfx/Pin1.wav",
-                "volume": 0.08
+                "volume": 0.25
             },
             {
                 "id": "pin",
                 "path": "StardustFever/Assets/Audio/Sfx/Pin2.wav",
-                "volume": 0.08
+                "volume": 0.25
             },
             {
                 "id": "pin",
                 "path": "StardustFever/Assets/Audio/Sfx/Pin3.wav",
-                "volume": 0.08
+                "volume": 0.25
             },
             {
                 "id": "pin",
                 "path": "StardustFever/Assets/Audio/Sfx/Pin4.wav",
-                "volume": 0.08
+                "volume": 0.25
             },
             {
                 "id": "pocketStart",
                 "path": "StardustFever/Assets/Audio/Sfx/PocketStart.wav",
-                "volume": 0.4
+                "volume": 0.7
             },
             {
                 "id": "pocketTulip",
                 "path": "StardustFever/Assets/Audio/Sfx/PocketTulip.wav",
-                "volume": 0.12
+                "volume": 0.5
             },
             {
                 "id": "pocketGate",

@@ -6,6 +6,7 @@
 
 #include <StardustFever/ECS/GameComponentRegistration.hpp>
 #include <StardustFever/ECS/System/BallEventSystem.hpp>
+#include <StardustFever/ECS/System/BallStuckSystem.hpp>
 #include <StardustFever/ECS/System/BigBangSystem.hpp>
 #include <StardustFever/ECS/System/BoardBuildSystem.hpp>
 #include <StardustFever/ECS/System/CollectionEffectSystem.hpp>
@@ -102,6 +103,7 @@ namespace StardustFever::Scene {
             Launch,
             Physics,
             BallEvent,          // 衝突 → 釘・入賞・アウト・星
+            BallStuck,          // 止まった玉を押す
             Lottery,            // 入賞 → 抽選結果
             Fever,              // 抽選結果 → フィーバー（星屑の稼ぎ時）
             Tulip,              // フィーバーの状態 → チューリップの羽を開け閉めする
@@ -179,6 +181,7 @@ namespace StardustFever::Scene {
         m_scene.AddSystem(std::make_shared<ECS::LaunchSystem>(eventBus), Order(SystemOrder::Launch));
         m_scene.AddSystem(std::make_shared<ECS::PhysicsStepSystem>(eventBus), Order(SystemOrder::Physics));
         m_scene.AddSystem(std::make_shared<ECS::BallEventSystem>(eventBus), Order(SystemOrder::BallEvent));
+        m_scene.AddSystem(std::make_shared<ECS::BallStuckSystem>(eventBus), Order(SystemOrder::BallStuck));
         m_scene.AddSystem(std::make_shared<ECS::LotterySystem>(eventBus), Order(SystemOrder::Lottery));
         m_scene.AddSystem(std::make_shared<ECS::FeverSystem>(eventBus), Order(SystemOrder::Fever));
         m_scene.AddSystem(std::make_shared<ECS::TulipSystem>(), Order(SystemOrder::Tulip));

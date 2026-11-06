@@ -7,6 +7,10 @@
         "autoFireJitter": 0.08,
         "maxBallsOnBoard": 30,
         "killPlaneY": -20.0,
+        "stuckSeconds": 2.5,
+        "stuckDistance": 0.3,
+        "stuckNudge": 40.0,
+        "stuckMaxNudges": 2,
         "ballPrefab": "StardustFever/Assets/Prefabs/Ball/Prefab.json"
     }
 }

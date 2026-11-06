@@ -20,6 +20,10 @@ namespace StardustFever::ECS {
         float       autoFireJitter     = 0.08f;     //!< 自動発射の強さの揺らぎ幅（±）
         int         maxBallsOnBoard    = 30;        //!< 盤面に同時に出せる玉の数
         float       killPlaneY         = -20.0f;    //!< これより下へ落ちた玉は消す
+        float       stuckSeconds       = 2.5f;      //!< この時間ほぼ動かない玉は止まったとみなす（秒）
+        float       stuckDistance      = 0.3f;      //!< この距離より動かなければ止まっている
+        float       stuckNudge         = 40.0f;     //!< 止まった玉を押す強さ（速さの変化）
+        int         stuckMaxNudges     = 2;         //!< この回数押しても動かない玉はアウトにする
         std::string ballPrefab;                     //!< 玉のPrefab
     };
 }    // namespace StardustFever::ECS

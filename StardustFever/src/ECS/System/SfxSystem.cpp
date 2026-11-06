@@ -19,6 +19,7 @@
 #include <Tsukino/Engine/Asset/Audio/AudioAsset.hpp>
 
 #include <algorithm>
+#include <chrono>
 #include <vector>
 
 // 名前空間 : StardustFever::ECS
@@ -42,6 +43,35 @@ namespace StardustFever::ECS {
     }
 
     //-------------------------------------------------------------
+    // まだ依頼していない音を裏で読み始め、読み終えた音を受け取る
+    //-------------------------------------------------------------
+    void SfxSystem::UpdateLoading(Tsukino::ECS::Registry& registry, const AudioConfigComponent& config) {
+        Tsukino::EngineIntegration::EngineContext* context = GetEngineContext(registry);
+        if(!context || !context->audioManager || !context->assetManager)
+            return;
+
+        // 設定の読み直しで増えた音もここで拾う
+        for(const SfxDef& sound : config.sounds) {
+            if(!m_loaded.contains(sound.path) && !m_loading.contains(sound.path))
+                m_loading.emplace(sound.path, context->assetManager->LoadAsync(Tsukino::Core::Path(sound.path)));
+        }
+
+        for(auto it = m_loading.begin(); it != m_loading.end();) {
+            if(it->second.wait_for(std::chrono::seconds(0)) != std::future_status::ready) {
+                ++it;
+                continue;
+            }
+            auto asset = std::dynamic_pointer_cast<Tsukino::Asset::AudioAsset>(context->assetManager->Get(it->second.get()));
+            if(asset)
+                context->audioManager->Prepare(*asset);
+            else
+                Tsukino::Core::Log::Warn("Sound could not be loaded: " + it->first);
+            m_loaded.emplace(it->first, std::move(asset));
+            it = m_loading.erase(it);
+        }
+    }
+
+    //-------------------------------------------------------------
     // 音を鳴らす
     //-------------------------------------------------------------
     void SfxSystem::Play(Tsukino::ECS::Registry& registry, const AudioConfigComponent& config, std::string_view id, int variant) {
@@ -60,10 +90,10 @@ namespace StardustFever::ECS {
         const int     last   = static_cast<int>(group.size()) - 1;
         const int     index  = variant < 0 ? std::uniform_int_distribution<int>(0, last)(m_random) : std::min(variant, last);
         const SfxDef& sound  = *group[static_cast<size_t>(index)];
-        const auto    handle = context->assetManager->Load(Tsukino::Core::Path(sound.path));
-        const auto    asset  = std::dynamic_pointer_cast<Tsukino::Asset::AudioAsset>(context->assetManager->Get(handle));
-        if(asset)
-            context->audioManager->Play(*asset, false, sound.volume, static_cast<Tsukino::Audio::AudioBus>(config.sfxBus));
+        const auto    loaded = m_loaded.find(sound.path);
+        if(loaded == m_loaded.end() || !loaded->second || !context->audioManager->IsPrepared(*loaded->second))
+            return;
+        context->audioManager->Play(*loaded->second, false, sound.volume, static_cast<Tsukino::Audio::AudioBus>(config.sfxBus));
     }
 
     //-------------------------------------------------------------
@@ -88,18 +118,7 @@ namespace StardustFever::ECS {
         if(!config)
             return;
 
-        //-------------------------------------------------------------
-        // 最初のフレームで全ての音を読む。初めての音は変換に時間がかかり、鳴らす瞬間だと止まって見える
-        //-------------------------------------------------------------
-        if(!m_preloaded) {
-            m_preloaded = true;
-            if(Tsukino::EngineIntegration::EngineContext* context = GetEngineContext(registry); context && context->assetManager) {
-                for(const SfxDef& sound : config->sounds) {
-                    if(!context->assetManager->Get(context->assetManager->Load(Tsukino::Core::Path(sound.path))))
-                        Tsukino::Core::Log::Warn("Sound could not be loaded: " + sound.path);
-                }
-            }
-        }
+        UpdateLoading(registry, *config);
 
         //-------------------------------------------------------------
         // 玉

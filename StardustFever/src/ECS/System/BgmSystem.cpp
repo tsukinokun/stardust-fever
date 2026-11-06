@@ -18,6 +18,7 @@
 #include <Tsukino/Engine/Asset/AssetManager.hpp>
 
 #include <algorithm>
+#include <chrono>
 
 // 名前空間 : StardustFever::ECS
 namespace StardustFever::ECS {
@@ -34,24 +35,29 @@ namespace StardustFever::ECS {
         const auto                    bus   = static_cast<Tsukino::Audio::AudioBus>(config->bgmBus);
 
         //-------------------------------------------------------------
-        // 曲を読む。読んだら一度鳴らしてバンクを開いておく（要らない曲は下で止まる）
+        // 曲を裏で読む。通常の曲を先頭に依頼するので、最初に聴こえる曲が最初に読み終わる
         //-------------------------------------------------------------
         const std::array<const std::string*, kSceneCount> paths = {
             &config->bgmNormal, &config->bgmReach, &config->bgmFever, &config->bgmChance, &config->bgmMap};
         for(int i = 0; i < kSceneCount; ++i) {
             Track& track = m_tracks[static_cast<size_t>(i)];
-            if(track.path == *paths[static_cast<size_t>(i)])
-                continue;
-            if(track.asset)
-                audio.Stop(*track.asset);
-            track.path   = *paths[static_cast<size_t>(i)];
-            track.volume = 0.0f;
-            track.asset =
-                std::dynamic_pointer_cast<Tsukino::Asset::AudioAsset>(context->assetManager->Get(context->assetManager->Load(Tsukino::Core::Path(track.path))));
-            if(track.asset)
-                audio.Play(*track.asset, true, 0.0f, bus);
-            else
-                Tsukino::Core::Log::Warn("BGM could not be loaded: " + track.path);
+            if(track.path != *paths[static_cast<size_t>(i)]) {
+                if(track.asset)
+                    audio.Stop(*track.asset);
+                track.path    = *paths[static_cast<size_t>(i)];
+                track.volume  = 0.0f;
+                track.asset   = nullptr;
+                track.loading = context->assetManager->LoadAsync(Tsukino::Core::Path(track.path));
+            }
+
+            if(track.loading.valid() && track.loading.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+                track.asset   = std::dynamic_pointer_cast<Tsukino::Asset::AudioAsset>(context->assetManager->Get(track.loading.get()));
+                track.loading = {};
+                if(track.asset)
+                    audio.Prepare(*track.asset);
+                else
+                    Tsukino::Core::Log::Warn("BGM could not be loaded: " + track.path);
+            }
         }
 
         //-------------------------------------------------------------
@@ -91,7 +97,7 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         for(int i = 0; i < kSceneCount; ++i) {
             Track& track = m_tracks[static_cast<size_t>(i)];
-            if(!track.asset)
+            if(!track.asset || !audio.IsPrepared(*track.asset))
                 continue;
             const bool active  = i == scene;
             bool       playing = audio.IsPlaying(*track.asset);
