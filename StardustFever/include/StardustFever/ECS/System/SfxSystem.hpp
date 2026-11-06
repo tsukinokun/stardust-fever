@@ -13,6 +13,7 @@
 #include <StardustFever/ECS/Event/StarChanceEndedEvent.hpp>
 #include <StardustFever/ECS/Event/StarChanceStartedEvent.hpp>
 #include <StardustFever/ECS/Event/StarDrawnEvent.hpp>
+#include <StardustFever/ECS/Event/StarGateRollEvent.hpp>
 #include <StardustFever/ECS/Event/StarGetFxEvent.hpp>
 #include <StardustFever/ECS/Event/StarLinkedEvent.hpp>
 #include <StardustFever/ECS/Event/UpgradeDeniedEvent.hpp>
@@ -86,6 +87,7 @@ namespace StardustFever::ECS {
         EventQueue<UpgradePurchasedEvent>       m_purchases;
         EventQueue<UpgradeDeniedEvent>          m_denials;
         EventQueue<StarGetFxEvent>              m_starFx;
+        EventQueue<StarGateRollEvent>           m_gateRolls;
 
         std::unordered_map<std::string, std::shared_future<Tsukino::Asset::AssetHandle>> m_loading;               //!< 読んでいる音（パス → 結果）
         std::unordered_map<std::string, Tsukino::Core::Ref<Tsukino::Asset::AudioAsset>>  m_loaded;                //!< 読み終えた音（パス → 音。失敗は nullptr）

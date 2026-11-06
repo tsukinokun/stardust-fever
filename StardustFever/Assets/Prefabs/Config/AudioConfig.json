@@ -85,7 +85,7 @@
             {
                 "id": "chanceStart",
                 "path": "StardustFever/Assets/Audio/Sfx/ChanceStart.wav",
-                "volume": 0.9
+                "volume": 0.5
             },
             {
                 "id": "starLink",
@@ -191,6 +191,21 @@
                 "id": "starArrive",
                 "path": "StardustFever/Assets/Audio/Sfx/StarArrive.wav",
                 "volume": 0.8
+            },
+            {
+                "id": "gateTick",
+                "path": "StardustFever/Assets/Audio/Sfx/GateTick.wav",
+                "volume": 0.5
+            },
+            {
+                "id": "gateWin",
+                "path": "StardustFever/Assets/Audio/Sfx/GateWin.wav",
+                "volume": 0.9
+            },
+            {
+                "id": "gateMiss",
+                "path": "StardustFever/Assets/Audio/Sfx/GateMiss.wav",
+                "volume": 0.6
             }
         ]
     }

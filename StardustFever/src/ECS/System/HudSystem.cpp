@@ -134,7 +134,8 @@ namespace StardustFever::ECS {
             case HudTextKind::AutoFire:
                 return BuildAutoFire(registry);
             //-------------------------------------------------------------
-            // 盤面の上の帯は、星ゲットチャンスとフィーバーで使い回す（同時には起きない）
+            // 盤面の上の帯は、星ゲットチャンスとフィーバーで使い回す。重なったらチャンスを出し、
+            // フィーバーの残りは下の行に出す
             //-------------------------------------------------------------
             case HudTextKind::BannerHeading:
                 {
@@ -171,8 +172,11 @@ namespace StardustFever::ECS {
             case HudTextKind::FeverChain:
                 {
                     const StarChanceStateComponent* chance = FindSingleton<StarChanceStateComponent>(registry);
-                    if(chance && chance->active)
+                    if(chance && chance->active) {
+                        if(const FeverStateComponent* fever = FindSingleton<FeverStateComponent>(registry); fever && fever->active)
+                            return "星詠みタイム 残り " + std::to_string(std::max(0, static_cast<int>(std::ceil(fever->timeRemaining)))) + "秒";
                         return chance->completed ? "星を引いています…" : "全部つないで星をゲット";
+                    }
                     return "チューリップが開く";
                 }
             }

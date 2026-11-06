@@ -76,7 +76,11 @@ namespace StardustFever::ECS {
             SetVisible(registry, banner, true);
             Tween::SlideIn(registry, banner, hlslpp::float2(0.0f, -fx->bannerTravel), 0.15f, 0.6f);
         }
-        if(closed && !opened && banner != entt::null) {
+        // 星詠みタイムと星ゲットチャンスは重なることがある。片方が終わっても、もう片方の間は帯を残す
+        const FeverStateComponent*      fever       = FindSingleton<FeverStateComponent>(registry);
+        const StarChanceStateComponent* chance      = FindSingleton<StarChanceStateComponent>(registry);
+        const bool                      stillActive = (fever && fever->active) || (chance && chance->active);
+        if(closed && !opened && !stillActive && banner != entt::null) {
             Tween::SlideOut(registry, banner, hlslpp::float2(0.0f, -fx->bannerTravel), 0.0f, 0.35f);
             m_hideTimer = 0.4f;
         }
@@ -89,9 +93,7 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         // 残り時間が少ないときは秒数を脈打たせ、急かす
         //-------------------------------------------------------------
-        const FeverStateComponent*      fever       = FindSingleton<FeverStateComponent>(registry);
-        const StarChanceStateComponent* chance      = FindSingleton<StarChanceStateComponent>(registry);
-        const bool                      timeWarning = (chance && chance->active && !chance->completed && chance->timeRemaining < fx->timeWarningSeconds)
+        const bool timeWarning = (chance && chance->active && !chance->completed && chance->timeRemaining < fx->timeWarningSeconds)
                                  || (fever && fever->active && fever->timeRemaining < fx->timeWarningSeconds);
         if(timeWarning != m_timeWarning) {
             const Tsukino::ECS::Entity timeText = FindText(registry, HudTextKind::FeverTime);

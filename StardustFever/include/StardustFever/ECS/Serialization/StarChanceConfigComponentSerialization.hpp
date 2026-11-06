@@ -29,7 +29,14 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("effectLevelBonus", component.effectLevelBonus));
         archive(cereal::make_nvp("allCompleteMultiplier", component.allCompleteMultiplier));
         archive(cereal::make_nvp("recentCount", component.recentCount));
-        archive(cereal::make_nvp("missToastInterval", component.missToastInterval));
+        archive(cereal::make_nvp("rollSeconds", component.rollSeconds));
+        archive(cereal::make_nvp("rollRevolutions", component.rollRevolutions));
+        archive(cereal::make_nvp("goldOnWin", component.goldOnWin));
+        archive(cereal::make_nvp("goldOnMiss", component.goldOnMiss));
+        archive(cereal::make_nvp("rollRingX", component.rollRingX));
+        archive(cereal::make_nvp("rollRingY", component.rollRingY));
+        archive(cereal::make_nvp("rollRingRadius", component.rollRingRadius));
+        archive(cereal::make_nvp("rollStarSize", component.rollStarSize));
     }
 
     template <class Archive>
@@ -45,7 +52,14 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "effectLevelBonus", component.effectLevelBonus);
         Tsukino::IO::LoadOptional(archive, "allCompleteMultiplier", component.allCompleteMultiplier);
         Tsukino::IO::LoadOptional(archive, "recentCount", component.recentCount);
-        Tsukino::IO::LoadOptional(archive, "missToastInterval", component.missToastInterval);
+        Tsukino::IO::LoadOptional(archive, "rollSeconds", component.rollSeconds);
+        Tsukino::IO::LoadOptional(archive, "rollRevolutions", component.rollRevolutions);
+        Tsukino::IO::LoadOptional(archive, "goldOnWin", component.goldOnWin);
+        Tsukino::IO::LoadOptional(archive, "goldOnMiss", component.goldOnMiss);
+        Tsukino::IO::LoadOptional(archive, "rollRingX", component.rollRingX);
+        Tsukino::IO::LoadOptional(archive, "rollRingY", component.rollRingY);
+        Tsukino::IO::LoadOptional(archive, "rollRingRadius", component.rollRingRadius);
+        Tsukino::IO::LoadOptional(archive, "rollStarSize", component.rollStarSize);
     }
 
 }    // namespace StardustFever::ECS

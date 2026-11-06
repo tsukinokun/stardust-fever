@@ -42,6 +42,7 @@ namespace StardustFever::ECS {
         , m_purchases(eventBus)
         , m_denials(eventBus)
         , m_starFx(eventBus)
+        , m_gateRolls(eventBus)
         , m_random(std::random_device{}()) {
     }
 
@@ -117,6 +118,7 @@ namespace StardustFever::ECS {
         const auto purchases      = m_purchases.Drain();
         const auto denials        = m_denials.Drain();
         const auto starFx         = m_starFx.Drain();
+        const auto gateRolls      = m_gateRolls.Drain();
 
         const AudioConfigComponent* config = FindSingleton<AudioConfigComponent>(registry);
         if(!config)
@@ -193,6 +195,15 @@ namespace StardustFever::ECS {
             Play(registry, *config, "constellation");
         else if(!draws.empty())
             Play(registry, *config, "starGet");
+
+        for(const StarGateRollEvent& roll : gateRolls) {
+            if(roll.stage == StarGateRollStage::Tick)
+                Play(registry, *config, "gateTick");
+            else if(roll.stage == StarGateRollStage::Win)
+                Play(registry, *config, "gateWin");
+            else if(roll.stage == StarGateRollStage::Miss)
+                Play(registry, *config, "gateMiss");
+        }
 
         for(const StarGetFxEvent& fx : starFx) {
             Play(registry, *config, fx.arrived ? "starArrive" : "starFly");

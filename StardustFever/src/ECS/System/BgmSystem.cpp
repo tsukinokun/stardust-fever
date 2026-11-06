@@ -78,10 +78,10 @@ namespace StardustFever::ECS {
         Scene scene = kNormal;
         if(map && map->open)
             scene = kMap;
+        else if(alive[kFever])
+            scene = kFever;    // 星ゲットチャンスと重なっても、盛り上がりを切らないよう星詠みの曲を流し続ける
         else if(alive[kChance])
             scene = kChance;
-        else if(alive[kFever])
-            scene = kFever;
         else if(alive[kReach])
             scene = kReach;
 

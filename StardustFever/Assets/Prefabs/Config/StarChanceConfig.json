@@ -11,6 +11,13 @@
         "effectLevelBonus": 0.1,
         "allCompleteMultiplier": 10.0,
         "recentCount": 5,
-        "missToastInterval": 8.0
+        "rollSeconds": 1.5,
+        "rollRevolutions": 3.0,
+        "goldOnWin": 0.6,
+        "goldOnMiss": 0.1,
+        "rollRingX": 800.0,
+        "rollRingY": 700.0,
+        "rollRingRadius": 66.0,
+        "rollStarSize": 30.0
     }
 }

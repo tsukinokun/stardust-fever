@@ -50,6 +50,7 @@
 #include <StardustFever/ECS/System/SettingsSystem.hpp>
 #include <StardustFever/ECS/System/SettingsViewSystem.hpp>
 #include <StardustFever/ECS/System/SfxSystem.hpp>
+#include <StardustFever/ECS/System/StarGateFxSystem.hpp>
 #include <StardustFever/ECS/System/StarGetFxSystem.hpp>
 #include <StardustFever/ECS/System/UpgradeShopSystem.hpp>
 
@@ -139,6 +140,7 @@ namespace StardustFever::Scene {
             PocketLabel,       // 入賞口の名札
             StarMapView,       // 88星座の星図の画面（HUD より上に重ねる）
             SettingsView,      // 設定の画面（星図より上に重ねる）
+            StarGateFx,        // 星の門の抽選の演出
             StarGetFx,         // 星を手に入れた演出
             ActionBar,         // 左下の操作ボタン
             UpgradeTooltip,    // 強化のカードの吹き出し
@@ -227,6 +229,7 @@ namespace StardustFever::Scene {
         m_scene.AddSystem(std::make_shared<ECS::PocketLabelSystem>(m_scene), Order(SystemOrder::PocketLabel));
         m_scene.AddSystem(std::make_shared<ECS::StarMapViewSystem>(m_scene), Order(SystemOrder::StarMapView));
         m_scene.AddSystem(std::make_shared<ECS::SettingsViewSystem>(m_scene), Order(SystemOrder::SettingsView));
+        m_scene.AddSystem(std::make_shared<ECS::StarGateFxSystem>(m_scene, eventBus), Order(SystemOrder::StarGateFx));
         m_scene.AddSystem(std::make_shared<ECS::StarGetFxSystem>(m_scene, eventBus), Order(SystemOrder::StarGetFx));
         m_scene.AddSystem(std::make_shared<ECS::ActionBarSystem>(m_scene), Order(SystemOrder::ActionBar));
         m_scene.AddSystem(std::make_shared<ECS::UpgradeTooltipSystem>(m_scene), Order(SystemOrder::UpgradeTooltip));

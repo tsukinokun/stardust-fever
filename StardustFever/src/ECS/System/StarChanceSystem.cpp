@@ -6,10 +6,8 @@
 
 #include <StardustFever/Data/GameDatabase.hpp>
 #include <StardustFever/ECS/Component/CollectionModifiersComponent.hpp>
-#include <StardustFever/ECS/Component/FeverStateComponent.hpp>
 #include <StardustFever/ECS/Component/HiddenPinComponent.hpp>
 #include <StardustFever/ECS/Component/LinkLineComponent.hpp>
-#include <StardustFever/ECS/Component/LotteryStateComponent.hpp>
 #include <StardustFever/ECS/Component/PinComponent.hpp>
 #include <StardustFever/ECS/Component/PocketComponent.hpp>
 #include <StardustFever/ECS/Component/StarChanceConfigComponent.hpp>
@@ -19,6 +17,7 @@
 #include <StardustFever/ECS/Event/HudMessageEvent.hpp>
 #include <StardustFever/ECS/Event/StarChanceEndedEvent.hpp>
 #include <StardustFever/ECS/Event/StarChanceStartedEvent.hpp>
+#include <StardustFever/ECS/Event/StarGateRollEvent.hpp>
 #include <StardustFever/ECS/Utility/GamePause.hpp>
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
@@ -115,31 +114,34 @@ namespace StardustFever::ECS {
         if(!state || !config)
             return;
 
-        state->missToastTimer = std::max(0.0f, state->missToastTimer - deltaTime);
-
         //-------------------------------------------------------------
-        // 星の門に入ったら抽選する。フィーバー中や、フィーバーの抽選のリールが回っている間は黙って見送る
-        // （チャンスの途中でフィーバーが当たると、星釘とフィーバーが重なってしまうため）
+        // 星の門に入ったら抽選する。結果はここで決め、見せるのは StarGateFxSystem の演出のあと。
+        // 抽選の間やチャンスの間に入った玉では、抽選を重ねない
         //-------------------------------------------------------------
         for(const BallEnteredPocketEvent& entry : entries) {
             const PocketComponent* pocket = registry.IsValid(entry.pocket) ? registry.try_get<PocketComponent>(entry.pocket) : nullptr;
-            if(!pocket || pocket->role != "starGate" || state->active)
-                continue;
-
-            const FeverStateComponent*   fever   = FindSingleton<FeverStateComponent>(registry);
-            const LotteryStateComponent* lottery = FindSingleton<LotteryStateComponent>(registry);
-            if((fever && fever->active) || (lottery && lottery->spinning))
+            if(!pocket || pocket->role != "starGate" || state->active || state->rolling)
                 continue;
 
             const UpgradeModifiersComponent*    upgrades   = FindSingleton<UpgradeModifiersComponent>(registry);
             const CollectionModifiersComponent* collection = FindSingleton<CollectionModifiersComponent>(registry);
             const double                        probability =
                 config->chanceProbability + (upgrades ? upgrades->starChanceBonus : 0.0) + (collection ? collection->starChanceBonus : 0.0);
-            if(std::bernoulli_distribution(std::clamp(probability, 0.0, 1.0))(m_random)) {
-                StartChance(registry);
-            } else if(state->missToastTimer <= 0.0f) {
-                m_eventBus->Publish(HudMessageEvent{"星の門  星は応えなかった", HudMessageImportance::Toast, HudMessageTone::Info});
-                state->missToastTimer = config->missToastInterval;
+            state->rolling   = true;
+            state->rollTotal = std::max(config->rollSeconds, 0.01f);
+            state->rollTimer = state->rollTotal;
+            state->rollWin   = std::bernoulli_distribution(std::clamp(probability, 0.0, 1.0))(m_random);
+            state->rollGold  = std::bernoulli_distribution(static_cast<double>(state->rollWin ? config->goldOnWin : config->goldOnMiss))(m_random);
+            m_eventBus->Publish(StarGateRollEvent{StarGateRollStage::Start});
+        }
+
+        if(state->rolling) {
+            state->rollTimer -= deltaTime;
+            if(state->rollTimer <= 0.0f) {
+                state->rolling = false;
+                m_eventBus->Publish(StarGateRollEvent{state->rollWin ? StarGateRollStage::Win : StarGateRollStage::Miss});
+                if(state->rollWin)
+                    StartChance(registry);
             }
         }
 
