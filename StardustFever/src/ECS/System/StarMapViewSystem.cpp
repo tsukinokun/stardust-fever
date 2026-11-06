@@ -230,6 +230,17 @@ namespace StardustFever::ECS {
             m_appliedVersion = state->version;
         }
         UpdateTooltip(registry);
+
+        // 照準が指す星座の名前。変わったときだけ書き換える
+        if(state->reticleId != m_reticleId || state->selectedId != m_reticleSelected) {
+            m_reticleId                                 = state->reticleId;
+            m_reticleSelected                           = state->selectedId;
+            const Data::ConstellationDef* constellation = Data::GetConstellationTable().Find(m_reticleId);
+            std::string                   text;
+            if(constellation && m_reticleId != m_reticleSelected)    // 選んだ星座は空に名前が出ている
+                text = constellation->name + "  Space で選ぶ";
+            HudUi::SetText(registry, m_reticleText, text);
+        }
     }
 
     //-------------------------------------------------------------
@@ -243,7 +254,10 @@ namespace StardustFever::ECS {
             return;
 
         const Data::StarTable& stars = Data::GetStarTable();
-        const bool             shown = state->hoverStar >= 0 && state->hoverStar < static_cast<int>(stars.stars.size());
+        // マウスが乗った星を優先し、無ければキーで選んだ星を見せる
+        const bool byMouse                                                                     = state->hoverStar >= 0;
+        const int  target                                                                      = byMouse ? state->hoverStar : state->focusStar;
+        const bool shown                                                                       = target >= 0 && target < static_cast<int>(stars.stars.size());
         registry.GetComponent<Tsukino::BuiltIn::ECS::UIVisibilityComponent>(m_tooltip).visible = shown;
         if(!shown) {
             m_tooltipStar = -1;
@@ -253,18 +267,20 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         // マウスの右下に置く。画面からはみ出すなら反対側へ回す
         //-------------------------------------------------------------
-        const float gap = 16.0f;
-        float       x   = state->hoverX + gap;
-        float       y   = state->hoverY + gap;
+        const float gap    = 16.0f;
+        const float pointX = byMouse ? state->hoverX : 800.0f;    // キーで選んだ星は中央へ回ってくるので、照準の名前の下に出す
+        const float pointY = byMouse ? state->hoverY : 548.0f;
+        float       x      = pointX + gap;
+        float       y      = pointY + gap;
         if(x + config->tooltipWidth > config->panelX)
-            x = state->hoverX - gap - config->tooltipWidth;
+            x = pointX - gap - config->tooltipWidth;
         if(y + config->tooltipHeight > 1000.0f)
-            y = state->hoverY - gap - config->tooltipHeight;
+            y = pointY - gap - config->tooltipHeight;
         Place(registry, m_tooltip, x, y, 1.0f, 1.0f);
 
-        if(state->hoverStar == m_tooltipStar)
+        if(target == m_tooltipStar)
             return;
-        m_tooltipStar = state->hoverStar;
+        m_tooltipStar = target;
 
         const Data::StarDef&          star  = stars.stars[static_cast<size_t>(m_tooltipStar)];
         const Data::ConstellationDef* home  = Data::GetConstellationTable().Find(star.constellationId);
@@ -364,6 +380,7 @@ namespace StardustFever::ECS {
         m_root           = entt::null;
         m_tooltip        = entt::null;
         m_groupButton    = entt::null;
+        m_reticleText    = entt::null;
         m_appliedVersion = -1;
 
         using Tsukino::BuiltIn::ECS::UIVisibilityComponent;
@@ -559,13 +576,36 @@ namespace StardustFever::ECS {
         const entt::entity summary = MakeElement(*m_scene, registry, m_root, StarMapElementKind::Summary, 0);
         AddText(registry, summary, config->textScale * 1.25f, order + 5, false);
         Place(registry, summary, config->mapX, 18.0f, 1.0f, 1.0f);
-        const entt::entity hint                                           = MakeElement(*m_scene, registry, m_root, StarMapElementKind::Root, 4);
-        AddText(registry, hint, config->rowScale, order + 5, false).color = hlslpp::float4(0.6f, 0.65f, 0.8f, 0.9f);
-        Place(registry, hint, config->mapX, config->mapY + config->mapHeight + 14.0f, 1.0f, 1.0f);
+        const hlslpp::float4 hintColor(0.6f, 0.65f, 0.8f, 0.9f);
+        const entt::entity   hint                                         = MakeElement(*m_scene, registry, m_root, StarMapElementKind::Root, 4);
+        AddText(registry, hint, config->rowScale, order + 5, false).color = hintColor;
+        Place(registry, hint, config->mapX, config->mapY + config->mapHeight - 10.0f, 1.0f, 1.0f);
+        HudUi::SetText(registry, hint, "WASD・矢印 見回す   Q/E 拡大   Space 中央の星座を選ぶ   Z/X 前後の星座   C/V 星を移る   R/F パネルを送る");
+        const entt::entity hintMouse                                           = MakeElement(*m_scene, registry, m_root, StarMapElementKind::Root, 30);
+        AddText(registry, hintMouse, config->rowScale, order + 5, false).color = hintColor;
+        Place(registry, hintMouse, config->mapX, config->mapY + config->mapHeight + 14.0f, 1.0f, 1.0f);
         HudUi::SetText(
-            registry,
-            hint,
-            "ドラッグ・矢印 見回す   ホイール・Q/E 拡大   クリック 星座を選ぶ   Z/X 前後   G グループの一覧   Tab・Esc 閉じる（遊びは止まっています）");
+            registry, hintMouse, "ドラッグ 見回す   ホイール 拡大   クリック 星座を選ぶ   G グループの一覧   Tab・Esc 閉じる（遊びは止まっています）");
+
+        //-------------------------------------------------------------
+        // 画面の中央の照準。キーで星座を選ぶときの目印
+        //-------------------------------------------------------------
+        if(const SettingsConfigComponent* reticleStyle = FindSingleton<SettingsConfigComponent>(registry)) {
+            const entt::entity reticle = MakeElement(*m_scene, registry, m_root, StarMapElementKind::Reticle, 0);
+            Place(registry, reticle, 800.0f, 500.0f, 1.0f, 1.0f);
+            UiParts::AddImage(registry,
+                              reticle,
+                              context->assetManager->Load(Tsukino::Core::Path(reticleStyle->starOutlineTexture)),
+                              34.0f,
+                              34.0f,
+                              order,
+                              hlslpp::float4(0.8f, 0.86f, 1.0f, 0.55f));
+            m_reticleText = MakeElement(*m_scene, registry, m_root, StarMapElementKind::ReticleText, 0);
+            AddText(registry, m_reticleText, config->labelScale, order, true);
+            Place(registry, m_reticleText, 800.0f, 534.0f, 1.0f, 1.0f);
+            m_reticleId.clear();
+            m_reticleSelected = "\n";    // 必ず一度書く
+        }
 
         float y         = config->mapY + 18.0f;
         auto  panelText = [&](StarMapElementKind kind, int index, float scale, float spacing) {
@@ -959,7 +999,7 @@ namespace StardustFever::ECS {
                 continue;
             }
             const bool more = row == config->maxRows - 1 && index + 1 < static_cast<int>(lines.size());
-            HudUi::SetText(registry, text, more ? std::string("▼ ホイールで続き") : lines[static_cast<size_t>(index)].first);
+            HudUi::SetText(registry, text, more ? std::string("▼ ホイール・R/F で続き") : lines[static_cast<size_t>(index)].first);
             HudUi::SetTextColor(registry, text, more ? config->selectedLabelColor : lines[static_cast<size_t>(index)].second);
         }
     }

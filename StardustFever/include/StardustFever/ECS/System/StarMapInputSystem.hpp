@@ -8,6 +8,8 @@
 
 #include <Tsukino/Core/ECS/System/ISystem.hpp>
 
+#include <string>
+
 // 名前空間 : StardustFever::ECS
 namespace StardustFever::ECS {
     //-------------------------------------------------------------
@@ -36,5 +38,6 @@ namespace StardustFever::ECS {
 
     private:
         EventQueue<UiActionEvent> m_actions;
+        std::string               m_focusConstellation;    //!< キーで星を選んだ星座（変わったら選び直す）
     };
 }    // namespace StardustFever::ECS

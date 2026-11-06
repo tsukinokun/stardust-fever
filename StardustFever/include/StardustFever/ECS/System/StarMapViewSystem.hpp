@@ -9,6 +9,7 @@
 
 #include <entt/entt.hpp>
 
+#include <string>
 #include <vector>
 
 // 名前空間 : Tsukino::ECS
@@ -99,6 +100,9 @@ namespace StardustFever::ECS {
         entt::entity              m_veil           = entt::null;                              //!< 暗転の幕（開け閉めの間だけある）
         int                       m_appliedVersion = -1;                                      //!< 最後に並べたときの状態の version
         entt::entity              m_groupButton    = entt::null;                              //!< 星座とグループの切り替えのボタン
+        entt::entity              m_reticleText    = entt::null;                              //!< 照準が指す星座の名前
+        std::string               m_reticleId;                                                //!< 書いてある星座
+        std::string               m_reticleSelected;                                          //!< 書いたときに選ばれていた星座
         entt::entity              m_tooltip        = entt::null;                              //!< 吹き出しの板
         entt::entity              m_tooltipText[3] = {entt::null, entt::null, entt::null};    //!< 吹き出しの文字
         int                       m_tooltipStar    = -1;                                      //!< 吹き出しに書いてある星

@@ -128,6 +128,7 @@
             "z": 1.0,
             "w": 0.95
         },
-        "captionWidth": 54
+        "captionWidth": 54,
+        "reticleRadius": 170.0
     }
 }

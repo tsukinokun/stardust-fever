@@ -34,6 +34,8 @@ namespace StardustFever::ECS {
         int         hoverStar     = -1;      //!< マウスが乗っている星（StarTable::stars の添字。無ければ -1）
         float       hoverX        = 0.0f;    //!< マウスの位置（UI の座標）
         float       hoverY        = 0.0f;
-        int         version       = 0;    //!< 見え方が変わるたびに増える（StarMapViewSystem が並べ直す合図）
+        int         focusStar     = -1;    //!< キーで選んでいる星（StarTable::stars の添字。無ければ -1）
+        std::string reticleId;             //!< 画面の中央に一番近い星座（無ければ空）
+        int         version = 0;           //!< 見え方が変わるたびに増える（StarMapViewSystem が並べ直す合図）
     };
 }    // namespace StardustFever::ECS

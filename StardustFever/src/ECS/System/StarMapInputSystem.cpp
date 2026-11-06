@@ -36,14 +36,15 @@ namespace StardustFever::ECS {
         //! @param  config [in] 星図の調整値
         //! @param  localX [in] クリックした所（画面の中央からのずれ）
         //! @param  localY [in] 同上
+        //! @param  radius [in] 拾う距離（ピクセル）
         //! @return 見つかった星座の ID（無ければ空）
         //! @note   星座名（星の中心）に近ければその星座、無ければ近い星を線に持つ星座を選ぶ。
         //!         視線より後ろの星は選ばない
         //-------------------------------------------------------------
-        std::string PickConstellation(const StarMapStateComponent& state, const StarMapConfigComponent& config, double localX, double localY) {
+        std::string PickConstellation(const StarMapStateComponent& state, const StarMapConfigComponent& config, double localX, double localY, double radius) {
             const Data::StarTable& stars = Data::GetStarTable();
             const double           fov   = config.baseFov / std::max(state.zoom, 0.1);
-            const double           limit = static_cast<double>(config.clickRadius) * config.clickRadius;
+            const double           limit = radius * radius;
             std::string            best;
             double                 bestDistance = std::numeric_limits<double>::max();
             auto                   consider     = [&](const std::string& id, double ra, double dec) {
@@ -253,7 +254,7 @@ namespace StardustFever::ECS {
                 state->raVelocity  = 0.0;
                 state->decVelocity = 0.0;
                 // クリックで星座を選んだら、星座の詳しい中身に戻し、その方へ回る
-                state->selectedId = PickConstellation(*state, *config, x - 800.0, y - kScreenHalfHeight);
+                state->selectedId = PickConstellation(*state, *config, x - 800.0, y - kScreenHalfHeight, config->clickRadius);
                 state->rowScroll  = 0;
                 if(const Data::ConstellationDef* picked = table.Find(state->selectedId)) {
                     state->groupMode = false;
@@ -302,10 +303,10 @@ namespace StardustFever::ECS {
         // 矢印キーで見回す。拡大しているほどゆっくり動かす
         //-------------------------------------------------------------
         const double step  = static_cast<double>(config->keyPanSpeed) * deltaTime / state->zoom;
-        const bool   left  = input.IsKeyDown(KeyCode::Left);
-        const bool   right = input.IsKeyDown(KeyCode::Right);
-        const bool   up    = input.IsKeyDown(KeyCode::Up);
-        const bool   down  = input.IsKeyDown(KeyCode::Down);
+        const bool   left  = input.IsKeyDown(KeyCode::Left) || input.IsKeyDown(KeyCode::A);
+        const bool   right = input.IsKeyDown(KeyCode::Right) || input.IsKeyDown(KeyCode::D);
+        const bool   up    = input.IsKeyDown(KeyCode::Up) || input.IsKeyDown(KeyCode::W);
+        const bool   down  = input.IsKeyDown(KeyCode::Down) || input.IsKeyDown(KeyCode::S);
         if(left || right || up || down)
             state->focusing = false;
         state->raCenter  += (left ? step * raStretch : 0.0) - (right ? step * raStretch : 0.0);
@@ -363,6 +364,63 @@ namespace StardustFever::ECS {
             state->decCenter   += dDec * blend;
             if(std::abs(dRa) < 0.02 && std::abs(dDec) < 0.02)
                 state->focusing = false;
+        }
+
+        //-------------------------------------------------------------
+        // R / F でパネルを送る（パネルの上のホイールと同じ）
+        //-------------------------------------------------------------
+        const int scrollKey = (input.IsKeyPressed(KeyCode::F) ? 3 : 0) - (input.IsKeyPressed(KeyCode::R) ? 3 : 0);
+        if(scrollKey != 0) {
+            const int scroll = std::clamp(state->rowScroll + scrollKey, 0, state->rowScrollMax);
+            changed          = changed || scroll != state->rowScroll;
+            state->rowScroll = scroll;
+        }
+
+        //-------------------------------------------------------------
+        // 中央の照準。一番近い星座を拾い、Space・Enter で選ぶ
+        //-------------------------------------------------------------
+        state->reticleId = PickConstellation(*state, *config, 0.0, 0.0, config->reticleRadius);
+        if((input.IsKeyPressed(KeyCode::Space) || input.IsKeyPressed(KeyCode::Enter)) && !state->reticleId.empty()) {
+            if(const Data::ConstellationDef* picked = table.Find(state->reticleId)) {
+                state->selectedId = picked->id;
+                state->groupMode  = false;
+                state->rowScroll  = 0;
+                TurnToConstellation(*state, *picked, config->maxDec);
+                changed = true;
+            }
+        }
+
+        //-------------------------------------------------------------
+        // C / V で選んだ星座の星を明るい順に移り、その星の方へ回る
+        //-------------------------------------------------------------
+        if(state->selectedId != m_focusConstellation) {
+            m_focusConstellation = state->selectedId;
+            state->focusStar     = -1;
+        }
+        const bool previousStar = input.IsKeyPressed(KeyCode::C);
+        const bool nextStar     = input.IsKeyPressed(KeyCode::V);
+        if(previousStar || nextStar) {
+            if(const Data::ConstellationDef* selected = table.Find(state->selectedId)) {
+                const Data::StarTable&            starTable = Data::GetStarTable();
+                std::vector<const Data::StarDef*> members;
+                for(const Data::ConstellationStarDef& member : selected->stars) {
+                    if(const Data::StarDef* star = starTable.Find(member.starId))
+                        members.push_back(star);
+                }
+                std::sort(members.begin(), members.end(), [](const Data::StarDef* a, const Data::StarDef* b) { return a->magnitude < b->magnitude; });
+                if(!members.empty()) {
+                    const int count   = static_cast<int>(members.size());
+                    int       current = -1;
+                    for(int i = 0; i < count; ++i) {
+                        if(static_cast<int>(members[static_cast<size_t>(i)] - starTable.stars.data()) == state->focusStar)
+                            current = i;
+                    }
+                    const int            target = current < 0 ? 0 : (current + (nextStar ? 1 : count - 1)) % count;
+                    const Data::StarDef* star   = members[static_cast<size_t>(target)];
+                    state->focusStar            = static_cast<int>(star - starTable.stars.data());
+                    TurnTo(*state, star->ra * 15.0, star->dec, config->maxDec);
+                }
+            }
         }
 
         //-------------------------------------------------------------

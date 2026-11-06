@@ -51,6 +51,7 @@ namespace StardustFever::ECS {
         float          rowScale               = 0.36f;      //!< 星の一覧の文字の大きさ
         float          rowSpacing             = 21.0f;      //!< 星の一覧の行の間隔
         int            maxRows                = 32;         //!< 星の一覧に出す行の数の上限
+        float          reticleRadius          = 170.0f;     //!< 中央の照準が星座を拾う距離（UI のピクセル）
         float          clickRadius            = 36.0f;      //!< クリックで星座を選べる距離（ピクセル）
         float          dragThreshold          = 6.0f;       //!< これより動かしたらクリックではなくドラッグとみなす（ピクセル）
         int            sortOrder              = 40;         //!< 描画順の基準（HUD とトーストより上に出す）

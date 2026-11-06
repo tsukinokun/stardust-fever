@@ -14,6 +14,8 @@ namespace StardustFever::ECS {
         Root,           //!< 画面全体（閉じるときにこの下をまとめて消す）
         Veil,           //!< 開け閉めの暗転の幕
         StarLabel,      //!< 選んだ星座の星の名前（index は使い回す枠の番号）
+        Reticle,        //!< 画面の中央の照準
+        ReticleText,    //!< 照準が指す星座の名前
         Tooltip,        //!< マウスを乗せた星の吹き出しの板
         TooltipText,    //!< 吹き出しの文字（index は行の番号）
         Star,           //!< 星の点（index は StarTable::stars の添字）

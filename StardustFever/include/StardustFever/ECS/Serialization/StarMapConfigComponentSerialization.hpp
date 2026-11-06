@@ -55,6 +55,7 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("rowScale", component.rowScale));
         archive(cereal::make_nvp("rowSpacing", component.rowSpacing));
         archive(cereal::make_nvp("maxRows", component.maxRows));
+        archive(cereal::make_nvp("reticleRadius", component.reticleRadius));
         archive(cereal::make_nvp("clickRadius", component.clickRadius));
         archive(cereal::make_nvp("dragThreshold", component.dragThreshold));
         archive(cereal::make_nvp("sortOrder", component.sortOrder));
@@ -125,6 +126,7 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "rowScale", component.rowScale);
         Tsukino::IO::LoadOptional(archive, "rowSpacing", component.rowSpacing);
         Tsukino::IO::LoadOptional(archive, "maxRows", component.maxRows);
+        Tsukino::IO::LoadOptional(archive, "reticleRadius", component.reticleRadius);
         Tsukino::IO::LoadOptional(archive, "clickRadius", component.clickRadius);
         Tsukino::IO::LoadOptional(archive, "dragThreshold", component.dragThreshold);
         Tsukino::IO::LoadOptional(archive, "sortOrder", component.sortOrder);
