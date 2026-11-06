@@ -28,7 +28,7 @@ BOARD_HALF_WIDTH = 30.0
 ARC_CENTER = (0.0, 60.0)
 ARC_THICKNESS_HALF = 0.6
 ARC_RADIUS = BOARD_HALF_WIDTH + ARC_THICKNESS_HALF  # 壁の中心線。内側の面が半径30になる
-ARC_SEGMENTS = 64  # 少ないと継ぎ目の角が外へ飛び出して見える
+ARC_SEGMENTS = 64  # 玉の当たりの細かさ。見た目は Tools/GenerateArchModel.py の滑らかなモデルが受け持つ
 
 # 発射レーン（左端）。外壁の内面 x=-30 と内壁の面 x=-26 の間を玉が昇る
 LANE_INNER_WALL_X = -25.5
@@ -215,7 +215,7 @@ def generate_walls():
         theta = math.pi - (i + 0.5) * step
         x = ARC_CENTER[0] + ARC_RADIUS * math.cos(theta)
         y = ARC_CENTER[1] + ARC_RADIUS * math.sin(theta)
-        walls.append(wall(x, y, chord_half, ARC_THICKNESS_HALF, math.degrees(theta) - 90.0))
+        walls.append(wall(x, y, chord_half, ARC_THICKNESS_HALF, math.degrees(theta) - 90.0, "Prefabs/ArcCollider/Prefab.json"))
     # 発射レーンの内壁と床
     lane_bottom = 2.0
     walls.append(wall(LANE_INNER_WALL_X, (lane_bottom + LANE_TOP_Y) / 2.0, (LANE_TOP_Y - lane_bottom) / 2.0, LANE_INNER_WALL_HALF_THICKNESS, 90.0))
@@ -240,6 +240,7 @@ def generate_objects():
     objects.append({"prefab": asset("Prefabs/Foul/Prefab.json"), "x": -28.0, "y": 1.5})
     objects.append({"prefab": asset("Prefabs/Launcher/Prefab.json"), "x": LAUNCHER_POSITION[0], "y": LAUNCHER_POSITION[1]})
     objects.append({"prefab": asset("Prefabs/Backboard/Prefab.json"), "x": 0.0, "y": 45.0})
+    objects.append({"prefab": asset("Prefabs/Arch/Prefab.json"), "x": ARC_CENTER[0], "y": ARC_CENTER[1]})
     return objects
 
 

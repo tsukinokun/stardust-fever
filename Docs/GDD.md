@@ -189,6 +189,8 @@ TsukinoEngine（EnTT ECS / Jolt Physics / cereal Prefab JSON）上で作る。
 
 ## 盤面の見た目
 
+- 上の半円の壁は、玉の当たりは短い箱の列（`ArcCollider`）、見た目は滑らかな1枚のモデル（`Arch`、`Tools/GenerateArchModel.py`）に分けている。箱をそのまま見せると継ぎ目の角が飛び出す
+
 星空の中で、光る玉が星屑の尾を引き、釘が星のように瞬く。
 
 | もの | 見た目 | 調整する場所 |
