@@ -1,7 +1,7 @@
 {
     "StarChanceConfigComponent": {
-        "chanceProbability": 0.25,
-        "duration": 12.0,
+        "chanceProbability": 0.3,
+        "duration": 30.0,
         "endDelayAfterComplete": 2.5,
         "starPinPrefab": "StardustFever/Assets/Prefabs/StarPin/Prefab.json",
         "pinHideRadius": 2.6,
