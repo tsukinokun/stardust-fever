@@ -33,6 +33,10 @@
             "value": "StardustFever/Assets/Prefabs/Config/SkyObjectConfig.json"
         },
         {
+            "key": "UpgradeShopConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/UpgradeShopConfig.json"
+        },
+        {
             "key": "PrestigeConfigComponent",
             "value": "StardustFever/Assets/Prefabs/Config/PrestigeConfig.json"
         },

@@ -49,6 +49,7 @@ namespace StardustFever::ECS {
         void Load(Tsukino::ECS::Registry& registry);
 
         EventQueue<UpgradePurchasedEvent> m_purchases;
+        EventQueue<UpgradeHoldEndedEvent> m_holdEnds;
         EventQueue<StarDrawnEvent>        m_draws;
         EventQueue<BigBangEvent>          m_bigBangs;
         bool                              m_loaded        = false;    //!< 読み込みを終えたか

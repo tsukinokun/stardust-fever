@@ -102,6 +102,7 @@ namespace StardustFever::ECS {
 
     SaveSystem::SaveSystem(Tsukino::ECS::EventBus& eventBus)
         : m_purchases(eventBus)
+        , m_holdEnds(eventBus)
         , m_draws(eventBus)
         , m_bigBangs(eventBus) {
     }
@@ -123,7 +124,12 @@ namespace StardustFever::ECS {
 
         // 取り返しのつかない出来事の直後は、自動保存を待たずに保存する。
         // 3つとも必ず空にしたいので、短絡評価の || ではなく | でつなぐ
-        const bool important = !m_purchases.Drain().empty() | !m_draws.Drain().empty() | !m_bigBangs.Drain().empty();
+        // 強化の長押しは1回ごとに書くと重いので、終わったときにまとめて保存する
+        bool purchased = false;
+        for(const UpgradePurchasedEvent& purchase : m_purchases.Drain()) {
+            purchased = purchased || !purchase.repeated;
+        }
+        const bool important = purchased | !m_holdEnds.Drain().empty() | !m_draws.Drain().empty() | !m_bigBangs.Drain().empty();
 
         m_autoSaveTimer -= deltaTime;
         if(important || m_autoSaveTimer <= 0.0f) {

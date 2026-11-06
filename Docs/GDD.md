@@ -136,6 +136,8 @@ TsukinoEngine（EnTT ECS / Jolt Physics / cereal Prefab JSON）上で作る。
 | 6 | 自動発射 | Lv1 で解禁。間隔 2.4秒 × 0.85^Lv（Lv1 で約2秒、上限 Lv12 で約0.34秒） |
 | 7 | 精密照準 | 自動発射の揺らぎ ×0.8/Lv（上限5） |
 
+数字キーとカードは長押しで続けて買える。だんだん速くなり、星屑が足りなければ貯まるまで待つ。値は `Prefabs/Config/UpgradeShopConfig.json`。
+
 強化レベルはセーブされ、ビッグバンで 0 に戻る。
 
 ## UI

@@ -1,0 +1,8 @@
+{
+    "UpgradeShopConfigComponent": {
+        "repeatDelay": 0.35,
+        "repeatInterval": 0.16,
+        "repeatMinInterval": 0.04,
+        "repeatAcceleration": 0.9
+    }
+}
