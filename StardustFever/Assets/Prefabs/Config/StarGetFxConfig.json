@@ -8,10 +8,10 @@
         "appearSeconds": 0.3,
         "holdSeconds": 1.1,
         "flySeconds": 0.6,
-        "centerX": 800.0,
+        "centerX": 620.0,
         "centerY": 455.0,
         "starSize": 200.0,
-        "flareSize": 720.0,
+        "flareSize": 620.0,
         "flashAlpha": 0.55,
         "sparkMin": 12,
         "sparkMax": 30,
@@ -34,6 +34,22 @@
             "y": 1.0,
             "z": 1.0,
             "w": 1.0
+        },
+        "mapCardX": 985.0,
+        "mapCardY": 520.0,
+        "mapCardWidth": 330.0,
+        "mapCardHeight": 380.0,
+        "mapLineColor": {
+            "x": 0.55,
+            "y": 0.65,
+            "z": 1.0,
+            "w": 0.75
+        },
+        "mapDimColor": {
+            "x": 0.5,
+            "y": 0.55,
+            "z": 0.75,
+            "w": 0.7
         }
     }
 }

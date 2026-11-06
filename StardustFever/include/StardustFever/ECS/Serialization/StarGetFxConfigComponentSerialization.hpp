@@ -40,6 +40,12 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("factsScale", component.factsScale));
         archive(cereal::make_nvp("walletX", component.walletX));
         archive(cereal::make_nvp("walletY", component.walletY));
+        archive(cereal::make_nvp("mapCardX", component.mapCardX));
+        archive(cereal::make_nvp("mapCardY", component.mapCardY));
+        archive(cereal::make_nvp("mapCardWidth", component.mapCardWidth));
+        archive(cereal::make_nvp("mapCardHeight", component.mapCardHeight));
+        archive(cereal::make_nvp("mapLineColor", component.mapLineColor));
+        archive(cereal::make_nvp("mapDimColor", component.mapDimColor));
         archive(cereal::make_nvp("tagColor", component.tagColor));
         archive(cereal::make_nvp("textColor", component.textColor));
     }
@@ -69,6 +75,12 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "factsScale", component.factsScale);
         Tsukino::IO::LoadOptional(archive, "walletX", component.walletX);
         Tsukino::IO::LoadOptional(archive, "walletY", component.walletY);
+        Tsukino::IO::LoadOptional(archive, "mapCardX", component.mapCardX);
+        Tsukino::IO::LoadOptional(archive, "mapCardY", component.mapCardY);
+        Tsukino::IO::LoadOptional(archive, "mapCardWidth", component.mapCardWidth);
+        Tsukino::IO::LoadOptional(archive, "mapCardHeight", component.mapCardHeight);
+        Tsukino::IO::LoadOptional(archive, "mapLineColor", component.mapLineColor);
+        Tsukino::IO::LoadOptional(archive, "mapDimColor", component.mapDimColor);
         Tsukino::IO::LoadOptional(archive, "tagColor", component.tagColor);
         Tsukino::IO::LoadOptional(archive, "textColor", component.textColor);
     }

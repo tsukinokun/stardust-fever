@@ -3,6 +3,7 @@
 //! @brief  星を手に入れた演出を行う System
 //-------------------------------------------------------------
 #pragma once
+#include <StardustFever/Data/StarData.hpp>
 #include <StardustFever/ECS/Event/StarDrawnEvent.hpp>
 #include <StardustFever/ECS/Utility/EventQueue.hpp>
 
@@ -58,6 +59,13 @@ namespace StardustFever::ECS {
         void Begin(Tsukino::ECS::Registry& registry);
 
         //-------------------------------------------------------------
+        //! @brief  星座の形の中で、手に入れた星の位置を見せるカードを作る
+        //! @param  registry [in] レジストリ
+        //! @param  star     [in] 手に入れた星
+        //-------------------------------------------------------------
+        void BuildMapCard(Tsukino::ECS::Registry& registry, const Data::StarDef& star);
+
+        //-------------------------------------------------------------
         //! @brief  今の時刻に合わせて部品を動かす
         //! @param  registry [in] レジストリ
         //-------------------------------------------------------------
@@ -89,12 +97,14 @@ namespace StardustFever::ECS {
         float                      m_targetX = 0.0f;     //!< 飛ぶ先
         float                      m_targetY = 0.0f;     //!< 飛ぶ先
         hlslpp::float4             m_color;              //!< 星の色
-        entt::entity               m_root  = entt::null;
-        entt::entity               m_flash = entt::null;
-        entt::entity               m_flare = entt::null;
-        entt::entity               m_glow  = entt::null;
-        entt::entity               m_star  = entt::null;
-        entt::entity               m_text  = entt::null;
+        entt::entity               m_root      = entt::null;
+        entt::entity               m_flash     = entt::null;
+        entt::entity               m_flare     = entt::null;
+        entt::entity               m_glow      = entt::null;
+        entt::entity               m_star      = entt::null;
+        entt::entity               m_text      = entt::null;
+        entt::entity               m_map       = entt::null;    //!< 星座の形のカード
+        entt::entity               m_mapTarget = entt::null;    //!< カードの中の、手に入れた星の光
         std::vector<Spark>         m_sparks;
         std::vector<entt::entity>  m_trail;
         std::mt19937               m_random;
