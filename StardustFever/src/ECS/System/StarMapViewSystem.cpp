@@ -706,6 +706,15 @@ namespace StardustFever::ECS {
                 UiParts::MakeClickable(registry, hit, UiAction::MapSelectGroup, i);
                 registry.AddComponent<Tsukino::BuiltIn::ECS::UIVisibilityComponent>(hit).visible = false;
             }
+
+            // 図鑑の一覧の行の当たり。文章の長さで一覧の位置が変わるので、全部の行に置く
+            for(int i = 0; i < config->maxRows; ++i) {
+                const float        rowY = firstRow + config->rowSpacing * (static_cast<float>(i) + 0.5f);
+                const entt::entity hit  = UiParts::MakeNode(*m_scene, registry, m_root, config->panelX + config->panelWidth * 0.5f, rowY);
+                UiParts::AddImage(registry, hit, white, config->panelWidth - 24.0f, config->rowSpacing, order + 4, hlslpp::float4(0.0f, 0.0f, 0.0f, 0.0f));
+                UiParts::MakeClickable(registry, hit, UiAction::MapSelectObject, i);
+                registry.AddComponent<Tsukino::BuiltIn::ECS::UIVisibilityComponent>(hit).visible = false;
+            }
         }
     }
 
@@ -748,8 +757,11 @@ namespace StardustFever::ECS {
 
         // グループの行は一覧の間だけ押せる。切り替えのボタンの文字も合わせる
         for(const auto entity : registry.View<UiActionComponent>()) {
-            if(registry.GetComponent<UiActionComponent>(entity).action == UiAction::MapSelectGroup)
+            const UiAction action = registry.GetComponent<UiActionComponent>(entity).action;
+            if(action == UiAction::MapSelectGroup)
                 registry.GetComponent<Tsukino::BuiltIn::ECS::UIVisibilityComponent>(entity).visible = state->groupMode;
+            else if(action == UiAction::MapSelectObject)
+                registry.GetComponent<Tsukino::BuiltIn::ECS::UIVisibilityComponent>(entity).visible = false;    // 図鑑を書くときに出す
         }
         if(m_groupButton != entt::null)
             HudUi::SetText(registry, registry.GetComponent<UiActionComponent>(m_groupButton).label, state->groupMode ? "星座へ" : "グループ");
@@ -989,6 +1001,7 @@ namespace StardustFever::ECS {
             pinned.emplace_back("Z/X 移る  C/V 同じ種類へ  T 星座へ", config->selectedLabelColor);
 
             std::vector<std::pair<std::string, hlslpp::float4>> list;
+            std::vector<int>                                    listObjects;
             int                                                 selectedLine = 0;
             for(int i = static_cast<int>(skyObjects.objects.size()) - 1; i >= 0; --i) {    // レア度の高い順に見せる
                 const Data::SkyObjectDef& object = skyObjects.objects[static_cast<size_t>(i)];
@@ -998,6 +1011,7 @@ namespace StardustFever::ECS {
                     color.w = 0.55f;
                 if(i == index)
                     selectedLine = static_cast<int>(list.size());
+                listObjects.push_back(i);
                 list.emplace_back(std::string(i == index ? "▶ " : "　 ") + (owned ? "★ " + object.name : std::string("☆ ？？？")) + "  " + rarityName(object),
                                   color);
             }
@@ -1011,12 +1025,28 @@ namespace StardustFever::ECS {
             state->rowScroll = std::clamp(state->rowScroll, 0, state->rowScrollMax);
 
             std::vector<std::pair<std::string, hlslpp::float4>> lines = pinned;
+            state->objectRows.assign(static_cast<size_t>(config->maxRows), -1);
             for(int i = 0; i < room && state->rowScroll + i < static_cast<int>(list.size()); ++i) {
+                const int row = static_cast<int>(lines.size());
+                if(row < config->maxRows)
+                    state->objectRows[static_cast<size_t>(row)] = listObjects[static_cast<size_t>(state->rowScroll + i)];
                 lines.push_back(list[static_cast<size_t>(state->rowScroll + i)]);
             }
+
+            // writeRows は渡した行だけで送りの量を決めるので、一覧の分へ戻す
             const int scrollMax = state->rowScrollMax;
+            const int scroll    = state->rowScroll;
             writeRows(lines);
-            state->rowScrollMax = scrollMax;    // 一覧の分だけ送れる
+            state->rowScrollMax = scrollMax;
+            state->rowScroll    = scroll;
+
+            // 天体のある行だけ押せる
+            for(const auto entity : registry.View<UiActionComponent>()) {
+                const UiActionComponent& action = registry.GetComponent<UiActionComponent>(entity);
+                if(action.action == UiAction::MapSelectObject)
+                    registry.GetComponent<Tsukino::BuiltIn::ECS::UIVisibilityComponent>(entity).visible =
+                        action.index < config->maxRows && state->objectRows[static_cast<size_t>(action.index)] >= 0;
+            }
             return;
         }
 

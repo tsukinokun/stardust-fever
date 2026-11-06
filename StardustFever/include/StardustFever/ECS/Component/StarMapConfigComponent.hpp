@@ -76,18 +76,19 @@ namespace StardustFever::ECS {
         float inertiaFriction   = 3.5f;     //!< 手を離した後の回転の止まりやすさ（1秒あたり）
         float focusSpeed        = 4.0f;     //!< 選んだ星座へ回る速さ（1秒あたり）
         // 名前と文章
-        std::string    reticleTexture;                                                     //!< 照準の絵
-        float          reticleSize         = 56.0f;                                        //!< 照準の大きさ（UI のピクセル）
-        float          objectReticleRadius = 60.0f;                                        //!< 中央の照準が天体を拾う距離（UI のピクセル）
-        float          objectPixels        = 256.0f;                                       //!< 天体の絵の幅
-        std::string    objectUnknownTexture;                                               //!< まだ手に入れていない天体の絵
-        float          objectUnknownSize  = 40.0f;                                         //!< まだ手に入れていない天体の大きさ（UI のピクセル）
-        float          unknownStarSize    = 4.0f;                                          //!< まだ手に入れていない星の大きさ（UI のピクセル）
-        float          objectMissingAlpha = 0.4f;                                          //!< 持っていない天体の濃さ
-        float          hoverRadius        = 14.0f;                                         //!< マウスがこの距離まで近づくと星の吹き出しを出す（UI のピクセル）
-        float          tooltipWidth       = 330.0f;                                        //!< 吹き出しの幅
-        float          tooltipHeight      = 84.0f;                                         //!< 吹き出しの高さ
-        float          tooltipScale       = 0.42f;                                         //!< 吹き出しの文字の大きさ
+        std::string    reticleTexture;                  //!< 照準の絵
+        float          reticleSize         = 56.0f;     //!< 照準の大きさ（UI のピクセル）
+        float          objectReticleRadius = 60.0f;     //!< 中央の照準が天体を拾う距離（UI のピクセル）
+        float          objectPixels        = 256.0f;    //!< 天体の絵の幅
+        std::string    objectUnknownTexture;            //!< まだ手に入れていない天体の絵
+        float          objectUnknownSize  = 40.0f;      //!< まだ手に入れていない天体の大きさ（UI のピクセル）
+        float          unknownStarSize    = 4.0f;       //!< まだ手に入れていない星の大きさ（UI のピクセル）
+        float          objectHoverMax     = 40.0f;      //!< 天体を拾う距離の上限（大きな銀河が星座のクリックを邪魔しないように）
+        float          objectMissingAlpha = 0.4f;       //!< 持っていない天体の濃さ
+        float          hoverRadius        = 14.0f;      //!< マウスがこの距離まで近づくと星の吹き出しを出す（UI のピクセル）
+        float          tooltipWidth       = 330.0f;     //!< 吹き出しの幅
+        float          tooltipHeight      = 84.0f;      //!< 吹き出しの高さ
+        float          tooltipScale       = 0.42f;      //!< 吹き出しの文字の大きさ
         hlslpp::float4 tooltipColor       = hlslpp::float4(0.01f, 0.012f, 0.04f, 0.9f);    //!< 吹き出しの板の色
         int            maxStarLabels      = 14;                                            //!< 選んだ星座に添える星の名前の数
         float          starLabelScale     = 0.34f;                                         //!< 星の名前の大きさ

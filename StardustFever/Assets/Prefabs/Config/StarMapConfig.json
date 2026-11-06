@@ -137,6 +137,7 @@
         "objectReticleRadius": 60.0,
         "objectUnknownTexture": "StardustFever/Assets/Textures/SkyObjects/unknown.png",
         "objectUnknownSize": 40.0,
-        "unknownStarSize": 4.0
+        "unknownStarSize": 4.0,
+        "objectHoverMax": 40.0
     }
 }

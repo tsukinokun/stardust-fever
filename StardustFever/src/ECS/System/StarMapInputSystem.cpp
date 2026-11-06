@@ -87,17 +87,53 @@ namespace StardustFever::ECS {
         }
 
         //-------------------------------------------------------------
+        //! @brief  画面の位置にある天体を探す
+        //! @param  state  [in] 星図の状態
+        //! @param  config [in] 星図の設定
+        //! @param  owned  [in] 持ち物（無ければ全部未発見として扱う）
+        //! @param  localX [in] 画面の中心から見た位置
+        //! @param  localY [in] 同上
+        //! @return 一番近い天体の添字（無ければ -1）
+        //! @note   拾う距離は見た目の大きさに合わせる。未発見は全部同じ大きさ
+        //-------------------------------------------------------------
+        int PickObject(
+            const StarMapStateComponent& state, const StarMapConfigComponent& config, const StarCollectionComponent* owned, double localX, double localY) {
+            const std::vector<Data::SkyObjectDef>& objects = Data::GetSkyObjectTable().objects;
+            const double                           view    = config.baseFov / std::max(state.zoom, 0.1);
+            double                                 best    = 1e18;
+            int                                    picked  = -1;
+            for(size_t i = 0; i < objects.size(); ++i) {
+                Core::SkyMath::Point point;
+                if(!Core::SkyMath::ProjectToScreen(state.raCenter, state.decCenter, view, kScreenHalfHeight, objects[i].ra * 15.0, objects[i].dec, point))
+                    continue;
+                const bool   known  = owned && OwnsSkyObject(*owned, objects[i].id);
+                const double radius = std::clamp(static_cast<double>(known ? objects[i].size : config.objectUnknownSize) * 0.5,
+                                                 static_cast<double>(config.hoverRadius),
+                                                 static_cast<double>(std::max(config.objectHoverMax, config.hoverRadius)));
+                const double dx     = point.x - localX;
+                const double dy     = point.y - localY;
+                const double square = dx * dx + dy * dy;
+                if(square <= radius * radius && square < best) {
+                    best   = square;
+                    picked = static_cast<int>(i);
+                }
+            }
+            return picked;
+        }
+
+        //-------------------------------------------------------------
         //! @brief  天体の図鑑でその天体を選び、その方へ回る
         //! @param  state   [in,out] 星図の状態
         //! @param  objects [in] 天体の一覧
         //! @param  index   [in] 選ぶ天体の添字
         //! @param  maxDec  [in] 見られる赤緯の上限
+        //! @param  follow  [in] 一覧を選んだ行へ合わせ直すか（一覧の行を押したときは動かさない）
         //-------------------------------------------------------------
-        void SelectObject(StarMapStateComponent& state, const std::vector<Data::SkyObjectDef>& objects, int index, float maxDec) {
+        void SelectObject(StarMapStateComponent& state, const std::vector<Data::SkyObjectDef>& objects, int index, float maxDec, bool follow = true) {
             state.groupMode      = false;
             state.objectMode     = true;
             state.selectedObject = index;
-            state.objectFollow   = true;
+            state.objectFollow   = follow;
             TurnTo(state, objects[static_cast<size_t>(index)].ra * 15.0, objects[static_cast<size_t>(index)].dec, maxDec);
         }
 
@@ -162,6 +198,7 @@ namespace StardustFever::ECS {
         bool previousItem = false;
         bool nextItem     = false;
         int  pickedGroup  = -1;
+        int  pickedRow    = -1;
         for(const UiActionEvent& action : m_actions.Drain()) {
             openMap      = openMap || action.action == UiAction::OpenMap;
             openGroups   = openGroups || action.action == UiAction::OpenGroups;
@@ -172,6 +209,8 @@ namespace StardustFever::ECS {
             nextItem     = nextItem || action.action == UiAction::MapNext;
             if(action.action == UiAction::MapSelectGroup)
                 pickedGroup = action.index;
+            if(action.action == UiAction::MapSelectObject)
+                pickedRow = action.index;
         }
 
         StarMapStateComponent*                     state   = FindSingleton<StarMapStateComponent>(registry);
@@ -288,14 +327,19 @@ namespace StardustFever::ECS {
                 state->decVelocity = 0.0;
                 // 天体の上なら図鑑を開き、それ以外は星座を選ぶ
                 const std::vector<Data::SkyObjectDef>& objects = Data::GetSkyObjectTable().objects;
-                if(state->hoverObject >= 0 && state->hoverObject < static_cast<int>(objects.size())) {
-                    SelectObject(*state, objects, state->hoverObject, config->maxDec);
+                // 押している間は吹き出しを出さないので、離した位置から探し直す
+                const int clicked = PickObject(*state, *config, FindSingleton<StarCollectionComponent>(registry), x - 800.0, y - kScreenHalfHeight);
+                if(clicked >= 0 && clicked < static_cast<int>(objects.size())) {
+                    SelectObject(*state, objects, clicked, config->maxDec);
                     changed = true;
                 } else {
                     // クリックで星座を選んだら、星座の詳しい中身に戻し、その方へ回る
                     state->selectedId = PickConstellation(*state, *config, x - 800.0, y - kScreenHalfHeight, config->clickRadius);
-                    state->rowScroll  = 0;
+                    // 図鑑を開いたまま空を押しても、一覧は動かさない
+                    if(!state->objectMode)
+                        state->rowScroll = 0;
                     if(const Data::ConstellationDef* picked = table.Find(state->selectedId)) {
+                        state->rowScroll  = 0;
                         state->groupMode  = false;
                         state->objectMode = false;
                         TurnToConstellation(*state, *picked, config->maxDec);
@@ -376,6 +420,14 @@ namespace StardustFever::ECS {
                 SelectObject(*state, skyObjects, std::clamp(state->selectedObject, 0, static_cast<int>(skyObjects.size()) - 1), config->maxDec);
             changed = true;
         }
+        // 図鑑の一覧の行を押すと、その天体へ移る。一覧は動かさない
+        if(state->objectMode && pickedRow >= 0 && pickedRow < static_cast<int>(state->objectRows.size())
+           && state->objectRows[static_cast<size_t>(pickedRow)] >= 0
+           && state->objectRows[static_cast<size_t>(pickedRow)] < static_cast<int>(skyObjects.size())) {
+            SelectObject(*state, skyObjects, state->objectRows[static_cast<size_t>(pickedRow)], config->maxDec, false);
+            changed = true;
+        }
+
         const bool previous = input.IsKeyPressed(KeyCode::Z) || previousItem;
         const bool next     = input.IsKeyPressed(KeyCode::X) || nextItem;
         if(state->groupMode) {
@@ -550,21 +602,9 @@ namespace StardustFever::ECS {
         // 天体は星より先に見せる。星の間に埋もれて見つからないのを避ける
         state->hoverObject = -1;
         if(inSky && !state->dragging) {
-            const std::vector<Data::SkyObjectDef>& objects = Data::GetSkyObjectTable().objects;
-            double                                 best    = static_cast<double>(config->hoverRadius) * config->hoverRadius;
-            const double                           view    = config->baseFov / std::max(state->zoom, 0.1);
-            for(size_t i = 0; i < objects.size(); ++i) {
-                Core::SkyMath::Point point;
-                if(!Core::SkyMath::ProjectToScreen(state->raCenter, state->decCenter, view, kScreenHalfHeight, objects[i].ra * 15.0, objects[i].dec, point))
-                    continue;
-                const double dx = point.x - (x - 800.0);
-                const double dy = point.y - (y - kScreenHalfHeight);
-                if(dx * dx + dy * dy <= best) {
-                    best               = dx * dx + dy * dy;
-                    state->hoverObject = static_cast<int>(i);
-                    state->hoverStar   = -1;
-                }
-            }
+            state->hoverObject = PickObject(*state, *config, FindSingleton<StarCollectionComponent>(registry), x - 800.0, y - kScreenHalfHeight);
+            if(state->hoverObject >= 0)
+                state->hoverStar = -1;
         }
 
         state->raCenter  = std::fmod(std::fmod(state->raCenter, 360.0) + 360.0, 360.0);

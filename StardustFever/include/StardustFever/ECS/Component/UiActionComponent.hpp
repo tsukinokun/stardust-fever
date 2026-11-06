@@ -28,6 +28,7 @@ namespace StardustFever::ECS {
         MapToggleObjects,    //!< 星座と天体の図鑑を切り替える
         MapToggleGroups,     //!< 星座とグループの一覧を切り替える
         MapClose,            //!< 星図を閉じる
+        MapSelectObject,     //!< 図鑑の行の天体を選ぶ（index はパネルの行の番号）
         MapSelectGroup,      //!< グループを選ぶ（index はグループの並び順）
     };
 
