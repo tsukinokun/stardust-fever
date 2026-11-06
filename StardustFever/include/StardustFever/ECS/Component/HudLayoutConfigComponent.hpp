@@ -25,6 +25,7 @@ namespace StardustFever::ECS {
         float          chartY             = 92.0f;                                         //!< 星図のいちばん上の Y
         float          chartRowSpacing    = 30.0f;                                         //!< 星の行の間隔
         float          chartHeaderSpacing = 40.0f;                                         //!< 星座見出しの高さ
+        float          chartWidth         = 360.0f;                                        //!< 星図の行の幅（「そろったグループ」を押せる範囲）
         float          chartIndent        = 14.0f;                                         //!< 星の行の字下げ
         hlslpp::float4 colorO             = hlslpp::float4(0.6f, 0.72f, 1.0f, 1.0f);       //!< O 型の星の色
         hlslpp::float4 colorB             = hlslpp::float4(0.72f, 0.82f, 1.0f, 1.0f);      //!< B 型の星の色

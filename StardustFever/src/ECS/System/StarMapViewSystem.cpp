@@ -495,7 +495,7 @@ namespace StardustFever::ECS {
         if(!selected) {
             HudUi::SetText(registry, title, "星座を選んでください");
             HudUi::SetTextColor(registry, title, config->labelColor);
-            HudUi::SetText(registry, subtitle, "星図の星か星座名をクリック（Z/X でも選べます）");
+            HudUi::SetText(registry, subtitle, "クリックで星座を選ぶ  G でグループ一覧");
             HudUi::SetText(registry, effect, "");
             for(int row = 0; row < config->maxRows; ++row) {
                 HudUi::SetText(registry, findText(StarMapElementKind::Row, row), "");

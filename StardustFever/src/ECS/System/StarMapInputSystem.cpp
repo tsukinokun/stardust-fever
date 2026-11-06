@@ -5,6 +5,7 @@
 #include <StardustFever/ECS/System/StarMapInputSystem.hpp>
 
 #include <StardustFever/Data/GameDatabase.hpp>
+#include <StardustFever/ECS/Component/HudLayoutConfigComponent.hpp>
 #include <StardustFever/ECS/Component/StarMapConfigComponent.hpp>
 #include <StardustFever/ECS/Component/StarMapStateComponent.hpp>
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
@@ -22,6 +23,27 @@
 namespace StardustFever::ECS {
 
     namespace {
+        //-------------------------------------------------------------
+        //! @brief  マウスが右のパネルの「そろったグループ」の行に乗っているか
+        //! @param  registry [in] レジストリ
+        //! @param  input    [in] 入力
+        //! @return 乗っていれば true
+        //! @note   行は上から2番目の見出し（StarChartViewSystem が並べる順）
+        //-------------------------------------------------------------
+        bool IsOverGroupRow(Tsukino::ECS::Registry& registry, const Tsukino::Input::InputSystem& input) {
+            const HudLayoutConfigComponent* layout = FindSingleton<HudLayoutConfigComponent>(registry);
+            if(!layout)
+                return false;
+            int mouseX = 0;
+            int mouseY = 0;
+            input.GetMousePosition(&mouseX, &mouseY);
+            const hlslpp::float2 ui = Tsukino::BuiltIn::ECS::GetUICanvas(registry).ToUI(hlslpp::float2(static_cast<float>(mouseX), static_cast<float>(mouseY)));
+            const float          x  = ui.x;
+            const float          y  = ui.y;
+            const float          top = layout->chartY + layout->chartHeaderSpacing * 0.5f;    // 行の Y は文字の中心
+            return x >= layout->chartX && x <= layout->chartX + layout->chartWidth && y >= top && y <= top + layout->chartHeaderSpacing;
+        }
+
         using Tsukino::Input::KeyCode;
 
         //-------------------------------------------------------------
@@ -94,12 +116,21 @@ namespace StardustFever::ECS {
         const Tsukino::Input::InputSystem& input = *context->inputSystem;
 
         if(input.IsKeyPressed(KeyCode::Tab) || (state->open && input.IsKeyPressed(KeyCode::Escape))) {
-            state->open     = !state->open && input.IsKeyPressed(KeyCode::Tab);
-            state->dragging = false;
+            state->open      = !state->open && input.IsKeyPressed(KeyCode::Tab);
+            state->groupMode = false;    // Tab はいつも星座の画面から始める
+            state->dragging  = false;
             ++state->version;
         }
-        if(!state->open)
+        if(!state->open) {
+            // 遊んでいる画面からは、G か右のパネルの「そろったグループ」でグループの一覧を直接開ける
+            if(input.IsKeyPressed(KeyCode::G) || (input.IsKeyPressed(KeyCode::LButton) && IsOverGroupRow(registry, input))) {
+                state->open      = true;
+                state->groupMode = true;
+                state->dragging  = false;
+                ++state->version;
+            }
             return;
+        }
 
         const Data::ConstellationTable& table   = Data::GetConstellationTable();
         bool                            changed = false;

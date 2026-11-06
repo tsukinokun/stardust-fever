@@ -212,7 +212,7 @@ namespace StardustFever::ECS {
                     text  = std::to_string(count) + " / " + std::to_string(modifiers->totalConstellations);
                 } else if(entry.constellationId == kGroupsHeader && modifiers) {
                     count = modifiers->collectedGroups;
-                    text  = std::to_string(count) + " / " + std::to_string(modifiers->totalGroups);
+                    text  = std::to_string(count) + " / " + std::to_string(modifiers->totalGroups) + " ▶";    // 押すと一覧が開く
                 } else if(entry.constellationId == kStarsHeader && modifiers) {
                     count = modifiers->ownedStars;
                     text  = std::to_string(count) + " / " + std::to_string(modifiers->totalStars);

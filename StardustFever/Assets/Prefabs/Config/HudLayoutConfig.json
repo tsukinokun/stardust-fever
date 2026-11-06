@@ -11,6 +11,7 @@
         "chartY": 100.0,
         "chartRowSpacing": 26.0,
         "chartHeaderSpacing": 38.0,
+        "chartWidth": 360.0,
         "chartIndent": 10.0,
         "colorO": {
             "x": 0.6,

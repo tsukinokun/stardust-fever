@@ -30,6 +30,7 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("chartY", component.chartY));
         archive(cereal::make_nvp("chartRowSpacing", component.chartRowSpacing));
         archive(cereal::make_nvp("chartHeaderSpacing", component.chartHeaderSpacing));
+        archive(cereal::make_nvp("chartWidth", component.chartWidth));
         archive(cereal::make_nvp("chartIndent", component.chartIndent));
         archive(cereal::make_nvp("colorO", component.colorO));
         archive(cereal::make_nvp("colorB", component.colorB));
@@ -60,6 +61,7 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "chartY", component.chartY);
         Tsukino::IO::LoadOptional(archive, "chartRowSpacing", component.chartRowSpacing);
         Tsukino::IO::LoadOptional(archive, "chartHeaderSpacing", component.chartHeaderSpacing);
+        Tsukino::IO::LoadOptional(archive, "chartWidth", component.chartWidth);
         Tsukino::IO::LoadOptional(archive, "chartIndent", component.chartIndent);
         Tsukino::IO::LoadOptional(archive, "colorO", component.colorO);
         Tsukino::IO::LoadOptional(archive, "colorB", component.colorB);
