@@ -51,6 +51,10 @@
         {
             "key": "StarMapConfigComponent",
             "value": "StardustFever/Assets/Prefabs/Config/StarMapConfig.json"
+        },
+        {
+            "key": "AudioConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/AudioConfig.json"
         }
     ]
 }

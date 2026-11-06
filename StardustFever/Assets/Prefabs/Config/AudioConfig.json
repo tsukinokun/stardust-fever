@@ -1,0 +1,177 @@
+{
+    "AudioConfigComponent": {
+        "bgmNormal": "StardustFever/Assets/Audio/Bgm/Normal.mp3",
+        "bgmReach": "StardustFever/Assets/Audio/Bgm/Reach.mp3",
+        "bgmFever": "StardustFever/Assets/Audio/Bgm/Fever.mp3",
+        "bgmChance": "StardustFever/Assets/Audio/Bgm/Chance.mp3",
+        "bgmMap": "StardustFever/Assets/Audio/Bgm/Map.mp3",
+        "fadeSeconds": 1.2,
+        "fastFadeSeconds": 0.3,
+        "bgmBus": 1,
+        "sfxBus": 2,
+        "volumeStep": 0.1,
+        "pinMinInterval": 0.09,
+        "sounds": [
+            {
+                "id": "launch",
+                "path": "StardustFever/Assets/Audio/Sfx/Launch.wav",
+                "volume": 0.15
+            },
+            {
+                "id": "pin",
+                "path": "StardustFever/Assets/Audio/Sfx/Pin0.wav",
+                "volume": 0.08
+            },
+            {
+                "id": "pin",
+                "path": "StardustFever/Assets/Audio/Sfx/Pin1.wav",
+                "volume": 0.08
+            },
+            {
+                "id": "pin",
+                "path": "StardustFever/Assets/Audio/Sfx/Pin2.wav",
+                "volume": 0.08
+            },
+            {
+                "id": "pin",
+                "path": "StardustFever/Assets/Audio/Sfx/Pin3.wav",
+                "volume": 0.08
+            },
+            {
+                "id": "pin",
+                "path": "StardustFever/Assets/Audio/Sfx/Pin4.wav",
+                "volume": 0.08
+            },
+            {
+                "id": "pocketStart",
+                "path": "StardustFever/Assets/Audio/Sfx/PocketStart.wav",
+                "volume": 0.4
+            },
+            {
+                "id": "pocketTulip",
+                "path": "StardustFever/Assets/Audio/Sfx/PocketTulip.wav",
+                "volume": 0.12
+            },
+            {
+                "id": "pocketGate",
+                "path": "StardustFever/Assets/Audio/Sfx/PocketGate.wav",
+                "volume": 0.9
+            },
+            {
+                "id": "reelStop",
+                "path": "StardustFever/Assets/Audio/Sfx/ReelStop.wav",
+                "volume": 0.4
+            },
+            {
+                "id": "reach",
+                "path": "StardustFever/Assets/Audio/Sfx/Reach.wav",
+                "volume": 0.9
+            },
+            {
+                "id": "miss",
+                "path": "StardustFever/Assets/Audio/Sfx/Miss.wav",
+                "volume": 0.7
+            },
+            {
+                "id": "win",
+                "path": "StardustFever/Assets/Audio/Sfx/Win.wav",
+                "volume": 0.7
+            },
+            {
+                "id": "feverEnd",
+                "path": "StardustFever/Assets/Audio/Sfx/FeverEnd.wav",
+                "volume": 0.8
+            },
+            {
+                "id": "chanceStart",
+                "path": "StardustFever/Assets/Audio/Sfx/ChanceStart.wav",
+                "volume": 0.9
+            },
+            {
+                "id": "starLink",
+                "path": "StardustFever/Assets/Audio/Sfx/StarLink0.wav",
+                "volume": 0.9
+            },
+            {
+                "id": "starLink",
+                "path": "StardustFever/Assets/Audio/Sfx/StarLink1.wav",
+                "volume": 0.9
+            },
+            {
+                "id": "starLink",
+                "path": "StardustFever/Assets/Audio/Sfx/StarLink2.wav",
+                "volume": 0.9
+            },
+            {
+                "id": "starLink",
+                "path": "StardustFever/Assets/Audio/Sfx/StarLink3.wav",
+                "volume": 0.9
+            },
+            {
+                "id": "starLink",
+                "path": "StardustFever/Assets/Audio/Sfx/StarLink4.wav",
+                "volume": 0.9
+            },
+            {
+                "id": "starLink",
+                "path": "StardustFever/Assets/Audio/Sfx/StarLink5.wav",
+                "volume": 0.9
+            },
+            {
+                "id": "starLink",
+                "path": "StardustFever/Assets/Audio/Sfx/StarLink6.wav",
+                "volume": 0.9
+            },
+            {
+                "id": "starLink",
+                "path": "StardustFever/Assets/Audio/Sfx/StarLink7.wav",
+                "volume": 0.9
+            },
+            {
+                "id": "chanceFail",
+                "path": "StardustFever/Assets/Audio/Sfx/ChanceFail.wav",
+                "volume": 0.8
+            },
+            {
+                "id": "starGet",
+                "path": "StardustFever/Assets/Audio/Sfx/StarGet.wav",
+                "volume": 0.7
+            },
+            {
+                "id": "constellation",
+                "path": "StardustFever/Assets/Audio/Sfx/Constellation.wav",
+                "volume": 0.7
+            },
+            {
+                "id": "bigBang",
+                "path": "StardustFever/Assets/Audio/Sfx/BigBang.wav",
+                "volume": 0.7
+            },
+            {
+                "id": "purchase",
+                "path": "StardustFever/Assets/Audio/Sfx/Purchase.wav",
+                "volume": 0.8
+            },
+            {
+                "id": "denied",
+                "path": "StardustFever/Assets/Audio/Sfx/Denied.wav",
+                "volume": 0.7
+            },
+            {
+                "id": "mapOpen",
+                "path": "StardustFever/Assets/Audio/Sfx/MapOpen.wav",
+                "volume": 0.6
+            },
+            {
+                "id": "mapClose",
+                "path": "StardustFever/Assets/Audio/Sfx/MapClose.wav",
+                "volume": 0.6
+            },
+            {
+                "id": "volumeTick",
+                "path": "StardustFever/Assets/Audio/Sfx/VolumeTick.wav",
+                "volume": 0.8
+            }
+        ]
+    }
+}

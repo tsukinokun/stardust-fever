@@ -3,6 +3,7 @@
 //! @brief  発射台から玉を打ち出す System
 //-------------------------------------------------------------
 #pragma once
+#include <Tsukino/Core/ECS/Event/EventBus.hpp>
 #include <Tsukino/Core/ECS/System/ISystem.hpp>
 
 #include <random>
@@ -16,7 +17,11 @@ namespace StardustFever::ECS {
     //-------------------------------------------------------------
     class LaunchSystem final : public Tsukino::ECS::ISystem {
     public:
-        LaunchSystem();
+        //-------------------------------------------------------------
+        //! @brief  コンストラクタ
+        //! @param  eventBus [in] 打ち出した知らせの発行先
+        //-------------------------------------------------------------
+        explicit LaunchSystem(Tsukino::ECS::EventBus& eventBus);
 
         //-------------------------------------------------------------
         //! @brief  玉を打ち出す
@@ -26,6 +31,7 @@ namespace StardustFever::ECS {
         void Update(Tsukino::ECS::Registry& registry, float deltaTime) override;
 
     private:
-        std::mt19937 m_random;    //!< 自動発射の揺らぎ用
+        Tsukino::ECS::EventBus* m_eventBus = nullptr;
+        std::mt19937            m_random;    //!< 自動発射の揺らぎ用
     };
 }    // namespace StardustFever::ECS

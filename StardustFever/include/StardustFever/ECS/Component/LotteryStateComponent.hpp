@@ -16,6 +16,7 @@ namespace StardustFever::ECS {
         int                 pending      = 0;                     //!< 保留の数
         bool                spinning     = false;                 //!< リールが回っているか
         float               spinTimer    = 0.0f;                  //!< 止まるまでの残り時間（秒）
+        float               spinTotal    = 0.0f;                  //!< 今回の変動が回る時間（秒。リーチなら長くなる）
         float               symbolTimer  = 0.0f;                  //!< 次に絵柄を送るまでの時間（秒）
         bool                willWin      = false;                 //!< 今回の変動が当たりか（回り始めに決める）
         std::array<int, 3>  symbols      = {0, 1, 2};             //!< 表示中の絵柄（LotteryConfigComponent::symbols の添字）

@@ -4,6 +4,7 @@
         "maxPending": 4,
         "spinDuration": 2.0,
         "symbolInterval": 0.07,
+        "reachExtraDuration": 3.0,
         "symbols": [
             "牡羊",
             "牡牛",

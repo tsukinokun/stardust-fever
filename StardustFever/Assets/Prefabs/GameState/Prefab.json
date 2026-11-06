@@ -43,6 +43,10 @@
         {
             "key": "StarMapStateComponent",
             "value": "null"
+        },
+        {
+            "key": "AudioSettingsComponent",
+            "value": "null"
         }
     ]
 }

@@ -22,10 +22,12 @@
 #include <StardustFever/ECS/Component/StarChartEntryComponent.hpp>
 #include <StardustFever/ECS/Component/StarPinComponent.hpp>
 #include <StardustFever/ECS/Component/ToastComponent.hpp>
+#include <StardustFever/ECS/Component/AudioSettingsComponent.hpp>
 #include <StardustFever/ECS/Component/UpgradeLevelsComponent.hpp>
 #include <StardustFever/ECS/Component/UpgradeModifiersComponent.hpp>
 
 // 値を JSON から読むコンポーネント（シリアライズ定義が見えていないと、値を読まずに付けるだけになる）
+#include <StardustFever/ECS/Serialization/AudioConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/AutoFireComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/BoardBuildRequestComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/CosmicFxConfigComponentSerialization.hpp>
@@ -112,6 +114,8 @@ namespace StardustFever::ECS {
         factory.RegisterComponent<Tsukino::BuiltIn::ECS::RimGlowComponent>("RimGlowComponent");
 
         // 設定
+        factory.RegisterComponent<AudioSettingsComponent>("AudioSettingsComponent");
+
         factory.RegisterComponent<LauncherConfigComponent>("LauncherConfigComponent");
         factory.RegisterComponent<LotteryConfigComponent>("LotteryConfigComponent");
         factory.RegisterComponent<FeverConfigComponent>("FeverConfigComponent");
@@ -125,6 +129,7 @@ namespace StardustFever::ECS {
         factory.RegisterComponent<PrestigeConfigComponent>("PrestigeConfigComponent");
         factory.RegisterComponent<SaveConfigComponent>("SaveConfigComponent");
         factory.RegisterComponent<CosmicFxConfigComponent>("CosmicFxConfigComponent");
+        factory.RegisterComponent<AudioConfigComponent>("AudioConfigComponent");
     }
 
     //-------------------------------------------------------------
@@ -144,6 +149,7 @@ namespace StardustFever::ECS {
         reloadSystem.RegisterType<PrestigeConfigComponent>("PrestigeConfigComponent");
         reloadSystem.RegisterType<SaveConfigComponent>("SaveConfigComponent");
         reloadSystem.RegisterType<CosmicFxConfigComponent>("CosmicFxConfigComponent");
+        reloadSystem.RegisterType<AudioConfigComponent>("AudioConfigComponent");
     }
 
 }    // namespace StardustFever::ECS

@@ -41,6 +41,8 @@ SF_TEST(SaveDataRoundTrips) {
     original.bigBangCount                = 5;
     original.universeEarned              = BigNumber(3.0e9);
     original.autoFireEnabled             = true;
+    original.bgmVolume                   = 0.3f;
+    original.audioMuted                  = true;
 
     const SaveData loaded = Read(Write(original));
     SF_EXPECT(loaded.stardust == original.stardust);
@@ -50,6 +52,8 @@ SF_TEST(SaveDataRoundTrips) {
     SF_EXPECT(loaded.bigBangCount == 5);
     SF_EXPECT(loaded.universeEarned == BigNumber(3.0e9));
     SF_EXPECT(loaded.autoFireEnabled);
+    SF_EXPECT(loaded.bgmVolume == 0.3f);
+    SF_EXPECT(loaded.audioMuted);
 }
 
 SF_TEST(SaveDataToleratesMissingFields) {

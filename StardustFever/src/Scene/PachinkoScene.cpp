@@ -10,6 +10,8 @@
 #include <StardustFever/ECS/System/BoardBuildSystem.hpp>
 #include <StardustFever/ECS/System/CollectionEffectSystem.hpp>
 #include <StardustFever/ECS/System/ConfigReloadSystem.hpp>
+#include <StardustFever/ECS/System/AudioSettingsSystem.hpp>
+#include <StardustFever/ECS/System/BgmSystem.hpp>
 #include <StardustFever/ECS/System/FeverSystem.hpp>
 #include <StardustFever/ECS/System/FxSystem.hpp>
 #include <StardustFever/ECS/System/GlowHaloSystem.hpp>
@@ -40,6 +42,7 @@
 #include <StardustFever/ECS/System/TulipSystem.hpp>
 #include <StardustFever/ECS/System/TwinkleSystem.hpp>
 #include <StardustFever/ECS/System/UpgradeEffectSystem.hpp>
+#include <StardustFever/ECS/System/SfxSystem.hpp>
 #include <StardustFever/ECS/System/UpgradeShopSystem.hpp>
 
 #include <Tsukino/EngineIntegration/ECS/System/AmbientParticleSystem.hpp>
@@ -90,6 +93,7 @@ namespace StardustFever::Scene {
             BoardBuild,          // 発射台（自動発射の ON/OFF を持つ）もここで作られるので、セーブより先に組み立てる
             Save,                // 最初のフレームでセーブを読み、他の System が見る前に進行を戻す
             StarMapInput,        // 星図の画面の開け閉め。開いている間は、ここより後の遊びの System が止まる（GamePause.hpp）
+            AudioSettings,       // 音量のキー操作。星図を開いている間も効く
             LauncherInput,
             BigBang,
             UpgradeShop,
@@ -106,6 +110,8 @@ namespace StardustFever::Scene {
             StarDraw,           // チャンスの結果 → 星を引く・星座がそろう
             ScoreMultiplier,    // 星・星座の効果・宇宙定数 → 全体倍率（払い出しより前に計算する）
             Payout,             // 全ての獲得 → 財布
+            Bgm,                // ここまでの状態 → 場面の曲（星図の間も動く）
+            Sfx,                // ここまでの出来事 → 効果音
             SparkleTrail,       // ここから4つは盤面の見た目（玉の尾・釘の瞬き・星釘の光輪・流れ星）
             Twinkle,
             GlowHalo,
@@ -164,12 +170,13 @@ namespace StardustFever::Scene {
         m_scene.AddSystem(m_saveSystem, Order(SystemOrder::Save));
         m_scene.AddSystem(std::make_shared<ECS::BoardBuildSystem>(), Order(SystemOrder::BoardBuild));
         m_scene.AddSystem(std::make_shared<ECS::StarMapInputSystem>(), Order(SystemOrder::StarMapInput));
+        m_scene.AddSystem(std::make_shared<ECS::AudioSettingsSystem>(eventBus), Order(SystemOrder::AudioSettings));
         m_scene.AddSystem(std::make_shared<ECS::LauncherInputSystem>(eventBus), Order(SystemOrder::LauncherInput));
         m_scene.AddSystem(std::make_shared<ECS::BigBangSystem>(eventBus), Order(SystemOrder::BigBang));
         m_scene.AddSystem(std::make_shared<ECS::UpgradeShopSystem>(eventBus), Order(SystemOrder::UpgradeShop));
         m_scene.AddSystem(std::make_shared<ECS::UpgradeEffectSystem>(), Order(SystemOrder::UpgradeEffect));
         m_scene.AddSystem(std::make_shared<ECS::CollectionEffectSystem>(), Order(SystemOrder::CollectionEffect));
-        m_scene.AddSystem(std::make_shared<ECS::LaunchSystem>(), Order(SystemOrder::Launch));
+        m_scene.AddSystem(std::make_shared<ECS::LaunchSystem>(eventBus), Order(SystemOrder::Launch));
         m_scene.AddSystem(std::make_shared<ECS::PhysicsStepSystem>(eventBus), Order(SystemOrder::Physics));
         m_scene.AddSystem(std::make_shared<ECS::BallEventSystem>(eventBus), Order(SystemOrder::BallEvent));
         m_scene.AddSystem(std::make_shared<ECS::LotterySystem>(eventBus), Order(SystemOrder::Lottery));
@@ -180,6 +187,8 @@ namespace StardustFever::Scene {
         m_scene.AddSystem(std::make_shared<ECS::StarDrawSystem>(eventBus), Order(SystemOrder::StarDraw));
         m_scene.AddSystem(std::make_shared<ECS::ScoreMultiplierSystem>(), Order(SystemOrder::ScoreMultiplier));
         m_scene.AddSystem(std::make_shared<ECS::PayoutSystem>(eventBus), Order(SystemOrder::Payout));
+        m_scene.AddSystem(std::make_shared<ECS::BgmSystem>(), Order(SystemOrder::Bgm));
+        m_scene.AddSystem(std::make_shared<ECS::SfxSystem>(eventBus), Order(SystemOrder::Sfx));
         m_scene.AddSystem(std::make_shared<ECS::SparkleTrailSystem>(m_scene), Order(SystemOrder::SparkleTrail));
         m_scene.AddSystem(std::make_shared<ECS::TwinkleSystem>(m_scene, eventBus), Order(SystemOrder::Twinkle));
         m_scene.AddSystem(std::make_shared<ECS::GlowHaloSystem>(m_scene), Order(SystemOrder::GlowHalo));

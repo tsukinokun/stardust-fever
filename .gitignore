@@ -41,3 +41,5 @@ Saves/
 
 # Downloaded sky source data (Tools/BuildSkyCatalog.py --download fetches it again)
 Tools/SkyData/
+Tools/MusicData/
+Tools/__pycache__/

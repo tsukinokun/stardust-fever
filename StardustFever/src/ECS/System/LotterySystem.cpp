@@ -22,10 +22,10 @@ namespace StardustFever::ECS {
 
     namespace {
         //-------------------------------------------------------------
-        // 左・中・右のリールが止まる時刻（回転時間に対する割合）。
+        // 左と中のリールが止まる時刻（回転時間に対する割合）。右は変動の終わりに止まる。
         // 左から順に止めることで、最後の1つを待つ「リーチ」の間が生まれる
         //-------------------------------------------------------------
-        constexpr float kReelStopRatios[3] = {0.45f, 0.7f, 1.0f};
+        constexpr float kReelStopRatios[2] = {0.45f, 0.7f};
     }    // namespace
 
     LotterySystem::LotterySystem(Tsukino::ECS::EventBus& eventBus)
@@ -70,7 +70,6 @@ namespace StardustFever::ECS {
         if(!state->spinning && state->pending > 0 && !feverActive && !chanceActive) {
             --state->pending;
             state->spinning                                = true;
-            state->spinTimer                               = config->spinDuration;
             state->symbolTimer                             = 0.0f;
             const UpgradeModifiersComponent*    upgrades   = FindSingleton<UpgradeModifiersComponent>(registry);
             const CollectionModifiersComponent* collection = FindSingleton<CollectionModifiersComponent>(registry);
@@ -87,20 +86,26 @@ namespace StardustFever::ECS {
                 if(symbolCount > 1 && state->finalSymbols[0] == state->finalSymbols[1] && state->finalSymbols[1] == state->finalSymbols[2])
                     state->finalSymbols[2] = (state->finalSymbols[2] + 1) % symbolCount;
             }
+
+            // 左と中がそろうならリーチ。右のリールを長く回して、BGM と演出の間を作る
+            const bool reach = state->finalSymbols[0] == state->finalSymbols[1];
+            state->spinTotal = config->spinDuration + (reach ? config->reachExtraDuration : 0.0f);
+            state->spinTimer = state->spinTotal;
         }
 
         if(!state->spinning)
             return;
 
-        state->spinTimer         -= deltaTime;
-        state->symbolTimer       -= deltaTime;
-        const float elapsedRatio  = config->spinDuration > 0.0f ? 1.0f - state->spinTimer / config->spinDuration : 1.0f;
-        const bool  advance       = state->symbolTimer <= 0.0f;
+        state->spinTimer    -= deltaTime;
+        state->symbolTimer  -= deltaTime;
+        const float elapsed  = state->spinTotal - state->spinTimer;
+        const bool  advance  = state->symbolTimer <= 0.0f;
         if(advance)
             state->symbolTimer = config->symbolInterval;
 
         for(int reel = 0; reel < 3; ++reel) {
-            if(elapsedRatio >= kReelStopRatios[reel]) {
+            const float stopAt = reel < 2 ? kReelStopRatios[reel] * config->spinDuration : state->spinTotal;
+            if(elapsed >= stopAt) {
                 state->symbols[reel]     = state->finalSymbols[reel];
                 state->reelStopped[reel] = true;
             } else {

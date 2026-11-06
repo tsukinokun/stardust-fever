@@ -23,6 +23,7 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("maxPending", component.maxPending));
         archive(cereal::make_nvp("spinDuration", component.spinDuration));
         archive(cereal::make_nvp("symbolInterval", component.symbolInterval));
+        archive(cereal::make_nvp("reachExtraDuration", component.reachExtraDuration));
         archive(cereal::make_nvp("symbols", component.symbols));
     }
 
@@ -32,6 +33,7 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "maxPending", component.maxPending);
         Tsukino::IO::LoadOptional(archive, "spinDuration", component.spinDuration);
         Tsukino::IO::LoadOptional(archive, "symbolInterval", component.symbolInterval);
+        Tsukino::IO::LoadOptional(archive, "reachExtraDuration", component.reachExtraDuration);
         Tsukino::IO::LoadOptional(archive, "symbols", component.symbols);
     }
 

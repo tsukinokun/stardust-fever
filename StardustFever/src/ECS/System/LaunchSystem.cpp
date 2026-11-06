@@ -9,6 +9,7 @@
 #include <StardustFever/ECS/Component/LauncherComponent.hpp>
 #include <StardustFever/ECS/Component/LauncherConfigComponent.hpp>
 #include <StardustFever/ECS/Component/UpgradeModifiersComponent.hpp>
+#include <StardustFever/ECS/Event/BallLaunchedEvent.hpp>
 #include <StardustFever/ECS/Utility/GamePause.hpp>
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
@@ -25,8 +26,9 @@
 // 名前空間 : StardustFever::ECS
 namespace StardustFever::ECS {
 
-    LaunchSystem::LaunchSystem()
-        : m_random(std::random_device{}()) {
+    LaunchSystem::LaunchSystem(Tsukino::ECS::EventBus& eventBus)
+        : m_eventBus(&eventBus)
+        , m_random(std::random_device{}()) {
     }
 
     //-------------------------------------------------------------
@@ -44,6 +46,7 @@ namespace StardustFever::ECS {
         int ballsOnBoard = 0;
         for([[maybe_unused]] const auto entity : registry.View<BallComponent>()) {
             ++ballsOnBoard;
+            m_eventBus->Publish(BallLaunchedEvent{});
         }
 
         //-------------------------------------------------------------

@@ -8,6 +8,7 @@
 #include <StardustFever/ECS/Component/HudTextComponent.hpp>
 #include <StardustFever/ECS/Component/LotteryStateComponent.hpp>
 #include <StardustFever/ECS/Utility/HudUi.hpp>
+#include <StardustFever/ECS/Utility/LotteryReach.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
 
 #include <Tsukino/BuiltIn/ECS/UI/UITweenUtility.hpp>
@@ -85,8 +86,7 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         // リーチ: 左と中が止まって同じ絵柄、右だけが回っている
         //-------------------------------------------------------------
-        const bool reach =
-            state->spinning && state->reelStopped[0] && state->reelStopped[1] && !state->reelStopped[2] && state->symbols[0] == state->symbols[1];
+        const bool reach = IsReach(*state);
         if(frame != entt::null) {
             if(reach && !m_wasReach)
                 HudUi::PlayPingPong(registry, frame, UITweenProperty::Scale, 1.0f, 1.045f, 0.36f, 0.0f, HudUi::Tag::kPulse);

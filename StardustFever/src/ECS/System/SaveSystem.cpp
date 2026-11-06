@@ -6,6 +6,7 @@
 
 #include <StardustFever/Data/GameDatabase.hpp>
 #include <StardustFever/Data/SaveData.hpp>
+#include <StardustFever/ECS/Component/AudioSettingsComponent.hpp>
 #include <StardustFever/ECS/Component/AutoFireComponent.hpp>
 #include <StardustFever/ECS/Component/PrestigeStateComponent.hpp>
 #include <StardustFever/ECS/Component/SaveConfigComponent.hpp>
@@ -50,6 +51,11 @@ namespace StardustFever::ECS {
             }
             if(const AutoFireComponent* autoFire = FindSingleton<AutoFireComponent>(registry))
                 data.autoFireEnabled = autoFire->enabled;
+            if(const AudioSettingsComponent* audio = FindSingleton<AudioSettingsComponent>(registry)) {
+                data.bgmVolume  = audio->bgmVolume;
+                data.sfxVolume  = audio->sfxVolume;
+                data.audioMuted = audio->muted;
+            }
             return data;
         }
 
@@ -73,6 +79,11 @@ namespace StardustFever::ECS {
             }
             if(AutoFireComponent* autoFire = FindSingleton<AutoFireComponent>(registry))
                 autoFire->enabled = data.autoFireEnabled;
+            if(AudioSettingsComponent* audio = FindSingleton<AudioSettingsComponent>(registry)) {
+                audio->bgmVolume = data.bgmVolume;
+                audio->sfxVolume = data.sfxVolume;
+                audio->muted     = data.audioMuted;
+            }
         }
     }    // namespace
 
