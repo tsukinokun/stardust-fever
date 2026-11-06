@@ -1,5 +1,22 @@
 # Stardust Fever
 
+<p align="center">
+  <img src="https://img.shields.io/badge/C%2B%2B-20-blue.svg" alt="C++20">
+  <img src="https://img.shields.io/badge/DirectX-11-107C10.svg" alt="DirectX 11">
+  <img src="https://img.shields.io/badge/platform-Windows-0078D6.svg" alt="Platform: Windows">
+  <img src="https://img.shields.io/badge/build-Premake5-orange.svg" alt="Build: Premake5">
+  <img src="https://img.shields.io/badge/ECS-EnTT-9cf.svg" alt="ECS: EnTT">
+  <img src="https://img.shields.io/badge/physics-Jolt-8A2BE2.svg" alt="Physics: Jolt">
+  <a href="https://github.com/tsukinokun/TsukinoEngine"><img src="https://img.shields.io/badge/engine-TsukinoEngine-4B3F9E.svg" alt="Engine: TsukinoEngine"></a>
+  <a href="https://qiita.com/tsukino_"><img src="https://img.shields.io/badge/Qiita-tsukino__-55C500?logo=qiita&logoColor=white" alt="Qiita"></a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/github/last-commit/tsukinokun/stardust-fever" alt="Last commit">
+  <img src="https://img.shields.io/github/repo-size/tsukinokun/stardust-fever" alt="Repo size">
+  <img src="https://img.shields.io/github/languages/top/tsukinokun/stardust-fever" alt="Top language">
+</p>
+
 星をモチーフにした、インフレ系のパチンコゲームです。
 玉で星座を描いて本物の星を集め、数字が宇宙規模へふくらんでいく遊びを作りました。
 自作のゲームエンジン [TsukinoEngine](https://github.com/tsukinokun/TsukinoEngine)（C++20 / DirectX 11）の上で動いています。
@@ -101,9 +118,13 @@ Docs/                企画書（GDD.md）とクレジット
 External/            TsukinoEngine（submodule）
 ```
 
-## 今後の予定
+## 作者
 
-多元宇宙（ビッグバンのさらに上の転生）、特殊な玉、ランダムイベントなどを企画書に載せています。まだ実装していません。
+**山﨑 愛**
+
+- GitHub：[@tsukinokun](https://github.com/tsukinokun)
+- Qiita：[@tsukino_](https://qiita.com/tsukino_)
+
 
 ## クレジット
 
