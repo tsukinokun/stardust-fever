@@ -17,6 +17,7 @@
 #include <StardustFever/ECS/Event/HudMessageEvent.hpp>
 #include <StardustFever/ECS/Event/StarChanceEndedEvent.hpp>
 #include <StardustFever/ECS/Event/StarChanceStartedEvent.hpp>
+#include <StardustFever/Core/StarGateRoll.hpp>
 #include <StardustFever/ECS/Event/StarGateRollEvent.hpp>
 #include <StardustFever/ECS/Utility/GamePause.hpp>
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
@@ -127,10 +128,28 @@ namespace StardustFever::ECS {
             const CollectionModifiersComponent* collection = FindSingleton<CollectionModifiersComponent>(registry);
             const double                        probability =
                 config->chanceProbability + (upgrades ? upgrades->starChanceBonus : 0.0) + (collection ? collection->starChanceBonus : 0.0);
-            state->rolling   = true;
-            state->rollTotal = std::max(config->rollSeconds, 0.01f);
+            // 盤面に出せる星が2つ以上ある星座から、止まる星座を先に選ぶ
+            std::vector<const Data::ConstellationDef*> candidates;
+            for(const Data::ConstellationDef& constellation : Data::GetConstellationTable().constellations) {
+                if(constellation.board.stars.size() >= 2)
+                    candidates.push_back(&constellation);
+            }
+            if(candidates.empty()) {
+                Tsukino::Core::Log::Warn("Star gate entered, but no constellation has board stars. Run Tools/BuildSkyCatalog.py.");
+                continue;
+            }
+
+            using Core::StarGateRoll::Scenario;
+            state->rolling             = true;
+            state->rollWin             = std::bernoulli_distribution(std::clamp(probability, 0.0, 1.0))(m_random);
+            state->rollConstellationId = candidates[std::uniform_int_distribution<size_t>(0, candidates.size() - 1)(m_random)]->id;
+            // 筋書きは見せ方だけで、当たり外れはもう決まっている
+            const bool twist = std::bernoulli_distribution(static_cast<double>(state->rollWin ? config->rollComebackRate : config->rollNearMissRate))(m_random);
+            const Scenario plan = state->rollWin ? (twist ? Scenario::Comeback : Scenario::Win) : (twist ? Scenario::NearMiss : Scenario::Miss);
+            state->rollScenario = static_cast<int>(plan);
+            state->rollTotal =
+                std::max(Core::StarGateRoll::TotalSeconds({config->rollSpinSeconds, config->rollHangSeconds, config->rollFakeSeconds}, plan), 0.01f);
             state->rollTimer = state->rollTotal;
-            state->rollWin   = std::bernoulli_distribution(std::clamp(probability, 0.0, 1.0))(m_random);
             state->rollGold  = std::bernoulli_distribution(static_cast<double>(state->rollWin ? config->goldOnWin : config->goldOnMiss))(m_random);
             m_eventBus->Publish(StarGateRollEvent{StarGateRollStage::Start});
         }
@@ -165,18 +184,13 @@ namespace StardustFever::ECS {
         if(!state || !config || !context || !context->prefabFactory)
             return;
 
-        // 盤面に出せる星が2つ以上ある星座から選ぶ
-        const Data::ConstellationTable&            table = Data::GetConstellationTable();
-        std::vector<const Data::ConstellationDef*> candidates;
-        for(const Data::ConstellationDef& constellation : table.constellations) {
-            if(constellation.board.stars.size() >= 2)
-                candidates.push_back(&constellation);
-        }
-        if(candidates.empty()) {
-            Tsukino::Core::Log::Warn("Star chance won, but no constellation has board stars. Run Tools/BuildSkyCatalog.py.");
+        // ルーレットが止まった星座でチャンスを始める
+        const Data::ConstellationDef* found = Data::GetConstellationTable().Find(state->rollConstellationId);
+        if(!found) {
+            Tsukino::Core::Log::Warn("Star chance won, but its constellation was not found: " + state->rollConstellationId);
             return;
         }
-        const Data::ConstellationDef& constellation = *candidates[std::uniform_int_distribution<size_t>(0, candidates.size() - 1)(m_random)];
+        const Data::ConstellationDef& constellation = *found;
 
         //-------------------------------------------------------------
         // 先に重なる釘を隠してから星釘を置く（星釘はセンサーなので、釘が残ると玉が星へ届かない）

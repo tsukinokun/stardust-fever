@@ -254,35 +254,13 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         // 星座の中心から見た向きで星を写し、カードの枠に収まる倍率を求める
         //-------------------------------------------------------------
-        const Data::StarTable& stars = Data::GetStarTable();
-        double                 ra    = 0.0;
-        double                 dec   = 0.0;
-        if(!StarMapGeometry::Centroid(*home, stars, ra, dec))
+        const Data::StarTable&  stars = Data::GetStarTable();
+        StarMapGeometry::Figure figure;
+        if(!StarMapGeometry::FitFigure(*home, stars, config->mapCardWidth - 90.0, config->mapCardHeight - 150.0, figure))
             return;
-
-        std::vector<Core::SkyMath::Point> points(home->stars.size());
-        std::vector<const Data::StarDef*> defs(home->stars.size(), nullptr);
-        double                            minX = 1e9;
-        double                            maxX = -1e9;
-        double                            minY = 1e9;
-        double                            maxY = -1e9;
-        for(size_t i = 0; i < home->stars.size(); ++i) {
-            const Data::StarDef* member = stars.Find(home->stars[i].starId);
-            if(!member || !Core::SkyMath::ProjectToScreen(ra, dec, 90.0, 1.0, member->ra * 15.0, member->dec, points[i]))
-                continue;
-            defs[i] = member;
-            minX    = std::min(minX, points[i].x);
-            maxX    = std::max(maxX, points[i].x);
-            minY    = std::min(minY, points[i].y);
-            maxY    = std::max(maxY, points[i].y);
-        }
-        const double areaW   = config->mapCardWidth - 90.0;
-        const double areaH   = config->mapCardHeight - 150.0;
-        const double scale   = std::min({areaW / std::max(maxX - minX, 1e-3), areaH / std::max(maxY - minY, 1e-3), 900.0});
-        const double middleX = (minX + maxX) * 0.5;
-        const double middleY = (minY + maxY) * 0.5;
-        const auto   mapX    = [&](size_t i) { return static_cast<float>((points[i].x - middleX) * scale); };
-        const auto   mapY    = [&](size_t i) { return static_cast<float>((points[i].y - middleY) * scale) + 34.0f; };
+        const std::vector<const Data::StarDef*>& defs = figure.defs;
+        const auto                               mapX = [&](size_t i) { return static_cast<float>(figure.points[i].x); };
+        const auto                               mapY = [&](size_t i) { return static_cast<float>(figure.points[i].y) + 34.0f; };
 
         Tsukino::Asset::AssetManager& assets = *context->assetManager;
         const auto                    white  = assets.Load(Tsukino::Core::Path(config->whiteTexture));

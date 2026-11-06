@@ -24,13 +24,21 @@ namespace StardustFever::ECS {
         double      effectLevelBonus      = 0.1;       //!< 星座の効果を、星の平均レベルが1上がるごとに何割伸ばすか
         double      allCompleteMultiplier = 10.0;      //!< 88星座を全部そろえたときの全体倍率
         int         recentCount           = 5;         //!< 右の星図に出す、最近手に入れた星の数
-        float       rollSeconds           = 1.5f;      //!< 星の門の抽選の長さ（秒）
-        float       rollRevolutions       = 3.0f;      //!< 抽選の光が回る周数
+        float       rollSpinSeconds       = 2.2f;      //!< 星座が入れ替わる長さ（秒）
+        float       rollHangSeconds       = 1.4f;      //!< 星が1つずつ灯る長さ（秒）
+        float       rollFakeSeconds       = 0.8f;      //!< 復活の前に外れたと見せる長さ（秒）
+        int         rollSteps             = 26;        //!< 星座が入れ替わる回数
+        float       rollComebackRate      = 0.3f;      //!< 当たりのうち、外れたと見せてから復活する割合
+        float       rollNearMissRate      = 0.45f;     //!< 外れのうち、あと1つまで灯る割合
         float       goldOnWin             = 0.6f;      //!< 当たりのとき輪が金色になる確率
         float       goldOnMiss            = 0.1f;      //!< 外れのとき輪が金色になる確率
-        float       rollRingX             = 800.0f;    //!< 抽選の輪の中心（UI の座標）
-        float       rollRingY             = 700.0f;    //!< 抽選の輪の中心（UI の座標）
-        float       rollRingRadius        = 66.0f;     //!< 抽選の輪の半径
-        float       rollStarSize          = 30.0f;     //!< 抽選の輪の星の大きさ
+        float       rollFigureX           = 800.0f;    //!< ルーレットの星座の中心（UI の座標）
+        float       rollFigureY           = 420.0f;    //!< ルーレットの星座の中心（UI の座標）
+        float       rollFigureWidth       = 480.0f;    //!< 星座を収める枠の幅
+        float       rollFigureHeight      = 340.0f;    //!< 星座を収める枠の高さ
+        float       rollVeilAlpha         = 0.75f;     //!< 画面を暗くする濃さ
+        std::string rollStarTexture;                   //!< 星座の星の絵
+        std::string rollNebulaTexture;                 //!< 星座の後ろの雲の絵
+        std::string rollDustTexture;                   //!< 金色の予告で舞う星屑の絵
     };
 }    // namespace StardustFever::ECS

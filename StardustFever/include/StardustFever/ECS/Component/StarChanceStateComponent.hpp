@@ -25,6 +25,8 @@ namespace StardustFever::ECS {
         float       rollTimer     = 0.0f;     //!< 抽選の残り時間（秒）
         float       rollTotal     = 0.0f;     //!< 抽選の長さ（秒）
         bool        rollWin       = false;    //!< 抽選の結果（始めに決める）
-        bool        rollGold      = false;    //!< 輪を金色にするか（当たりやすさの予告）
+        int         rollScenario  = 0;        //!< 抽選の筋書き（Core::StarGateRoll::Scenario）
+        std::string rollConstellationId;      //!< ルーレットが止まる星座（当たればチャンスの星座になる）
+        bool        rollGold = false;         //!< 輪を金色にするか（当たりやすさの予告）
     };
 }    // namespace StardustFever::ECS

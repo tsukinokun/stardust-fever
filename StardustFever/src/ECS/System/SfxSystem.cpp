@@ -203,6 +203,10 @@ namespace StardustFever::ECS {
         for(const StarGateRollEvent& roll : gateRolls) {
             if(roll.stage == StarGateRollStage::Tick)
                 Play(registry, *config, "gateTick");
+            else if(roll.stage == StarGateRollStage::Hang)
+                Play(registry, *config, "reach");
+            else if(roll.stage == StarGateRollStage::Fake)
+                Play(registry, *config, "gateMiss");
             else if(roll.stage == StarGateRollStage::Win)
                 Play(registry, *config, "gateWin");
             else if(roll.stage == StarGateRollStage::Miss)

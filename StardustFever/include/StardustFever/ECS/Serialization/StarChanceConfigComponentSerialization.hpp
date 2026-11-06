@@ -29,14 +29,22 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("effectLevelBonus", component.effectLevelBonus));
         archive(cereal::make_nvp("allCompleteMultiplier", component.allCompleteMultiplier));
         archive(cereal::make_nvp("recentCount", component.recentCount));
-        archive(cereal::make_nvp("rollSeconds", component.rollSeconds));
-        archive(cereal::make_nvp("rollRevolutions", component.rollRevolutions));
+        archive(cereal::make_nvp("rollSpinSeconds", component.rollSpinSeconds));
+        archive(cereal::make_nvp("rollHangSeconds", component.rollHangSeconds));
+        archive(cereal::make_nvp("rollFakeSeconds", component.rollFakeSeconds));
+        archive(cereal::make_nvp("rollSteps", component.rollSteps));
+        archive(cereal::make_nvp("rollComebackRate", component.rollComebackRate));
+        archive(cereal::make_nvp("rollNearMissRate", component.rollNearMissRate));
         archive(cereal::make_nvp("goldOnWin", component.goldOnWin));
         archive(cereal::make_nvp("goldOnMiss", component.goldOnMiss));
-        archive(cereal::make_nvp("rollRingX", component.rollRingX));
-        archive(cereal::make_nvp("rollRingY", component.rollRingY));
-        archive(cereal::make_nvp("rollRingRadius", component.rollRingRadius));
-        archive(cereal::make_nvp("rollStarSize", component.rollStarSize));
+        archive(cereal::make_nvp("rollFigureX", component.rollFigureX));
+        archive(cereal::make_nvp("rollFigureY", component.rollFigureY));
+        archive(cereal::make_nvp("rollFigureWidth", component.rollFigureWidth));
+        archive(cereal::make_nvp("rollFigureHeight", component.rollFigureHeight));
+        archive(cereal::make_nvp("rollVeilAlpha", component.rollVeilAlpha));
+        archive(cereal::make_nvp("rollStarTexture", component.rollStarTexture));
+        archive(cereal::make_nvp("rollNebulaTexture", component.rollNebulaTexture));
+        archive(cereal::make_nvp("rollDustTexture", component.rollDustTexture));
     }
 
     template <class Archive>
@@ -52,14 +60,22 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "effectLevelBonus", component.effectLevelBonus);
         Tsukino::IO::LoadOptional(archive, "allCompleteMultiplier", component.allCompleteMultiplier);
         Tsukino::IO::LoadOptional(archive, "recentCount", component.recentCount);
-        Tsukino::IO::LoadOptional(archive, "rollSeconds", component.rollSeconds);
-        Tsukino::IO::LoadOptional(archive, "rollRevolutions", component.rollRevolutions);
+        Tsukino::IO::LoadOptional(archive, "rollSpinSeconds", component.rollSpinSeconds);
+        Tsukino::IO::LoadOptional(archive, "rollHangSeconds", component.rollHangSeconds);
+        Tsukino::IO::LoadOptional(archive, "rollFakeSeconds", component.rollFakeSeconds);
+        Tsukino::IO::LoadOptional(archive, "rollSteps", component.rollSteps);
+        Tsukino::IO::LoadOptional(archive, "rollComebackRate", component.rollComebackRate);
+        Tsukino::IO::LoadOptional(archive, "rollNearMissRate", component.rollNearMissRate);
         Tsukino::IO::LoadOptional(archive, "goldOnWin", component.goldOnWin);
         Tsukino::IO::LoadOptional(archive, "goldOnMiss", component.goldOnMiss);
-        Tsukino::IO::LoadOptional(archive, "rollRingX", component.rollRingX);
-        Tsukino::IO::LoadOptional(archive, "rollRingY", component.rollRingY);
-        Tsukino::IO::LoadOptional(archive, "rollRingRadius", component.rollRingRadius);
-        Tsukino::IO::LoadOptional(archive, "rollStarSize", component.rollStarSize);
+        Tsukino::IO::LoadOptional(archive, "rollFigureX", component.rollFigureX);
+        Tsukino::IO::LoadOptional(archive, "rollFigureY", component.rollFigureY);
+        Tsukino::IO::LoadOptional(archive, "rollFigureWidth", component.rollFigureWidth);
+        Tsukino::IO::LoadOptional(archive, "rollFigureHeight", component.rollFigureHeight);
+        Tsukino::IO::LoadOptional(archive, "rollVeilAlpha", component.rollVeilAlpha);
+        Tsukino::IO::LoadOptional(archive, "rollStarTexture", component.rollStarTexture);
+        Tsukino::IO::LoadOptional(archive, "rollNebulaTexture", component.rollNebulaTexture);
+        Tsukino::IO::LoadOptional(archive, "rollDustTexture", component.rollDustTexture);
     }
 
 }    // namespace StardustFever::ECS

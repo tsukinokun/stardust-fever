@@ -11,13 +11,21 @@
         "effectLevelBonus": 0.1,
         "allCompleteMultiplier": 10.0,
         "recentCount": 5,
-        "rollSeconds": 1.5,
-        "rollRevolutions": 3.0,
         "goldOnWin": 0.6,
         "goldOnMiss": 0.1,
-        "rollRingX": 800.0,
-        "rollRingY": 700.0,
-        "rollRingRadius": 66.0,
-        "rollStarSize": 30.0
+        "rollSpinSeconds": 2.2,
+        "rollHangSeconds": 1.4,
+        "rollFakeSeconds": 0.8,
+        "rollSteps": 26,
+        "rollComebackRate": 0.3,
+        "rollNearMissRate": 0.45,
+        "rollFigureX": 800.0,
+        "rollFigureY": 420.0,
+        "rollFigureWidth": 480.0,
+        "rollFigureHeight": 340.0,
+        "rollVeilAlpha": 0.75,
+        "rollStarTexture": "StardustFever/Assets/Textures/SkyObjects/star_white.png",
+        "rollNebulaTexture": "StardustFever/Assets/Textures/Space/nebula_violet.png",
+        "rollDustTexture": "StardustFever/Assets/Textures/Space/sparkle.png"
     }
 }
