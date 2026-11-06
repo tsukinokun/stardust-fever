@@ -18,6 +18,7 @@
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
 #include <StardustFever/ECS/Utility/HudUi.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
+#include <StardustFever/ECS/Utility/StarColor.hpp>
 #include <StardustFever/ECS/Utility/UiParts.hpp>
 #include <StardustFever/ECS/Utility/StarMapGeometry.hpp>
 
@@ -49,30 +50,6 @@ namespace StardustFever::ECS {
         using Tsukino::BuiltIn::ECS::FontComponent;
         using Tsukino::BuiltIn::ECS::SpriteComponent;
         using Tsukino::BuiltIn::ECS::TransformComponent;
-
-        //-------------------------------------------------------------
-        //! @brief  スペクトル型（の頭文字）から星の色を選ぶ（右の星図パネルと同じ色）
-        //-------------------------------------------------------------
-        hlslpp::float4 SpectralColor(const HudLayoutConfigComponent* layout, const std::string& spectralType) {
-            if(!layout)
-                return hlslpp::float4(1.0f, 1.0f, 1.0f, 1.0f);
-            switch(spectralType.empty() ? 'A' : spectralType.front()) {
-            case 'O':
-                return layout->colorO;
-            case 'B':
-                return layout->colorB;
-            case 'F':
-                return layout->colorF;
-            case 'G':
-                return layout->colorG;
-            case 'K':
-                return layout->colorK;
-            case 'M':
-                return layout->colorM;
-            default:
-                return layout->colorA;
-            }
-        }
 
         //-------------------------------------------------------------
         //! @brief  星座の星を全部持っているか
@@ -297,7 +274,8 @@ namespace StardustFever::ECS {
         HudUi::SetText(
             registry,
             m_tooltipText[2],
-            (home ? home->name + "  " : std::string()) + (found != collection->starLevels.end() ? "★" + std::to_string(found->second) : std::string("未獲得")));
+            (home ? home->name + "  " : std::string()) + (found != collection->starLevels.end() ? "★" + std::to_string(found->second) : std::string("未獲得"))
+                + (std::find(collection->unseenStars.begin(), collection->unseenStars.end(), star.id) != collection->unseenStars.end() ? "  NEW" : ""));
     }
 
     //-------------------------------------------------------------
@@ -731,6 +709,9 @@ namespace StardustFever::ECS {
                     float                size   = config->faintStarSize + (config->brightStarSize - config->faintStarSize) * bright;
                     if(!owned)
                         size *= 0.7f;
+                    const bool unseen = std::find(collection->unseenStars.begin(), collection->unseenStars.end(), star.id) != collection->unseenStars.end();
+                    if(unseen)
+                        size *= 2.2f;    // まだ見ていない星は大きくして、見つけやすくする
                     const float         scale     = size * config->worldUnitsPerPixel / starPx;
                     TransformComponent& transform = registry.GetComponent<TransformComponent>(entity);
                     transform.scale               = hlslpp::float3(scale, scale, 1.0f);
@@ -963,7 +944,8 @@ namespace StardustFever::ECS {
             }
             char facts[64];
             std::snprintf(facts, sizeof(facts), "  %.2f等 %s", star->magnitude, CollectionText::SpectralColor(star->spectralType));
-            lines.emplace_back((level > 0 ? marks : std::string("未獲得")) + "  " + star->name + facts,
+            const bool isNew = std::find(collection->unseenStars.begin(), collection->unseenStars.end(), star->id) != collection->unseenStars.end();
+            lines.emplace_back(std::string(isNew ? "NEW " : "") + (level > 0 ? marks : std::string("未獲得")) + "  " + star->name + facts,
                                level > 0 ? SpectralColor(layout, star->spectralType) : config->missingStarColor * hlslpp::float4(1.4f, 1.4f, 1.4f, 1.4f));
         }
 

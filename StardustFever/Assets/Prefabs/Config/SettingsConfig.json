@@ -105,6 +105,12 @@
         "actionButtonGap": 10.0,
         "tooltipX": 590.0,
         "tooltipWidth": 340.0,
-        "tooltipHeight": 108.0
+        "tooltipHeight": 108.0,
+        "badgeColor": {
+            "x": 0.85,
+            "y": 0.06,
+            "z": 0.1,
+            "w": 1.0
+        }
     }
 }

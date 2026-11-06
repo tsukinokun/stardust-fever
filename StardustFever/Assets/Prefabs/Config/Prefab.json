@@ -59,6 +59,10 @@
         {
             "key": "SettingsConfigComponent",
             "value": "StardustFever/Assets/Prefabs/Config/SettingsConfig.json"
+        },
+        {
+            "key": "StarGetFxConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/StarGetFxConfig.json"
         }
     ]
 }

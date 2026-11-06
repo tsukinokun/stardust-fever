@@ -41,6 +41,7 @@ namespace StardustFever::ECS {
         , m_bigBangs(eventBus)
         , m_purchases(eventBus)
         , m_denials(eventBus)
+        , m_starFx(eventBus)
         , m_random(std::random_device{}()) {
     }
 
@@ -115,6 +116,7 @@ namespace StardustFever::ECS {
         const auto bigBangs       = m_bigBangs.Drain();
         const auto purchases      = m_purchases.Drain();
         const auto denials        = m_denials.Drain();
+        const auto starFx         = m_starFx.Drain();
 
         const AudioConfigComponent* config = FindSingleton<AudioConfigComponent>(registry);
         if(!config)
@@ -191,6 +193,10 @@ namespace StardustFever::ECS {
             Play(registry, *config, "constellation");
         else if(!draws.empty())
             Play(registry, *config, "starGet");
+
+        for(const StarGetFxEvent& fx : starFx) {
+            Play(registry, *config, fx.arrived ? "starArrive" : "starFly");
+        }
 
         //-------------------------------------------------------------
         // 押せる部品。乗ったときと押したとき

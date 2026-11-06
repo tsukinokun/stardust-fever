@@ -16,5 +16,6 @@ namespace StardustFever::ECS {
         int         level;        //!< 加えた後のレベル
         bool        isNew;        //!< 初めて手に入れたか
         bool        converted;    //!< 最大レベルだったので星屑に換えたか
+        std::string followUp;     //!< 演出のあとに出す大見出し（星座がそろったときなど。無ければ空）
     };
 }    // namespace StardustFever::ECS

@@ -16,6 +16,7 @@ namespace StardustFever::ECS {
     //-------------------------------------------------------------
     struct StarCollectionComponent {
         std::unordered_map<std::string, int> starLevels;     //!< 星ID → レベル（未獲得は載らない）
+        std::vector<std::string>             unseenStars;    //!< 星図でまだ見ていない星（古い順。セーブに残す）
         std::vector<std::string>             recentStars;    //!< 最近手に入れた星（新しい順。実行時だけの値）
     };
 }    // namespace StardustFever::ECS

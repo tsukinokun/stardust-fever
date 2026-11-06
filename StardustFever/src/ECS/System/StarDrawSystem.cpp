@@ -129,46 +129,27 @@ namespace StardustFever::ECS {
             }
 
             //-------------------------------------------------------------
-            // 知らせる。大見出しは1枚だけなので、いちばん大きな出来事を見出しにし、星のことはトーストに回す
+            // 知らせる。星そのものは StarGetFxSystem が見せるので、ここでは星座がそろった大見出しを
+            // 演出のあとへ回す。大見出しは1枚だけなので、いちばん大きな出来事を選ぶ
             //-------------------------------------------------------------
-            //  見出しの1行目は星の名前だけにして短く保つ（星座の名前と性質は2行目へ。長いと帯からはみ出す）
-            const Data::ConstellationDef* home = constellations.Find(star.constellationId);
-            // 固有名のある星は StarFacts が呼び名（「オリオン座α」）を添えるので、星座の名前は名前の無い星にだけ足す
-            const bool        unnamed   = star.designation.empty() || star.designation == star.name;
-            const std::string homeName  = home && unnamed ? home->name + "の星  " : std::string();
-            const std::string facts     = homeName + CollectionText::StarFacts(star);
-            std::string       starTitle = star.name;
-            if(outcome.isNew)
-                starTitle += " を手に入れた！";
-            else if(outcome.converted)
-                starTitle += " は★最大  星屑に換えた";
-            else
-                starTitle += "  ★" + std::to_string(outcome.level) + " に成長！";
-
+            std::string followUp;
             if(allComplete) {
-                m_eventBus->Publish(HudMessageEvent{"★ 88星座 すべてそろった ★\n全ての効果が大きく強まる", HudMessageImportance::Headline});
-                m_eventBus->Publish(HudMessageEvent{starTitle, HudMessageImportance::Toast, HudMessageTone::Positive});
+                followUp = "★ 88星座 すべてそろった ★\n全ての効果が大きく強まる";
             } else if(!completedGroups.empty()) {
                 const Data::ConstellationGroupDef& group = *completedGroups.front();
-                m_eventBus->Publish(HudMessageEvent{"★ " + group.name + " がそろった ★\n" + CollectionText::Effect(group.effect, group.effect.value),
-                                                    HudMessageImportance::Headline});
+                followUp                                 = "★ " + group.name + " がそろった ★\n" + CollectionText::Effect(group.effect, group.effect.value);
                 for(const Data::ConstellationDef* constellation : collected) {
                     m_eventBus->Publish(
                         HudMessageEvent{constellation->name + "がそろった  " + CollectionText::Effect(constellation->effect, constellation->effect.value),
                                         HudMessageImportance::Toast,
                                         HudMessageTone::Positive});
                 }
-                m_eventBus->Publish(HudMessageEvent{starTitle, HudMessageImportance::Toast, HudMessageTone::Positive});
             } else if(!collected.empty()) {
                 const Data::ConstellationDef& first = *collected.front();
-                m_eventBus->Publish(HudMessageEvent{"★ " + first.name + "がそろった ★\n" + CollectionText::Effect(first.effect, first.effect.value),
-                                                    HudMessageImportance::Headline});
-                m_eventBus->Publish(HudMessageEvent{starTitle, HudMessageImportance::Toast, HudMessageTone::Positive});
-            } else {
-                m_eventBus->Publish(HudMessageEvent{starTitle + "\n" + facts, HudMessageImportance::Headline});
+                followUp                            = "★ " + first.name + "がそろった ★\n" + CollectionText::Effect(first.effect, first.effect.value);
             }
 
-            m_eventBus->Publish(StarDrawnEvent{star.id, outcome.level, outcome.isNew, outcome.converted});
+            m_eventBus->Publish(StarDrawnEvent{star.id, outcome.level, outcome.isNew, outcome.converted, followUp});
             for(const Data::ConstellationDef* constellation : collected) {
                 m_eventBus->Publish(ConstellationCollectedEvent{constellation->id});
             }

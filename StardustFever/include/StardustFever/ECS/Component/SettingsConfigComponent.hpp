@@ -49,6 +49,7 @@ namespace StardustFever::ECS {
         float          tooltipX           = 590.0f;                                          //!< 強化の吹き出しの中心の X
         float          tooltipWidth       = 340.0f;                                          //!< 強化の吹き出しの幅
         float          tooltipHeight      = 108.0f;                                          //!< 強化の吹き出しの高さ
+        hlslpp::float4 badgeColor         = hlslpp::float4(0.85f, 0.06f, 0.1f, 1.0f);        //!< 通知の赤い丸の色
         hlslpp::float4 dimColor           = hlslpp::float4(0.006f, 0.008f, 0.03f, 0.72f);    //!< 後ろの幕の色
         hlslpp::float4 panelColor         = hlslpp::float4(0.008f, 0.01f, 0.035f, 1.0f);     //!< カードの面の色
         hlslpp::float4 frameColor         = hlslpp::float4(1.0f, 0.8f, 0.45f, 0.6f);         //!< カードの縁と題の線の色

@@ -7,6 +7,7 @@
 #include <StardustFever/Data/GameDatabase.hpp>
 #include <StardustFever/ECS/Component/PrestigeStateComponent.hpp>
 #include <StardustFever/ECS/Component/SettingsStateComponent.hpp>
+#include <StardustFever/ECS/Component/StarCollectionComponent.hpp>
 #include <StardustFever/ECS/Component/StarMapConfigComponent.hpp>
 #include <StardustFever/ECS/Component/StarMapStateComponent.hpp>
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
@@ -173,6 +174,23 @@ namespace StardustFever::ECS {
             state->groupMode = false;    // Tab はいつも星座の画面から始める
             state->dragging  = false;
             ++state->version;
+
+            //-------------------------------------------------------------
+            // まだ見ていない星があれば、開いたら一番新しい星を見せ、閉じたら見たことにする
+            //-------------------------------------------------------------
+            if(StarCollectionComponent* collection = FindSingleton<StarCollectionComponent>(registry)) {
+                if(!state->open) {
+                    collection->unseenStars.clear();
+                } else if(!collection->unseenStars.empty()) {
+                    if(const Data::StarDef* star = Data::GetStarTable().Find(collection->unseenStars.back())) {
+                        state->raCenter   = star->ra * 15.0;
+                        state->decCenter  = std::clamp(star->dec, -static_cast<double>(config->maxDec), static_cast<double>(config->maxDec));
+                        state->selectedId = star->constellationId;
+                        state->rowScroll  = 0;
+                        state->focusing   = false;
+                    }
+                }
+            }
         }
         if(!state->open) {
             // 遊んでいる画面からは、G か右のパネルの「そろったグループ」でグループの一覧を直接開ける

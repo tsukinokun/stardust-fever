@@ -181,6 +181,16 @@
                 "id": "uiClick",
                 "path": "StardustFever/Assets/Audio/Sfx/UiClick.wav",
                 "volume": 0.6
+            },
+            {
+                "id": "starFly",
+                "path": "StardustFever/Assets/Audio/Sfx/StarFly.wav",
+                "volume": 0.6
+            },
+            {
+                "id": "starArrive",
+                "path": "StardustFever/Assets/Audio/Sfx/StarArrive.wav",
+                "volume": 0.8
             }
         ]
     }

@@ -43,8 +43,10 @@ namespace StardustFever::ECS {
                 data.stardust = wallet->stardust;
             if(const UpgradeLevelsComponent* upgrades = FindSingleton<UpgradeLevelsComponent>(registry))
                 data.upgradeLevels = upgrades->levels;
-            if(const StarCollectionComponent* collection = FindSingleton<StarCollectionComponent>(registry))
-                data.starLevels = collection->starLevels;
+            if(const StarCollectionComponent* collection = FindSingleton<StarCollectionComponent>(registry)) {
+                data.starLevels  = collection->starLevels;
+                data.unseenStars = collection->unseenStars;
+            }
             if(const PrestigeStateComponent* prestige = FindSingleton<PrestigeStateComponent>(registry)) {
                 data.cosmicConstants = prestige->cosmicConstants;
                 data.bigBangCount    = prestige->bigBangCount;
@@ -73,8 +75,10 @@ namespace StardustFever::ECS {
                 wallet->stardust = data.stardust;
             if(UpgradeLevelsComponent* upgrades = FindSingleton<UpgradeLevelsComponent>(registry))
                 upgrades->levels = data.upgradeLevels;
-            if(StarCollectionComponent* collection = FindSingleton<StarCollectionComponent>(registry))
-                collection->starLevels = data.starLevels;
+            if(StarCollectionComponent* collection = FindSingleton<StarCollectionComponent>(registry)) {
+                collection->starLevels  = data.starLevels;
+                collection->unseenStars = data.unseenStars;
+            }
             if(PrestigeStateComponent* prestige = FindSingleton<PrestigeStateComponent>(registry)) {
                 prestige->cosmicConstants = data.cosmicConstants;
                 prestige->bigBangCount    = data.bigBangCount;

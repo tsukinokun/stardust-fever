@@ -12,10 +12,12 @@
 #include <cereal/cereal.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/unordered_map.hpp>
+#include <cereal/types/vector.hpp>
 
 #include <algorithm>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 // 名前空間 : StardustFever::Data
 namespace StardustFever::Data {
@@ -38,6 +40,7 @@ namespace StardustFever::Data {
         float                                sfxVolume       = 0.6f;     //!< 効果音の音量
         bool                                 audioMuted      = false;    //!< 消音しているか
         bool                                 showKeyHints    = true;     //!< キー操作の表示を出すか
+        std::vector<std::string>             unseenStars;                //!< 星図でまだ見ていない星
     };
 
     //! 今の形式の版。項目の意味を変えたときに上げ、読み込み側で古い版を変換する
@@ -79,6 +82,7 @@ namespace StardustFever::Data {
         Tsukino::IO::LoadOptional(archive, "sfxVolume", data.sfxVolume);
         Tsukino::IO::LoadOptional(archive, "audioMuted", data.audioMuted);
         Tsukino::IO::LoadOptional(archive, "showKeyHints", data.showKeyHints);
+        Tsukino::IO::LoadOptional(archive, "unseenStars", data.unseenStars);
     }
 
 }    // namespace StardustFever::Data

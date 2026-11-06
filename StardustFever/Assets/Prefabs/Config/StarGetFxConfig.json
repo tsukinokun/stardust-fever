@@ -1,0 +1,39 @@
+{
+    "StarGetFxConfigComponent": {
+        "whiteTexture": "StardustFever/Assets/Textures/UI/white.png",
+        "starTexture": "StardustFever/Assets/Textures/UI/star.png",
+        "glowTexture": "StardustFever/Assets/Textures/UI/glow.png",
+        "flareTexture": "StardustFever/Assets/Textures/Space/flare.png",
+        "sortOrder": 62,
+        "appearSeconds": 0.3,
+        "holdSeconds": 1.1,
+        "flySeconds": 0.6,
+        "centerX": 800.0,
+        "centerY": 455.0,
+        "starSize": 200.0,
+        "flareSize": 720.0,
+        "flashAlpha": 0.55,
+        "sparkMin": 12,
+        "sparkMax": 30,
+        "sparkDistance": 420.0,
+        "trailCount": 12,
+        "textY": 150.0,
+        "nameScale": 1.15,
+        "tagScale": 0.66,
+        "factsScale": 0.5,
+        "walletX": 72.0,
+        "walletY": 104.0,
+        "tagColor": {
+            "x": 1.0,
+            "y": 0.86,
+            "z": 0.5,
+            "w": 1.0
+        },
+        "textColor": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0,
+            "w": 1.0
+        }
+    }
+}

@@ -15,6 +15,7 @@
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
 #include <StardustFever/ECS/Utility/HudUi.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
+#include <StardustFever/ECS/Utility/StarColor.hpp>
 
 #include <Tsukino/BuiltIn/ECS/Component/SpriteComponent.hpp>
 #include <Tsukino/BuiltIn/ECS/Transform/TransformUtility.hpp>
@@ -34,29 +35,6 @@ namespace StardustFever::ECS {
         using Tsukino::BuiltIn::ECS::UITweenProperty;
         using Tsukino::Core::Math::Easing::EaseType;
         namespace Tween = Tsukino::BuiltIn::ECS::UITweenUtility;
-
-        //-------------------------------------------------------------
-        //! @brief  スペクトル型（の頭文字）から星の色を選ぶ
-        //-------------------------------------------------------------
-        hlslpp::float4 SpectralColor(const HudLayoutConfigComponent& layout, const std::string& spectralType) {
-            switch(spectralType.empty() ? 'A' : spectralType.front()) {
-            case 'O':
-                return layout.colorO;
-            case 'B':
-                return layout.colorB;
-            case 'F':
-                return layout.colorF;
-            case 'G':
-                return layout.colorG;
-            case 'K':
-                return layout.colorK;
-            case 'M':
-                return layout.colorM;
-            case 'A':
-            default:
-                return layout.colorA;
-            }
-        }
 
         // 見出しの行の種類（StarChartEntryComponent::constellationId に入れて見分ける）
         constexpr const char* kConstellationsHeader = "#constellations";
@@ -248,7 +226,7 @@ namespace StardustFever::ECS {
                 const std::string& texture = lit ? layout->starIconTexture : layout->starOutlineTexture;
                 if(!texture.empty())
                     sprite->textureHandle = context->assetManager->Load(Tsukino::Core::Path(texture));
-                sprite->tintColor = lit && star ? SpectralColor(*layout, star->spectralType) : layout->undiscoveredColor;
+                sprite->tintColor = lit && star ? SpectralColor(layout, star->spectralType) : layout->undiscoveredColor;
             }
             HudUi::SetTextColor(registry, HudUi::FindPart(registry, row, "Name"), lit ? hlslpp::float4(0.93f, 0.95f, 1.0f, 1.0f) : layout->undiscoveredColor);
             HudUi::SetText(registry, HudUi::FindPart(registry, row, "Level"), level > 0 ? LevelStars(level, maxLevel) : "");

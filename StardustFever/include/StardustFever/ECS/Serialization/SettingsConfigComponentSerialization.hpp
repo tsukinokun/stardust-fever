@@ -51,6 +51,7 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("tooltipX", component.tooltipX));
         archive(cereal::make_nvp("tooltipWidth", component.tooltipWidth));
         archive(cereal::make_nvp("tooltipHeight", component.tooltipHeight));
+        archive(cereal::make_nvp("badgeColor", component.badgeColor));
         archive(cereal::make_nvp("dimColor", component.dimColor));
         archive(cereal::make_nvp("panelColor", component.panelColor));
         archive(cereal::make_nvp("frameColor", component.frameColor));
@@ -101,6 +102,7 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "tooltipX", component.tooltipX);
         Tsukino::IO::LoadOptional(archive, "tooltipWidth", component.tooltipWidth);
         Tsukino::IO::LoadOptional(archive, "tooltipHeight", component.tooltipHeight);
+        Tsukino::IO::LoadOptional(archive, "badgeColor", component.badgeColor);
         Tsukino::IO::LoadOptional(archive, "dimColor", component.dimColor);
         Tsukino::IO::LoadOptional(archive, "panelColor", component.panelColor);
         Tsukino::IO::LoadOptional(archive, "frameColor", component.frameColor);

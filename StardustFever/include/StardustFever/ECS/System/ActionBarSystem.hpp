@@ -40,8 +40,11 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         void Build(Tsukino::ECS::Registry& registry);
 
-        Tsukino::ECS::Scene* m_scene    = nullptr;
-        entt::entity         m_autoFire = entt::null;    //!< 自動発射のボタン
-        entt::entity         m_bigBang  = entt::null;    //!< ビッグバンのボタン
+        Tsukino::ECS::Scene* m_scene      = nullptr;
+        entt::entity         m_autoFire   = entt::null;    //!< 自動発射のボタン
+        entt::entity         m_bigBang    = entt::null;    //!< ビッグバンのボタン
+        entt::entity         m_badge      = entt::null;    //!< 星図のボタンの赤い丸
+        entt::entity         m_badgeText  = entt::null;    //!< 赤い丸の数
+        int                  m_badgeCount = 0;             //!< 表示している数
     };
 }    // namespace StardustFever::ECS

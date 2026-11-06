@@ -56,6 +56,7 @@
 #include <StardustFever/ECS/Serialization/RollingNumberComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/SaveConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/SettingsConfigComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/StarGetFxConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/SparkleTrailComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/StarChanceConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/StarLinkConfigComponentSerialization.hpp>
@@ -136,6 +137,7 @@ namespace StardustFever::ECS {
         factory.RegisterComponent<CosmicFxConfigComponent>("CosmicFxConfigComponent");
         factory.RegisterComponent<AudioConfigComponent>("AudioConfigComponent");
         factory.RegisterComponent<SettingsConfigComponent>("SettingsConfigComponent");
+        factory.RegisterComponent<StarGetFxConfigComponent>("StarGetFxConfigComponent");
     }
 
     //-------------------------------------------------------------
@@ -157,6 +159,7 @@ namespace StardustFever::ECS {
         reloadSystem.RegisterType<CosmicFxConfigComponent>("CosmicFxConfigComponent");
         reloadSystem.RegisterType<AudioConfigComponent>("AudioConfigComponent");
         reloadSystem.RegisterType<SettingsConfigComponent>("SettingsConfigComponent");
+        reloadSystem.RegisterType<StarGetFxConfigComponent>("StarGetFxConfigComponent");
     }
 
 }    // namespace StardustFever::ECS

@@ -168,6 +168,8 @@ def main():
     save("MapOpen", sweep(500.0, 1400.0, 0.25, 0.5), 0.4)
     save("MapClose", sweep(1400.0, 500.0, 0.25, 0.5), 0.4)
     save("VolumeTick", tone(note("E6"), 0.08, 40.0, GLASS), 0.4)
+    save("StarFly", sweep(500.0, 2200.0, 0.55, 0.5, 1.6), 0.45)
+    save("StarArrive", echo(arpeggio(["G6", "C7", "E7"], 0.05, 0.6, 7.0, GLASS), 0.08, 0.3, 2), 0.75)
     save("UiHover", tone(note("A6"), 0.05, 60.0, GLASS), 0.3)
     save("UiClick", arpeggio(["E6", "A6"], 0.03, 0.12, 30.0, GLASS), 0.5)
 
