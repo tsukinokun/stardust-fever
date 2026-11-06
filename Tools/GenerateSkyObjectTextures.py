@@ -281,6 +281,11 @@ def cygnus_x1():
     finish(image.rotate(-18, Image.BICUBIC), "cygx1")
 
 
+def unknown():
+    """まだ手に入れていない天体。どれも同じ、淡くぼんやりした光にして正体を隠す。"""
+    finish(add(tint(radial_falloff(SIZE, 3.0), (105, 118, 150)), tint(radial_falloff(SIZE, 9.0), (150, 160, 185))), "unknown")
+
+
 def reticle():
     """星図の照準。細い円と4つの目盛り。"""
     scale = 4
@@ -327,6 +332,7 @@ def main():
     magellanic("smc", 312, -32, [])
     black_hole("sgra", (235, 125, 50), (255, 240, 190), 0.82)
     cygnus_x1()
+    unknown()
     reticle()
 
 

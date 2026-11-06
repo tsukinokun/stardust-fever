@@ -48,6 +48,8 @@
 namespace StardustFever::ECS {
 
     namespace {
+        constexpr const char* kUnknownObject = "未発見の天体";    //!< まだ手に入れていない天体の呼び名
+
         using Tsukino::BuiltIn::ECS::FontComponent;
         using Tsukino::BuiltIn::ECS::SpriteComponent;
         using Tsukino::BuiltIn::ECS::TransformComponent;
@@ -245,8 +247,11 @@ namespace StardustFever::ECS {
             std::string                   text;
             if(m_reticleObject >= 0 && m_reticleObject < static_cast<int>(objects.objects.size())) {
                 // 図鑑で今見ている天体は、パネルに名前が出ている
-                if(!(m_reticleInCatalogue && m_reticleObject == m_reticleSelectedObject))
-                    text = objects.objects[static_cast<size_t>(m_reticleObject)].name + "  Space で見る";
+                if(!(m_reticleInCatalogue && m_reticleObject == m_reticleSelectedObject)) {
+                    const Data::SkyObjectDef&      object = objects.objects[static_cast<size_t>(m_reticleObject)];
+                    const StarCollectionComponent* owned  = FindSingleton<StarCollectionComponent>(registry);
+                    text = (owned && OwnsSkyObject(*owned, object.id) ? object.name : std::string(kUnknownObject)) + "  Space で見る";
+                }
             } else if(constellation && m_reticleId != m_reticleSelected) {    // 選んだ星座は空に名前が出ている
                 text = constellation->name + "  Space で選ぶ";
             }
@@ -297,18 +302,19 @@ namespace StardustFever::ECS {
         m_tooltipStar = target;
 
         if(onObject) {
-            const Data::SkyObjectDef&       object = objects.objects[static_cast<size_t>(state->hoverObject)];
-            const SkyObjectConfigComponent* tiers  = FindSingleton<SkyObjectConfigComponent>(registry);
-            const size_t                    rarity = static_cast<size_t>(object.rarity);
-            HudUi::SetText(registry, m_tooltipText[0], object.name);
-            HudUi::SetText(
-                registry,
-                m_tooltipText[1],
-                (tiers && rarity < tiers->rarityNames.size() ? tiers->rarityNames[rarity] + "  " : std::string()) + CollectionText::SkyObjectKind(object.kind));
-            HudUi::SetText(registry,
-                           m_tooltipText[2],
-                           (OwnsSkyObject(*collection, object.id) ? "効果 発動中  " : "ビッグバンで手に入る  ")
-                               + CollectionText::Effect(object.effect, object.effect.value));
+            const Data::SkyObjectDef&       object     = objects.objects[static_cast<size_t>(state->hoverObject)];
+            const SkyObjectConfigComponent* tiers      = FindSingleton<SkyObjectConfigComponent>(registry);
+            const size_t                    rarity     = static_cast<size_t>(object.rarity);
+            const std::string               rarityName = tiers && rarity < tiers->rarityNames.size() ? tiers->rarityNames[rarity] : std::string();
+            if(OwnsSkyObject(*collection, object.id)) {
+                HudUi::SetText(registry, m_tooltipText[0], object.name);
+                HudUi::SetText(registry, m_tooltipText[1], rarityName + "  " + CollectionText::SkyObjectKind(object.kind));
+                HudUi::SetText(registry, m_tooltipText[2], "効果 発動中  " + CollectionText::Effect(object.effect, object.effect.value));
+            } else {
+                HudUi::SetText(registry, m_tooltipText[0], kUnknownObject);
+                HudUi::SetText(registry, m_tooltipText[1], rarityName);
+                HudUi::SetText(registry, m_tooltipText[2], "ビッグバンで手に入る");
+            }
             return;
         }
 
@@ -562,7 +568,10 @@ namespace StardustFever::ECS {
         const Data::SkyObjectTable& skyObjects = Data::GetSkyObjectTable();
         for(size_t i = 0; i < skyObjects.objects.size(); ++i) {
             const entt::entity object = MakeElement(*m_scene, registry, m_root, StarMapElementKind::SkyObject, static_cast<int>(i));
-            AddSprite(registry, object, context->assetManager->Load(Tsukino::Core::Path(skyObjects.objects[i].texture)), 2, true, SpriteSpace::World);
+            // 持ち物は星図を開いている間に変わらないので、絵はここで決める
+            const StarCollectionComponent* owned = FindSingleton<StarCollectionComponent>(registry);
+            const std::string& image = owned && OwnsSkyObject(*owned, skyObjects.objects[i].id) ? skyObjects.objects[i].texture : config->objectUnknownTexture;
+            AddSprite(registry, object, context->assetManager->Load(Tsukino::Core::Path(image)), 2, true, SpriteSpace::World);
             TransformComponent& transform = registry.GetComponent<TransformComponent>(object);
             transform.position = SkyPoint(*config, Core::SkyMath::ToDirection(skyObjects.objects[i].ra * 15.0, skyObjects.objects[i].dec), config->skyRadius);
         }
@@ -794,7 +803,7 @@ namespace StardustFever::ECS {
                         break;
                     const Data::SkyObjectDef& object = objects.objects[static_cast<size_t>(element.index)];
                     const bool                owned  = OwnsSkyObject(*collection, object.id);
-                    float                     size   = object.size;
+                    float                     size   = owned ? object.size : config->objectUnknownSize;
                     if(state->objectMode && state->selectedObject == element.index)
                         size *= 1.3f;
                     const float         scale     = size * config->worldUnitsPerPixel / std::max(config->objectPixels, 1.0f);
@@ -954,15 +963,19 @@ namespace StardustFever::ECS {
             const auto rarityName = [&](const Data::SkyObjectDef& object) {
                 return static_cast<size_t>(object.rarity) < tiers->rarityNames.size() ? tiers->rarityNames[static_cast<size_t>(object.rarity)] : std::string();
             };
-            HudUi::SetText(registry, title, current.name);
+            HudUi::SetText(registry, title, has ? current.name : std::string(kUnknownObject));
             HudUi::SetTextColor(registry, title, tint(current));
-            HudUi::SetText(registry, subtitle, current.nameEn + "   " + rarityName(current) + "  " + CollectionText::SkyObjectKind(current.kind));
-            HudUi::SetText(registry, effect, (has ? "効果 発動中  " : "ビッグバンで手に入る  ") + CollectionText::Effect(current.effect, current.effect.value));
+            HudUi::SetText(registry,
+                           subtitle,
+                           has ? current.nameEn + "   " + rarityName(current) + "  " + CollectionText::SkyObjectKind(current.kind) : rarityName(current));
+            HudUi::SetText(
+                registry, effect, has ? "効果 発動中  " + CollectionText::Effect(current.effect, current.effect.value) : std::string("ビッグバンで手に入る"));
             HudUi::SetTextColor(registry, effect, has ? config->collectedLabelColor : config->labelColor);
 
             // 文章はいつも見せ、その下の一覧だけが動く
             std::vector<std::pair<std::string, hlslpp::float4>> pinned;
-            for(const std::string& line : Core::WrapText(current.caption, config->captionWidth)) {
+            for(const std::string& line :
+                Core::WrapText(has ? current.caption : std::string("ビッグバンで手に入れると、ここに記録されます。"), config->captionWidth)) {
                 pinned.emplace_back(line, config->labelColor * hlslpp::float4(1.3f, 1.3f, 1.3f, 1.3f));
             }
             pinned.emplace_back("", config->labelColor);
@@ -978,7 +991,8 @@ namespace StardustFever::ECS {
                     color.w = 0.55f;
                 if(i == index)
                     selectedLine = static_cast<int>(list.size());
-                list.emplace_back(std::string(i == index ? "▶ " : "　 ") + (owned ? "★ " : "☆ ") + object.name + "  " + rarityName(object), color);
+                list.emplace_back(std::string(i == index ? "▶ " : "　 ") + (owned ? "★ " + object.name : std::string("☆ ？？？")) + "  " + rarityName(object),
+                                  color);
             }
 
             const int room      = std::max(1, config->maxRows - static_cast<int>(pinned.size()));

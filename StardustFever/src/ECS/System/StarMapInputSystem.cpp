@@ -12,6 +12,7 @@
 #include <StardustFever/ECS/Component/StarMapStateComponent.hpp>
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
+#include <StardustFever/ECS/Utility/SkyObjectOdds.hpp>
 #include <StardustFever/ECS/Utility/StarMapGeometry.hpp>
 
 #include <Tsukino/BuiltIn/ECS/UI/UICanvas.hpp>
@@ -482,14 +483,16 @@ namespace StardustFever::ECS {
         const bool previousStar = input.IsKeyPressed(KeyCode::C);
         const bool nextStar     = input.IsKeyPressed(KeyCode::V);
         if((previousStar || nextStar) && state->objectMode && !skyObjects.empty()) {
-            // 図鑑では、同じ種類の前後へ移る。向きは Z / X と同じく一覧の順
-            const int          count   = static_cast<int>(skyObjects.size());
-            const int          current = std::clamp(state->selectedObject, 0, count - 1);
-            const int          step    = nextStar ? count - 1 : 1;
-            const std::string& kind    = skyObjects[static_cast<size_t>(current)].kind;
+            // 図鑑では、同じ種類の前後へ移る。向きは Z / X と同じく一覧の順。
+            // まだ手に入れていない天体は、種類がわからないよう飛ばす
+            const StarCollectionComponent* owned   = FindSingleton<StarCollectionComponent>(registry);
+            const int                      count   = static_cast<int>(skyObjects.size());
+            const int                      current = std::clamp(state->selectedObject, 0, count - 1);
+            const int                      step    = nextStar ? count - 1 : 1;
+            const std::string&             kind    = skyObjects[static_cast<size_t>(current)].kind;
             for(int i = 1; i < count; ++i) {
                 const int candidate = (current + step * i) % count;
-                if(skyObjects[static_cast<size_t>(candidate)].kind == kind) {
+                if(skyObjects[static_cast<size_t>(candidate)].kind == kind && owned && OwnsSkyObject(*owned, skyObjects[static_cast<size_t>(candidate)].id)) {
                     SelectObject(*state, skyObjects, candidate, config->maxDec);
                     changed = true;
                     break;
