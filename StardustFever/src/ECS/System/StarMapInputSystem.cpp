@@ -6,6 +6,7 @@
 
 #include <StardustFever/Data/GameDatabase.hpp>
 #include <StardustFever/ECS/Component/HudLayoutConfigComponent.hpp>
+#include <StardustFever/ECS/Component/SettingsStateComponent.hpp>
 #include <StardustFever/ECS/Component/StarMapConfigComponent.hpp>
 #include <StardustFever/ECS/Component/StarMapStateComponent.hpp>
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
@@ -155,6 +156,10 @@ namespace StardustFever::ECS {
         if(!state || !config || !context || !context->inputSystem)
             return;
         const Tsukino::Input::InputSystem& input = *context->inputSystem;
+
+        // 設定の画面の間は星図を動かさない
+        if(const SettingsStateComponent* settings = FindSingleton<SettingsStateComponent>(registry); settings && settings->open)
+            return;
 
         if(input.IsKeyPressed(KeyCode::Tab) || (state->open && input.IsKeyPressed(KeyCode::Escape))) {
             state->open      = !state->open && input.IsKeyPressed(KeyCode::Tab);

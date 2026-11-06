@@ -37,6 +37,7 @@ namespace StardustFever::Data {
         float                                bgmVolume       = 0.8f;     //!< BGM の音量
         float                                sfxVolume       = 0.6f;     //!< 効果音の音量
         bool                                 audioMuted      = false;    //!< 消音しているか
+        bool                                 showKeyHints    = true;     //!< キー操作の表示を出すか
     };
 
     //! 今の形式の版。項目の意味を変えたときに上げ、読み込み側で古い版を変換する
@@ -77,6 +78,7 @@ namespace StardustFever::Data {
         Tsukino::IO::LoadOptional(archive, "bgmVolume", data.bgmVolume);
         Tsukino::IO::LoadOptional(archive, "sfxVolume", data.sfxVolume);
         Tsukino::IO::LoadOptional(archive, "audioMuted", data.audioMuted);
+        Tsukino::IO::LoadOptional(archive, "showKeyHints", data.showKeyHints);
     }
 
 }    // namespace StardustFever::Data

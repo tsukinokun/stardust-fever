@@ -23,6 +23,8 @@
 #include <StardustFever/ECS/Component/StarPinComponent.hpp>
 #include <StardustFever/ECS/Component/ToastComponent.hpp>
 #include <StardustFever/ECS/Component/AudioSettingsComponent.hpp>
+#include <StardustFever/ECS/Component/KeyHintComponent.hpp>
+#include <StardustFever/ECS/Component/SettingsStateComponent.hpp>
 #include <StardustFever/ECS/Component/UpgradeLevelsComponent.hpp>
 #include <StardustFever/ECS/Component/UpgradeModifiersComponent.hpp>
 
@@ -53,6 +55,7 @@
 #include <StardustFever/ECS/Serialization/RimGlowComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/RollingNumberComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/SaveConfigComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/SettingsConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/SparkleTrailComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/StarChanceConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/StarLinkConfigComponentSerialization.hpp>
@@ -115,6 +118,8 @@ namespace StardustFever::ECS {
 
         // 設定
         factory.RegisterComponent<AudioSettingsComponent>("AudioSettingsComponent");
+        factory.RegisterComponent<SettingsStateComponent>("SettingsStateComponent");
+        factory.RegisterComponent<KeyHintComponent>("KeyHintComponent");
 
         factory.RegisterComponent<LauncherConfigComponent>("LauncherConfigComponent");
         factory.RegisterComponent<LotteryConfigComponent>("LotteryConfigComponent");
@@ -130,6 +135,7 @@ namespace StardustFever::ECS {
         factory.RegisterComponent<SaveConfigComponent>("SaveConfigComponent");
         factory.RegisterComponent<CosmicFxConfigComponent>("CosmicFxConfigComponent");
         factory.RegisterComponent<AudioConfigComponent>("AudioConfigComponent");
+        factory.RegisterComponent<SettingsConfigComponent>("SettingsConfigComponent");
     }
 
     //-------------------------------------------------------------
@@ -150,6 +156,7 @@ namespace StardustFever::ECS {
         reloadSystem.RegisterType<SaveConfigComponent>("SaveConfigComponent");
         reloadSystem.RegisterType<CosmicFxConfigComponent>("CosmicFxConfigComponent");
         reloadSystem.RegisterType<AudioConfigComponent>("AudioConfigComponent");
+        reloadSystem.RegisterType<SettingsConfigComponent>("SettingsConfigComponent");
     }
 
 }    // namespace StardustFever::ECS

@@ -43,9 +43,14 @@
 #include <StardustFever/ECS/System/TulipSystem.hpp>
 #include <StardustFever/ECS/System/TwinkleSystem.hpp>
 #include <StardustFever/ECS/System/UpgradeEffectSystem.hpp>
+#include <StardustFever/ECS/System/SettingsSystem.hpp>
+#include <StardustFever/ECS/System/SettingsViewSystem.hpp>
 #include <StardustFever/ECS/System/SfxSystem.hpp>
 #include <StardustFever/ECS/System/UpgradeShopSystem.hpp>
 
+#include <Tsukino/EngineIntegration/ECS/System/InteractionSystem.hpp>
+#include <Tsukino/EngineIntegration/ECS/System/UISliderSystem.hpp>
+#include <Tsukino/EngineIntegration/ECS/System/UIToggleSystem.hpp>
 #include <Tsukino/EngineIntegration/ECS/System/AmbientParticleSystem.hpp>
 #include <Tsukino/EngineIntegration/ECS/System/BloomSystem.hpp>
 #include <Tsukino/EngineIntegration/ECS/System/BurstParticleSystem.hpp>
@@ -93,8 +98,12 @@ namespace StardustFever::Scene {
             ConfigReload = 0,    // 設定を読み直してから、そのフレームの処理を始める
             BoardBuild,          // 発射台（自動発射の ON/OFF を持つ）もここで作られるので、セーブより先に組み立てる
             Save,                // 最初のフレームでセーブを読み、他の System が見る前に進行を戻す
-            StarMapInput,        // 星図の画面の開け閉め。開いている間は、ここより後の遊びの System が止まる（GamePause.hpp）
-            AudioSettings,       // 音量のキー操作。星図を開いている間も効く
+            Interaction,         // マウスが乗っている画面の部品を決める
+            UISlider,
+            UIToggle,
+            Settings,         // 設定の画面の開け閉めと値の反映。Esc を星図より先に見る
+            StarMapInput,     // 星図の画面の開け閉め。開いている間は、ここより後の遊びの System が止まる（GamePause.hpp）
+            AudioSettings,    // 音量のキー操作。星図を開いている間も効く
             LauncherInput,
             BigBang,
             UpgradeShop,
@@ -121,8 +130,9 @@ namespace StardustFever::Scene {
             Hud,         // 文字の中身
             ShopView,    // ここから下は HUD の見た目と動き（ゲームの状態を読むだけ）
             StarChartView,
-            PocketLabel,    // 入賞口の名札
-            StarMapView,    // 88星座の星図の画面（HUD より上に重ねる）
+            PocketLabel,     // 入賞口の名札
+            StarMapView,     // 88星座の星図の画面（HUD より上に重ねる）
+            SettingsView,    // 設定の画面（星図より上に重ねる）
             LotteryView,
             HudGauge,
             RollingNumber,
@@ -171,6 +181,10 @@ namespace StardustFever::Scene {
         m_saveSystem = std::make_shared<ECS::SaveSystem>(eventBus);
         m_scene.AddSystem(m_saveSystem, Order(SystemOrder::Save));
         m_scene.AddSystem(std::make_shared<ECS::BoardBuildSystem>(), Order(SystemOrder::BoardBuild));
+        m_scene.AddSystem(std::make_shared<Tsukino::BuiltIn::ECS::InteractionSystem>(), Order(SystemOrder::Interaction));
+        m_scene.AddSystem(std::make_shared<Tsukino::BuiltIn::ECS::UISliderSystem>(), Order(SystemOrder::UISlider));
+        m_scene.AddSystem(std::make_shared<Tsukino::BuiltIn::ECS::UIToggleSystem>(), Order(SystemOrder::UIToggle));
+        m_scene.AddSystem(std::make_shared<ECS::SettingsSystem>(), Order(SystemOrder::Settings));
         m_scene.AddSystem(std::make_shared<ECS::StarMapInputSystem>(), Order(SystemOrder::StarMapInput));
         m_scene.AddSystem(std::make_shared<ECS::AudioSettingsSystem>(eventBus), Order(SystemOrder::AudioSettings));
         m_scene.AddSystem(std::make_shared<ECS::LauncherInputSystem>(eventBus), Order(SystemOrder::LauncherInput));
@@ -201,6 +215,7 @@ namespace StardustFever::Scene {
         m_scene.AddSystem(std::make_shared<ECS::StarChartViewSystem>(), Order(SystemOrder::StarChartView));
         m_scene.AddSystem(std::make_shared<ECS::PocketLabelSystem>(m_scene), Order(SystemOrder::PocketLabel));
         m_scene.AddSystem(std::make_shared<ECS::StarMapViewSystem>(m_scene), Order(SystemOrder::StarMapView));
+        m_scene.AddSystem(std::make_shared<ECS::SettingsViewSystem>(m_scene), Order(SystemOrder::SettingsView));
         m_scene.AddSystem(std::make_shared<ECS::LotteryViewSystem>(eventBus), Order(SystemOrder::LotteryView));
         m_scene.AddSystem(std::make_shared<ECS::HudGaugeSystem>(), Order(SystemOrder::HudGauge));
         m_scene.AddSystem(std::make_shared<ECS::RollingNumberSystem>(), Order(SystemOrder::RollingNumber));

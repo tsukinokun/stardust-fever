@@ -11,6 +11,10 @@
         {
             "key": "SpriteComponent",
             "value": "StardustFever/Assets/Prefabs/Hud/Layout/Chip4/Sprite.json"
+        },
+        {
+            "key": "KeyHintComponent",
+            "value": "null"
         }
     ]
 }

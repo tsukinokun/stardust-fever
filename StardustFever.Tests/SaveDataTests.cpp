@@ -43,6 +43,7 @@ SF_TEST(SaveDataRoundTrips) {
     original.autoFireEnabled             = true;
     original.bgmVolume                   = 0.3f;
     original.audioMuted                  = true;
+    original.showKeyHints                = false;
 
     const SaveData loaded = Read(Write(original));
     SF_EXPECT(loaded.stardust == original.stardust);
@@ -54,6 +55,7 @@ SF_TEST(SaveDataRoundTrips) {
     SF_EXPECT(loaded.autoFireEnabled);
     SF_EXPECT(loaded.bgmVolume == 0.3f);
     SF_EXPECT(loaded.audioMuted);
+    SF_EXPECT(!loaded.showKeyHints);
 }
 
 SF_TEST(SaveDataToleratesMissingFields) {

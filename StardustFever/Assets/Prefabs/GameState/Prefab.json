@@ -47,6 +47,10 @@
         {
             "key": "AudioSettingsComponent",
             "value": "null"
+        },
+        {
+            "key": "SettingsStateComponent",
+            "value": "null"
         }
     ]
 }

@@ -8,6 +8,7 @@
 #include <StardustFever/Data/SaveData.hpp>
 #include <StardustFever/ECS/Component/AudioSettingsComponent.hpp>
 #include <StardustFever/ECS/Component/AutoFireComponent.hpp>
+#include <StardustFever/ECS/Component/SettingsStateComponent.hpp>
 #include <StardustFever/ECS/Component/PrestigeStateComponent.hpp>
 #include <StardustFever/ECS/Component/SaveConfigComponent.hpp>
 #include <StardustFever/ECS/Component/StarCollectionComponent.hpp>
@@ -56,6 +57,8 @@ namespace StardustFever::ECS {
                 data.sfxVolume  = audio->sfxVolume;
                 data.audioMuted = audio->muted;
             }
+            if(const SettingsStateComponent* settings = FindSingleton<SettingsStateComponent>(registry))
+                data.showKeyHints = settings->showKeyHints;
             return data;
         }
 
@@ -84,6 +87,8 @@ namespace StardustFever::ECS {
                 audio->sfxVolume = data.sfxVolume;
                 audio->muted     = data.audioMuted;
             }
+            if(SettingsStateComponent* settings = FindSingleton<SettingsStateComponent>(registry))
+                settings->showKeyHints = data.showKeyHints;
         }
     }    // namespace
 

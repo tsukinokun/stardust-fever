@@ -11,6 +11,10 @@
         {
             "key": "HudTextComponent",
             "value": "StardustFever/Assets/Prefabs/Hud/Layout/ShopHint/HudText.json"
+        },
+        {
+            "key": "KeyHintComponent",
+            "value": "null"
         }
     ]
 }

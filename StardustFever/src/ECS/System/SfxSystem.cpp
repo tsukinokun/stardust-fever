@@ -8,6 +8,7 @@
 #include <StardustFever/ECS/Component/AudioSettingsComponent.hpp>
 #include <StardustFever/ECS/Component/LotteryStateComponent.hpp>
 #include <StardustFever/ECS/Component/PocketComponent.hpp>
+#include <StardustFever/ECS/Component/SettingsStateComponent.hpp>
 #include <StardustFever/ECS/Component/StarMapStateComponent.hpp>
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
 #include <StardustFever/ECS/Utility/LotteryReach.hpp>
@@ -207,8 +208,14 @@ namespace StardustFever::ECS {
         }
 
         if(const AudioSettingsComponent* settings = FindSingleton<AudioSettingsComponent>(registry)) {
-            if(m_lastSfxLevel >= 0.0f && settings->sfxVolume != m_lastSfxLevel)
+            // スライダーを動かしている間は鳴らさず、離したときに確かめの音を鳴らす
+            SettingsStateComponent* screen = FindSingleton<SettingsStateComponent>(registry);
+            if(screen && screen->previewSound) {
+                screen->previewSound = false;
                 Play(registry, *config, "volumeTick");
+            } else if(m_lastSfxLevel >= 0.0f && settings->sfxVolume != m_lastSfxLevel && !(screen && screen->open)) {
+                Play(registry, *config, "volumeTick");
+            }
             m_lastSfxLevel = settings->sfxVolume;
         }
     }

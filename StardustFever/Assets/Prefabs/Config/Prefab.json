@@ -55,6 +55,10 @@
         {
             "key": "AudioConfigComponent",
             "value": "StardustFever/Assets/Prefabs/Config/AudioConfig.json"
+        },
+        {
+            "key": "SettingsConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/SettingsConfig.json"
         }
     ]
 }
