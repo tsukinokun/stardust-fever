@@ -29,6 +29,11 @@ namespace StardustFever::ECS {
         float       dragMoved     = 0.0f;     //!< つかんでから動かした量（ピクセル。少なければクリック）
         float       lastX         = 0.0f;     //!< 前のフレームのマウスの位置（UI の座標）
         float       lastY         = 0.0f;
+        int         rowScroll     = 0;       //!< 右のパネルの先頭から何行送ったか
+        int         rowScrollMax  = 0;       //!< 送れる行数（StarMapViewSystem が書く）
+        int         hoverStar     = -1;      //!< マウスが乗っている星（StarTable::stars の添字。無ければ -1）
+        float       hoverX        = 0.0f;    //!< マウスの位置（UI の座標）
+        float       hoverY        = 0.0f;
         int         version       = 0;    //!< 見え方が変わるたびに増える（StarMapViewSystem が並べ直す合図）
     };
 }    // namespace StardustFever::ECS

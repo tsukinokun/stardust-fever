@@ -76,6 +76,16 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("revealLookDegrees", component.revealLookDegrees));
         archive(cereal::make_nvp("inertiaFriction", component.inertiaFriction));
         archive(cereal::make_nvp("focusSpeed", component.focusSpeed));
+        archive(cereal::make_nvp("hoverRadius", component.hoverRadius));
+        archive(cereal::make_nvp("tooltipWidth", component.tooltipWidth));
+        archive(cereal::make_nvp("tooltipHeight", component.tooltipHeight));
+        archive(cereal::make_nvp("tooltipScale", component.tooltipScale));
+        archive(cereal::make_nvp("tooltipColor", component.tooltipColor));
+        archive(cereal::make_nvp("maxStarLabels", component.maxStarLabels));
+        archive(cereal::make_nvp("starLabelScale", component.starLabelScale));
+        archive(cereal::make_nvp("starLabelOffset", component.starLabelOffset));
+        archive(cereal::make_nvp("starLabelColor", component.starLabelColor));
+        archive(cereal::make_nvp("captionWidth", component.captionWidth));
     }
 
     template <class Archive>
@@ -136,6 +146,16 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "revealLookDegrees", component.revealLookDegrees);
         Tsukino::IO::LoadOptional(archive, "inertiaFriction", component.inertiaFriction);
         Tsukino::IO::LoadOptional(archive, "focusSpeed", component.focusSpeed);
+        Tsukino::IO::LoadOptional(archive, "hoverRadius", component.hoverRadius);
+        Tsukino::IO::LoadOptional(archive, "tooltipWidth", component.tooltipWidth);
+        Tsukino::IO::LoadOptional(archive, "tooltipHeight", component.tooltipHeight);
+        Tsukino::IO::LoadOptional(archive, "tooltipScale", component.tooltipScale);
+        Tsukino::IO::LoadOptional(archive, "tooltipColor", component.tooltipColor);
+        Tsukino::IO::LoadOptional(archive, "maxStarLabels", component.maxStarLabels);
+        Tsukino::IO::LoadOptional(archive, "starLabelScale", component.starLabelScale);
+        Tsukino::IO::LoadOptional(archive, "starLabelOffset", component.starLabelOffset);
+        Tsukino::IO::LoadOptional(archive, "starLabelColor", component.starLabelColor);
+        Tsukino::IO::LoadOptional(archive, "captionWidth", component.captionWidth);
     }
 
 }    // namespace StardustFever::ECS

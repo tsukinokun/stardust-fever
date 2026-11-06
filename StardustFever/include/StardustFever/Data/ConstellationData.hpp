@@ -68,13 +68,14 @@ namespace StardustFever::Data {
     //! @brief  星座1つの定義
     //-------------------------------------------------------------
     struct ConstellationDef {
-        std::string                       id;        //!< 参照用のID（IAU の略符の小文字。例: "ori"）
-        std::string                       name;      //!< 表示名（UTF-8）
-        std::string                       nameEn;    //!< ラテン語名
-        std::vector<ConstellationStarDef> stars;     //!< 線をつくる星すべて（そろえる対象）
-        std::vector<ConstellationLineDef> lines;     //!< 星座の線
-        ConstellationEffectDef            effect;    //!< そろえたときの効果
-        ConstellationBoardDef             board;     //!< 星ゲットチャンスで盤面に出す形
+        std::string                       id;         //!< 参照用のID（IAU の略符の小文字。例: "ori"）
+        std::string                       name;       //!< 表示名（UTF-8）
+        std::string                       nameEn;     //!< ラテン語名
+        std::string                       caption;    //!< 図鑑の文章（神話・見つけ方・天文の話題）
+        std::vector<ConstellationStarDef> stars;      //!< 線をつくる星すべて（そろえる対象）
+        std::vector<ConstellationLineDef> lines;      //!< 星座の線
+        ConstellationEffectDef            effect;     //!< そろえたときの効果
+        ConstellationBoardDef             board;      //!< 星ゲットチャンスで盤面に出す形
     };
 
     //-------------------------------------------------------------
@@ -131,6 +132,7 @@ namespace StardustFever::Data {
                 cereal::make_nvp("stars", constellation.stars),
                 cereal::make_nvp("lines", constellation.lines));
         Tsukino::IO::LoadOptional(archive, "nameEn", constellation.nameEn);
+        Tsukino::IO::LoadOptional(archive, "caption", constellation.caption);
         Tsukino::IO::LoadOptional(archive, "effect", constellation.effect);
         Tsukino::IO::LoadOptional(archive, "board", constellation.board);
     }

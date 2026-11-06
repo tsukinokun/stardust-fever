@@ -108,6 +108,26 @@
         "revealSeconds": 1.1,
         "revealLookDegrees": 25.0,
         "inertiaFriction": 3.5,
-        "focusSpeed": 4.0
+        "focusSpeed": 4.0,
+        "hoverRadius": 14.0,
+        "tooltipWidth": 330.0,
+        "tooltipHeight": 84.0,
+        "tooltipScale": 0.42,
+        "tooltipColor": {
+            "x": 0.01,
+            "y": 0.012,
+            "z": 0.04,
+            "w": 0.9
+        },
+        "maxStarLabels": 14,
+        "starLabelScale": 0.34,
+        "starLabelOffset": 12.0,
+        "starLabelColor": {
+            "x": 0.85,
+            "y": 0.9,
+            "z": 1.0,
+            "w": 0.95
+        },
+        "captionWidth": 54
     }
 }

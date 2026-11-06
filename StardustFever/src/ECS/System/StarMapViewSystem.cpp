@@ -4,6 +4,7 @@
 //-------------------------------------------------------------
 #include <StardustFever/ECS/System/StarMapViewSystem.hpp>
 
+#include <StardustFever/Core/TextUtility.hpp>
 #include <StardustFever/Data/GameDatabase.hpp>
 #include <StardustFever/ECS/Component/CollectionModifiersComponent.hpp>
 #include <StardustFever/ECS/Component/HudLayoutConfigComponent.hpp>
@@ -249,6 +250,52 @@ namespace StardustFever::ECS {
             Layout(registry);
             m_appliedVersion = state->version;
         }
+        UpdateTooltip(registry);
+    }
+
+    //-------------------------------------------------------------
+    // マウスの下の星の吹き出しを出す
+    //-------------------------------------------------------------
+    void StarMapViewSystem::UpdateTooltip(Tsukino::ECS::Registry& registry) {
+        const StarMapStateComponent*   state      = FindSingleton<StarMapStateComponent>(registry);
+        const StarMapConfigComponent*  config     = FindSingleton<StarMapConfigComponent>(registry);
+        const StarCollectionComponent* collection = FindSingleton<StarCollectionComponent>(registry);
+        if(!state || !config || !collection || m_tooltip == entt::null)
+            return;
+
+        const Data::StarTable& stars = Data::GetStarTable();
+        const bool             shown = state->hoverStar >= 0 && state->hoverStar < static_cast<int>(stars.stars.size());
+        registry.GetComponent<Tsukino::BuiltIn::ECS::UIVisibilityComponent>(m_tooltip).visible = shown;
+        if(!shown) {
+            m_tooltipStar = -1;
+            return;
+        }
+
+        //-------------------------------------------------------------
+        // マウスの右下に置く。画面からはみ出すなら反対側へ回す
+        //-------------------------------------------------------------
+        const float gap = 16.0f;
+        float       x   = state->hoverX + gap;
+        float       y   = state->hoverY + gap;
+        if(x + config->tooltipWidth > config->panelX)
+            x = state->hoverX - gap - config->tooltipWidth;
+        if(y + config->tooltipHeight > 1000.0f)
+            y = state->hoverY - gap - config->tooltipHeight;
+        Place(registry, m_tooltip, x, y, 1.0f, 1.0f);
+
+        if(state->hoverStar == m_tooltipStar)
+            return;
+        m_tooltipStar = state->hoverStar;
+
+        const Data::StarDef&          star  = stars.stars[static_cast<size_t>(m_tooltipStar)];
+        const Data::ConstellationDef* home  = Data::GetConstellationTable().Find(star.constellationId);
+        const auto                    found = collection->starLevels.find(star.id);
+        HudUi::SetText(registry, m_tooltipText[0], star.name);
+        HudUi::SetText(registry, m_tooltipText[1], CollectionText::StarFacts(star));
+        HudUi::SetText(
+            registry,
+            m_tooltipText[2],
+            (home ? home->name + "  " : std::string()) + (found != collection->starLevels.end() ? "★" + std::to_string(found->second) : std::string("未獲得")));
     }
 
     //-------------------------------------------------------------
@@ -335,6 +382,7 @@ namespace StardustFever::ECS {
         if(m_root != entt::null && registry.IsValid(m_root))
             Tsukino::BuiltIn::ECS::TransformUtility::DestroyHierarchy(registry, m_root);
         m_root           = entt::null;
+        m_tooltip        = entt::null;
         m_appliedVersion = -1;
 
         using Tsukino::BuiltIn::ECS::UIVisibilityComponent;
@@ -495,7 +543,37 @@ namespace StardustFever::ECS {
         }
 
         //-------------------------------------------------------------
+        // 選んだ星座の星の名前。枠を使い回し、貼り付ける星は Layout が決める
+        //-------------------------------------------------------------
+        for(int i = 0; i < config->maxStarLabels; ++i) {
+            const entt::entity label                            = MakeElement(*m_scene, registry, m_root, StarMapElementKind::StarLabel, i);
+            FontComponent&     font                             = AddText(registry, label, config->starLabelScale, order, true);
+            font.horizontalAlign                                = Tsukino::BuiltIn::ECS::HorizontalAlign::Left;
+            Tsukino::BuiltIn::ECS::WorldAnchorComponent& anchor = registry.AddComponent<Tsukino::BuiltIn::ECS::WorldAnchorComponent>(label);
+            anchor.useFixedWorldPosition                        = true;
+            anchor.screenOffset                                 = hlslpp::float2(config->starLabelOffset, 0.0f);
+        }
+
+        //-------------------------------------------------------------
+        // マウスを乗せた星の吹き出し。板の左上を基準に置く
+        //-------------------------------------------------------------
+        m_tooltip = MakeElement(*m_scene, registry, m_root, StarMapElementKind::Tooltip, 0);
+        Place(registry, m_tooltip, 0.0f, 0.0f, 1.0f, 1.0f);
+        registry.AddComponent<Tsukino::BuiltIn::ECS::UIVisibilityComponent>(m_tooltip).visible = false;
+        const entt::entity tooltipBoard                                      = MakeElement(*m_scene, registry, m_tooltip, StarMapElementKind::Tooltip, 1);
+        AddSprite(registry, tooltipBoard, white, order + 6, false).tintColor = config->tooltipColor;
+        Place(registry, tooltipBoard, config->tooltipWidth * 0.5f, config->tooltipHeight * 0.5f, config->tooltipWidth / px, config->tooltipHeight / px);
+        for(int i = 0; i < 3; ++i) {
+            m_tooltipText[i]    = MakeElement(*m_scene, registry, m_tooltip, StarMapElementKind::TooltipText, i);
+            FontComponent& font = AddText(registry, m_tooltipText[i], config->tooltipScale * (i == 0 ? 1.25f : 1.0f), order + 7, false);
+            font.maxWidth       = config->tooltipWidth - 24.0f;
+            Place(registry, m_tooltipText[i], 12.0f, i == 0 ? 8.0f : 12.0f + 24.0f * static_cast<float>(i), 1.0f, 1.0f);
+        }
+        m_tooltipStar = -1;
+
+        //-------------------------------------------------------------
         // 上のまとめと操作の説明、右のパネルの文字
+        //-------------------------------------------------------------
         //-------------------------------------------------------------
         const entt::entity summary = MakeElement(*m_scene, registry, m_root, StarMapElementKind::Summary, 0);
         AddText(registry, summary, config->textScale * 1.25f, order + 5, false);
@@ -527,7 +605,7 @@ namespace StardustFever::ECS {
     // 星・線・名前の色を今の状態にし、詳しいパネルの中身を書く
     //-------------------------------------------------------------
     void StarMapViewSystem::Layout(Tsukino::ECS::Registry& registry) {
-        const StarMapStateComponent*        state      = FindSingleton<StarMapStateComponent>(registry);
+        StarMapStateComponent*              state      = FindSingleton<StarMapStateComponent>(registry);
         const StarMapConfigComponent*       config     = FindSingleton<StarMapConfigComponent>(registry);
         const StarCollectionComponent*      collection = FindSingleton<StarCollectionComponent>(registry);
         const CollectionModifiersComponent* modifiers  = FindSingleton<CollectionModifiersComponent>(registry);
@@ -560,9 +638,48 @@ namespace StardustFever::ECS {
                 highlighted[c] = selected == &constellation;
         }
 
+        //-------------------------------------------------------------
+        // 選んだ星座の、名前を添える星。固有名のある星を先に、その中は明るい順に選ぶ
+        //-------------------------------------------------------------
+        std::vector<const Data::StarDef*> labelled;
+        if(selected && !group) {
+            for(const Data::ConstellationStarDef& member : selected->stars) {
+                if(const Data::StarDef* star = stars.Find(member.starId))
+                    labelled.push_back(star);
+            }
+            std::sort(labelled.begin(), labelled.end(), [](const Data::StarDef* a, const Data::StarDef* b) {
+                const bool namedA = !a->nameEn.empty();
+                const bool namedB = !b->nameEn.empty();
+                return namedA != namedB ? namedA : a->magnitude < b->magnitude;
+            });
+        }
+
         for(const auto entity : registry.View<StarMapElementComponent>()) {
             const StarMapElementComponent& element = registry.GetComponent<StarMapElementComponent>(entity);
             switch(element.kind) {
+            //-------------------------------------------------------------
+            // 星の名前: 呼び名の頭の星座名は省いて短くする（「オリオン座π4」→「π4」）
+            //-------------------------------------------------------------
+            case StarMapElementKind::StarLabel:
+                {
+                    if(element.index >= static_cast<int>(labelled.size())) {
+                        HudUi::SetTextColor(registry, entity, hlslpp::float4(0.0f, 0.0f, 0.0f, 0.0f));
+                        if(FontComponent* font = registry.try_get<FontComponent>(entity))
+                            font->outlineWidth = 0.0f;
+                        break;
+                    }
+                    const Data::StarDef& star = *labelled[static_cast<size_t>(element.index)];
+                    std::string          name = star.name;
+                    if(name.rfind(selected->name, 0) == 0 && name.size() > selected->name.size())
+                        name = name.substr(selected->name.size());
+                    HudUi::SetText(registry, entity, name);
+                    HudUi::SetTextColor(registry, entity, config->starLabelColor);
+                    if(FontComponent* font = registry.try_get<FontComponent>(entity))
+                        font->outlineWidth = 1.0f;
+                    if(auto* anchor = registry.try_get<Tsukino::BuiltIn::ECS::WorldAnchorComponent>(entity))
+                        anchor->fixedWorldPosition = SkyPoint(*config, Core::SkyMath::ToDirection(star.ra * 15.0, star.dec), config->skyRadius);
+                    break;
+                }
             //-------------------------------------------------------------
             // 星: 明るいほど大きく。持っていればスペクトル型の色で強く光り、無ければ淡い点
             //-------------------------------------------------------------
@@ -789,24 +906,41 @@ namespace StardustFever::ECS {
                 members.push_back(star);
         }
         std::sort(members.begin(), members.end(), [](const Data::StarDef* a, const Data::StarDef* b) { return a->magnitude < b->magnitude; });
-        for(int row = 0; row < config->maxRows; ++row) {
-            const entt::entity text = findText(StarMapElementKind::Row, row);
-            if(row >= static_cast<int>(members.size())) {
-                HudUi::SetText(registry, text, row == config->maxRows - 1 && static_cast<int>(members.size()) > config->maxRows ? "…" : "");
-                continue;
-            }
-            const Data::StarDef& star  = *members[row];
-            const auto           found = collection->starLevels.find(star.id);
-            const int            level = found == collection->starLevels.end() ? 0 : found->second;
-            std::string          stars_;
+
+        //-------------------------------------------------------------
+        // 図鑑の文章の下に星の一覧を続け、入りきらない分はホイールで送る
+        //-------------------------------------------------------------
+        std::vector<std::pair<std::string, hlslpp::float4>> lines;
+        for(const std::string& line : Core::WrapText(selected->caption, config->captionWidth)) {
+            lines.emplace_back(line, config->labelColor * hlslpp::float4(1.3f, 1.3f, 1.3f, 1.3f));
+        }
+        if(!lines.empty())
+            lines.emplace_back("", config->labelColor);
+        for(const Data::StarDef* star : members) {
+            const auto  found = collection->starLevels.find(star->id);
+            const int   level = found == collection->starLevels.end() ? 0 : found->second;
+            std::string marks;
             for(int i = 0; i < maxLevel; ++i) {
-                stars_ += i < level ? "★" : "☆";
+                marks += i < level ? "★" : "☆";
             }
             char facts[64];
-            std::snprintf(facts, sizeof(facts), "  %.2f等 %s", star.magnitude, CollectionText::SpectralColor(star.spectralType));
-            HudUi::SetText(registry, text, (level > 0 ? stars_ : std::string("未獲得")) + "  " + star.name + facts);
-            HudUi::SetTextColor(
-                registry, text, level > 0 ? SpectralColor(layout, star.spectralType) : config->missingStarColor * hlslpp::float4(1.4f, 1.4f, 1.4f, 1.4f));
+            std::snprintf(facts, sizeof(facts), "  %.2f等 %s", star->magnitude, CollectionText::SpectralColor(star->spectralType));
+            lines.emplace_back((level > 0 ? marks : std::string("未獲得")) + "  " + star->name + facts,
+                               level > 0 ? SpectralColor(layout, star->spectralType) : config->missingStarColor * hlslpp::float4(1.4f, 1.4f, 1.4f, 1.4f));
+        }
+
+        state->rowScrollMax = std::max(0, static_cast<int>(lines.size()) - config->maxRows);
+        state->rowScroll    = std::clamp(state->rowScroll, 0, state->rowScrollMax);
+        for(int row = 0; row < config->maxRows; ++row) {
+            const entt::entity text  = findText(StarMapElementKind::Row, row);
+            const int          index = row + state->rowScroll;
+            if(index >= static_cast<int>(lines.size())) {
+                HudUi::SetText(registry, text, "");
+                continue;
+            }
+            const bool more = row == config->maxRows - 1 && index + 1 < static_cast<int>(lines.size());
+            HudUi::SetText(registry, text, more ? std::string("▼ ホイールで続き") : lines[static_cast<size_t>(index)].first);
+            HudUi::SetTextColor(registry, text, more ? config->selectedLabelColor : lines[static_cast<size_t>(index)].second);
         }
     }
 

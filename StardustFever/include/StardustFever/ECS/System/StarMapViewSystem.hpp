@@ -77,6 +77,12 @@ namespace StardustFever::ECS {
         void ApplyCamera(Tsukino::ECS::Registry& registry);
 
         //-------------------------------------------------------------
+        //! @brief  マウスの下の星の吹き出しを出す
+        //! @param  registry [in] レジストリ
+        //-------------------------------------------------------------
+        void UpdateTooltip(Tsukino::ECS::Registry& registry);
+
+        //-------------------------------------------------------------
         //! @brief  画面の部品を全て作る
         //! @param  registry [in] レジストリ
         //-------------------------------------------------------------
@@ -89,9 +95,12 @@ namespace StardustFever::ECS {
         void Layout(Tsukino::ECS::Registry& registry);
 
         Tsukino::ECS::Scene*      m_scene          = nullptr;
-        entt::entity              m_root           = entt::null;    //!< 空の部品（空を見ている間だけある）
-        entt::entity              m_veil           = entt::null;    //!< 暗転の幕（開け閉めの間だけある）
-        int                       m_appliedVersion = -1;            //!< 最後に並べたときの状態の version
+        entt::entity              m_root           = entt::null;                              //!< 空の部品（空を見ている間だけある）
+        entt::entity              m_veil           = entt::null;                              //!< 暗転の幕（開け閉めの間だけある）
+        int                       m_appliedVersion = -1;                                      //!< 最後に並べたときの状態の version
+        entt::entity              m_tooltip        = entt::null;                              //!< 吹き出しの板
+        entt::entity              m_tooltipText[3] = {entt::null, entt::null, entt::null};    //!< 吹き出しの文字
+        int                       m_tooltipStar    = -1;                                      //!< 吹き出しに書いてある星
         Phase                     m_phase          = Phase::Closed;
         float                     m_veilAlpha      = 0.0f;       //!< 幕の濃さ
         std::vector<entt::entity> m_hiddenHud;                   //!< 空を見ている間だけ隠した HUD

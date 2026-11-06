@@ -23,6 +23,7 @@ import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import GenerateBoardLayout as board  # noqa: E402
+import SkyCaptions as captions  # noqa: E402
 import SkyNames as names  # noqa: E402
 
 SKY_DATA = os.path.join(board.ROOT, "Tools", "SkyData")
@@ -312,6 +313,7 @@ def main():
             "id": abbr.lower(),
             "name": names.CONSTELLATIONS[abbr][0],
             "nameEn": names.CONSTELLATIONS[abbr][1],
+            "caption": captions.CAPTIONS[abbr.lower()],
             "stars": [{"starId": f"hip_{h}"} for h in order],
             "lines": [{"from": index[a], "to": index[b]} for a, b in pairs],
             "effect": {"type": kind, "value": value},

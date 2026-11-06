@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <vector>
 
 // 名前空間 : StardustFever::ECS
 namespace StardustFever::ECS {
@@ -223,6 +224,7 @@ namespace StardustFever::ECS {
                 state->decVelocity = 0.0;
                 // クリックで星座を選んだら、星座の詳しい中身に戻し、その方へ回る
                 state->selectedId = PickConstellation(*state, *config, x - 800.0, y - kScreenHalfHeight);
+                state->rowScroll  = 0;
                 if(const Data::ConstellationDef* picked = table.Find(state->selectedId)) {
                     state->groupMode = false;
                     TurnToConstellation(*state, *picked, config->maxDec);
@@ -246,8 +248,16 @@ namespace StardustFever::ECS {
         // 拡大: ホイール（1目盛りで zoomStep 倍）と Q / E
         //-------------------------------------------------------------
         double zoom = state->zoom;
-        if(const float wheel = input.GetWheelDelta(); wheel != 0.0f && inSky)
-            zoom *= std::pow(static_cast<double>(config->zoomStep), static_cast<double>(wheel));
+        if(const float wheel = input.GetWheelDelta(); wheel != 0.0f) {
+            if(inSky) {
+                zoom *= std::pow(static_cast<double>(config->zoomStep), static_cast<double>(wheel));
+            } else {
+                // パネルの上では、文章と星の一覧を送る
+                const int scroll = std::clamp(state->rowScroll - static_cast<int>(wheel) * 3, 0, state->rowScrollMax);
+                changed          = changed || scroll != state->rowScroll;
+                state->rowScroll = scroll;
+            }
+        }
         if(input.IsKeyDown(KeyCode::E))
             zoom *= std::pow(static_cast<double>(config->keyZoomSpeed), static_cast<double>(deltaTime));
         if(input.IsKeyDown(KeyCode::Q))
@@ -302,6 +312,7 @@ namespace StardustFever::ECS {
             }
             const int target  = current < 0 ? 0 : (current + (next ? 1 : count - 1)) % count;
             state->selectedId = table.constellations[target].id;
+            state->rowScroll  = 0;
             TurnToConstellation(*state, table.constellations[target], config->maxDec);
             changed = true;
         }
@@ -317,6 +328,29 @@ namespace StardustFever::ECS {
             state->decCenter   += dDec * blend;
             if(std::abs(dRa) < 0.02 && std::abs(dDec) < 0.02)
                 state->focusing = false;
+        }
+
+        //-------------------------------------------------------------
+        // マウスの下の星を探す。回している最中は吹き出しを出さない
+        //-------------------------------------------------------------
+        state->hoverStar = -1;
+        state->hoverX    = x;
+        state->hoverY    = y;
+        if(inSky && !state->dragging) {
+            const std::vector<Data::StarDef>& stars = Data::GetStarTable().stars;
+            double                            best  = static_cast<double>(config->hoverRadius) * config->hoverRadius;
+            const double                      view  = config->baseFov / std::max(state->zoom, 0.1);
+            for(size_t i = 0; i < stars.size(); ++i) {
+                Core::SkyMath::Point point;
+                if(!Core::SkyMath::ProjectToScreen(state->raCenter, state->decCenter, view, kScreenHalfHeight, stars[i].ra * 15.0, stars[i].dec, point))
+                    continue;
+                const double dx = point.x - (x - 800.0);
+                const double dy = point.y - (y - kScreenHalfHeight);
+                if(dx * dx + dy * dy <= best) {
+                    best             = dx * dx + dy * dy;
+                    state->hoverStar = static_cast<int>(i);
+                }
+            }
         }
 
         state->raCenter  = std::fmod(std::fmod(state->raCenter, 360.0) + 360.0, 360.0);
