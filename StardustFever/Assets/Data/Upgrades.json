@@ -65,12 +65,12 @@
                 "id": "auto_fire",
                 "name": "自動発射",
                 "description": "自動発射を解禁",
-                "effect": "autoFireUnlock",
-                "stacking": "add",
-                "valuePerLevel": 1.0,
+                "effect": "autoFire",
+                "stacking": "multiply",
+                "valuePerLevel": -0.15,
                 "baseCost": 2000.0,
-                "costGrowth": 1.0,
-                "maxLevel": 1,
+                "costGrowth": 1.6,
+                "maxLevel": 12,
                 "displayUnit": ""
             },
             {

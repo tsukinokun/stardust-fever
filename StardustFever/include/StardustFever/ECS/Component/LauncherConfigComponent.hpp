@@ -16,6 +16,7 @@ namespace StardustFever::ECS {
         float       minSpeed           = 380.0f;    //!< ハンドル0のときの初速（ワールド単位/秒）
         float       maxSpeed           = 560.0f;    //!< ハンドル1のときの初速（ワールド単位/秒）
         float       fireInterval       = 0.6f;      //!< 最短の発射間隔（秒）。自動発射はこの間隔で打ち続ける
+        float       autoFireInterval   = 2.4f;      //!< 自動発射の間隔の元（秒）。強化のレベルで短くなる
         float       chargeCycleSeconds = 1.2f;      //!< 溜めの強さが 0→1→0 と1往復する時間（秒）。短いほど狙うのが難しい
         float       autoFireJitter     = 0.08f;     //!< 自動発射の強さの揺らぎ幅（±）
         int         maxBallsOnBoard    = 30;        //!< 盤面に同時に出せる玉の数

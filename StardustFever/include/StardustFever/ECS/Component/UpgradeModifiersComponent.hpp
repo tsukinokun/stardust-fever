@@ -19,6 +19,7 @@ namespace StardustFever::ECS {
         float  feverDurationBonus     = 0.0f;     //!< フィーバーの長さに足す秒数
         double starChanceBonus        = 0.0;      //!< 星ゲットチャンスの当選確率に足す量
         float  autoFireJitterScale    = 1.0f;     //!< 自動発射の揺らぎ幅に掛ける倍率
+        float  autoFireIntervalScale  = 1.0f;     //!< 自動発射の間隔に掛ける倍率
         bool   autoFireUnlocked       = false;    //!< 自動発射を解禁したか
     };
 }    // namespace StardustFever::ECS

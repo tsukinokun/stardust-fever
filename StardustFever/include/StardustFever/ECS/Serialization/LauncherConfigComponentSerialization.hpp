@@ -21,6 +21,7 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("minSpeed", component.minSpeed));
         archive(cereal::make_nvp("maxSpeed", component.maxSpeed));
         archive(cereal::make_nvp("fireInterval", component.fireInterval));
+        archive(cereal::make_nvp("autoFireInterval", component.autoFireInterval));
         archive(cereal::make_nvp("chargeCycleSeconds", component.chargeCycleSeconds));
         archive(cereal::make_nvp("autoFireJitter", component.autoFireJitter));
         archive(cereal::make_nvp("maxBallsOnBoard", component.maxBallsOnBoard));
@@ -37,6 +38,7 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "minSpeed", component.minSpeed);
         Tsukino::IO::LoadOptional(archive, "maxSpeed", component.maxSpeed);
         Tsukino::IO::LoadOptional(archive, "fireInterval", component.fireInterval);
+        Tsukino::IO::LoadOptional(archive, "autoFireInterval", component.autoFireInterval);
         Tsukino::IO::LoadOptional(archive, "chargeCycleSeconds", component.chargeCycleSeconds);
         Tsukino::IO::LoadOptional(archive, "autoFireJitter", component.autoFireJitter);
         Tsukino::IO::LoadOptional(archive, "maxBallsOnBoard", component.maxBallsOnBoard);

@@ -15,6 +15,7 @@ namespace StardustFever::ECS {
     struct LauncherComponent {
         float handlePower   = 0.5f;     //!< 強さ（0〜1）。溜めている間は往復し、離した後は最後の強さを残す（自動発射の基準にもなる）
         float cooldown      = 0.0f;     //!< 次に打てるまでの残り時間（秒）
+        float autoCooldown  = 0.0f;     //!< 次の自動発射までの残り時間（秒）
         bool  charging      = false;    //!< Space を押して溜めているか（LauncherInputSystem が書く）
         float chargeTime    = 0.0f;     //!< 溜め始めてからの時間（秒）
         bool  fireRequested = false;    //!< 離して打つ要求。打てるようになるまで残し、打ったら LaunchSystem が下ろす

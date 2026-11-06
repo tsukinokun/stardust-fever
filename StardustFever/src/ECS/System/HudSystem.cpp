@@ -76,7 +76,7 @@ namespace StardustFever::ECS {
                 // 解禁する強化の購入キーは Upgrades.json の並び順で決まるので、データから探す
                 const auto& upgrades = Data::GetUpgradeTable().upgrades;
                 for(size_t i = 0; i < upgrades.size(); ++i) {
-                    if(upgrades[i].effect == "autoFireUnlock")
+                    if(upgrades[i].effect == "autoFire")
                         return "自動発射は強化 [" + std::to_string(i + 1) + "] で解禁";
                 }
                 return "自動発射 未解禁";

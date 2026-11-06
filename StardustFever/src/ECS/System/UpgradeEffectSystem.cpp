@@ -47,8 +47,9 @@ namespace StardustFever::ECS {
                 result.starChanceBonus += value;
             } else if(upgrade.effect == "autoFireJitter") {
                 result.autoFireJitterScale *= static_cast<float>(value);
-            } else if(upgrade.effect == "autoFireUnlock") {
-                result.autoFireUnlocked = true;
+            } else if(upgrade.effect == "autoFire") {
+                result.autoFireUnlocked      = true;
+                result.autoFireIntervalScale = static_cast<float>(value);
             } else {
                 // 毎フレーム呼ばれるので、同じ書き間違いは1回だけ知らせる
                 static std::unordered_set<std::string> s_ReportedEffects;

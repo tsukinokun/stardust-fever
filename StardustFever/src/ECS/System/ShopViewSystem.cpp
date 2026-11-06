@@ -6,6 +6,7 @@
 
 #include <StardustFever/Data/GameDatabase.hpp>
 #include <StardustFever/ECS/Component/HudLayoutConfigComponent.hpp>
+#include <StardustFever/ECS/Component/LauncherConfigComponent.hpp>
 #include <StardustFever/ECS/Component/ShopCardComponent.hpp>
 #include <StardustFever/ECS/Component/UpgradeLevelsComponent.hpp>
 #include <StardustFever/ECS/Component/WalletComponent.hpp>
@@ -47,6 +48,20 @@ namespace StardustFever::ECS {
             else
                 std::snprintf(buffer, sizeof(buffer), "+%g%s", value, upgrade.displayUnit.c_str());
             return buffer;
+        }
+
+        //-------------------------------------------------------------
+        //! @brief  自動発射の今の間隔の文字を作る
+        //! @param  registry [in] レジストリ
+        //! @param  upgrade  [in] 自動発射の強化
+        //! @param  level    [in] 今のレベル
+        //! @return 「発射間隔 2.0秒」のような文字
+        //-------------------------------------------------------------
+        std::string AutoFireText(Tsukino::ECS::Registry& registry, const Data::UpgradeDef& upgrade, int level) {
+            const LauncherConfigComponent* config = FindSingleton<LauncherConfigComponent>(registry);
+            char                           text[48];
+            std::snprintf(text, sizeof(text), "発射間隔 %.1f秒", (config ? config->autoFireInterval : 0.0f) * upgrade.EffectAt(level));
+            return text;
         }
     }    // namespace
 
@@ -132,7 +147,8 @@ namespace StardustFever::ECS {
             HudUi::SetText(registry, costText, maxed ? "MAX" : cost.ToJapaneseString());
             HudUi::SetText(registry,
                            HudUi::FindPart(registry, card, "Effect"),
-                           level > 0 && upgrade.effect != "autoFireUnlock" ? upgrade.description + " " + FormatEffect(upgrade, level) : upgrade.description);
+                           upgrade.effect == "autoFire" ? (level > 0 ? AutoFireText(registry, upgrade, level) : upgrade.description)
+                                                        : (level > 0 ? upgrade.description + " " + FormatEffect(upgrade, level) : upgrade.description));
 
             if(static_cast<int>(state) == component.state)
                 continue;

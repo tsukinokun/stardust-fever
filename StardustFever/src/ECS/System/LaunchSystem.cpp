@@ -21,6 +21,7 @@
 #include <Tsukino/Core/Log.hpp>
 
 #include <algorithm>
+#include <string>
 #include <vector>
 
 // 名前空間 : StardustFever::ECS
@@ -61,7 +62,8 @@ namespace StardustFever::ECS {
         for(const entt::entity launcherEntity : launchers) {
             LauncherComponent& launcher = registry.GetComponent<LauncherComponent>(launcherEntity);
             launcher.cooldown           = std::max(0.0f, launcher.cooldown - deltaTime);
-            if(launcher.cooldown > 0.0f || ballsOnBoard >= config->maxBallsOnBoard)
+            launcher.autoCooldown       = std::max(0.0f, launcher.autoCooldown - deltaTime);
+            if(ballsOnBoard >= config->maxBallsOnBoard)
                 continue;
 
             //-------------------------------------------------------------
@@ -69,19 +71,24 @@ namespace StardustFever::ECS {
             // 自動発射は溜めていない間だけ、最後に打った強さを基準に揺らいで打ち続ける（自動発射の代償）。
             // 溜めている最中に自動で打つと、狙っている最中の強さが勝手に使われてしまうため止める
             //-------------------------------------------------------------
-            const AutoFireComponent* autoFire   = registry.try_get<AutoFireComponent>(launcherEntity);
-            const bool               autoFiring = autoFire && autoFire->unlocked && autoFire->enabled && !launcher.charging;
-            if(!launcher.fireRequested && !autoFiring)
+            const AutoFireComponent* autoFire = registry.try_get<AutoFireComponent>(launcherEntity);
+            // 自動発射の待ちは手打ちと別に数える。長い間隔の間も手打ちは止めない
+            const bool autoFiring = autoFire && autoFire->unlocked && autoFire->enabled && !launcher.charging && launcher.autoCooldown <= 0.0f;
+            const bool handShot   = launcher.fireRequested && launcher.cooldown <= 0.0f;
+            if(!handShot && !autoFiring)
                 continue;
 
-            float power = launcher.handlePower;
-            if(!launcher.fireRequested) {
-                const UpgradeModifiersComponent*      upgrades = FindSingleton<UpgradeModifiersComponent>(registry);
-                const float                           range    = config->autoFireJitter * (upgrades ? upgrades->autoFireJitterScale : 1.0f);
+            float                            power    = launcher.handlePower;
+            const UpgradeModifiersComponent* upgrades = FindSingleton<UpgradeModifiersComponent>(registry);
+            if(handShot) {
+                launcher.fireRequested = false;
+                launcher.cooldown      = config->fireInterval;
+            } else {
+                launcher.autoCooldown                       = config->autoFireInterval * (upgrades ? upgrades->autoFireIntervalScale : 1.0f);
+                const float                           range = config->autoFireJitter * (upgrades ? upgrades->autoFireJitterScale : 1.0f);
                 std::uniform_real_distribution<float> jitter(-range, range);
                 power += jitter(m_random);
             }
-            launcher.fireRequested = false;
             power                  = std::clamp(power, 0.0f, 1.0f);
             launcher.lastShotPower = power;
             const float speed      = config->minSpeed + (config->maxSpeed - config->minSpeed) * power;
@@ -89,7 +96,6 @@ namespace StardustFever::ECS {
             const entt::entity ball = context->prefabFactory->Instantiate(config->ballPrefab, registry);
             if(ball == entt::null) {
                 Tsukino::Core::Log::Error("Failed to launch: ball prefab could not be instantiated: " + config->ballPrefab);
-                launcher.cooldown = config->fireInterval;
                 continue;
             }
 
@@ -109,7 +115,6 @@ namespace StardustFever::ECS {
             Tsukino::BuiltIn::ECS::ImpulseRequestComponent& impulse = registry.AddComponent<Tsukino::BuiltIn::ECS::ImpulseRequestComponent>(ball);
             impulse.impulse                                         = hlslpp::float3(0.0f, mass * speed, 0.0f);
 
-            launcher.cooldown = config->fireInterval;
             ++ballsOnBoard;
             m_eventBus->Publish(BallLaunchedEvent{});
         }
