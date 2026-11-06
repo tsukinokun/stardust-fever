@@ -6,6 +6,7 @@
 
 #include <StardustFever/ECS/Component/AudioSettingsComponent.hpp>
 #include <StardustFever/ECS/Component/KeyHintComponent.hpp>
+#include <StardustFever/ECS/Component/PrestigeStateComponent.hpp>
 #include <StardustFever/ECS/Component/SettingsElementComponent.hpp>
 #include <StardustFever/ECS/Component/SettingsStateComponent.hpp>
 #include <StardustFever/ECS/Component/StarMapStateComponent.hpp>
@@ -39,7 +40,9 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         // 開け閉め。星図を開いている間の Esc は星図のもの
         //-------------------------------------------------------------
-        bool toggle = context->inputSystem->IsKeyPressed(Tsukino::Input::KeyCode::Escape) && !(map && map->open);
+        const PrestigeStateComponent* prestige = FindSingleton<PrestigeStateComponent>(registry);
+        const bool                    dialog   = prestige && prestige->confirmOpen;
+        bool                          toggle   = context->inputSystem->IsKeyPressed(Tsukino::Input::KeyCode::Escape) && !(map && map->open) && !dialog;
         for(const auto entity : registry.View<SettingsElementComponent, PointerTargetComponent>()) {
             const SettingsElementComponent& element = registry.GetComponent<SettingsElementComponent>(entity);
             const bool                      clicked = registry.GetComponent<PointerTargetComponent>(entity).clicked;

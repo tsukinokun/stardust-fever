@@ -171,6 +171,16 @@
                 "id": "volumeTick",
                 "path": "StardustFever/Assets/Audio/Sfx/VolumeTick.wav",
                 "volume": 0.8
+            },
+            {
+                "id": "uiHover",
+                "path": "StardustFever/Assets/Audio/Sfx/UiHover.wav",
+                "volume": 0.25
+            },
+            {
+                "id": "uiClick",
+                "path": "StardustFever/Assets/Audio/Sfx/UiClick.wav",
+                "volume": 0.6
             }
         ]
     }

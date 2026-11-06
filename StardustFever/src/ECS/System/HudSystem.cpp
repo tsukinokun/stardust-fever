@@ -56,7 +56,7 @@ namespace StardustFever::ECS {
                 const Core::BigNumber needed = Core::PrestigeFormula::EarnedForNextConstant(gain, config->threshold, config->exponent);
                 return "次の宇宙定数まで あと " + (needed - prestige->universeEarned).ToJapaneseString();
             }
-            return "ビッグバンで Λ+" + gain.ToJapaneseString() + "  （B を2回）";
+            return "ビッグバンで Λ+" + gain.ToJapaneseString();
         }
 
         std::string BuildReel(Tsukino::ECS::Registry& registry, int index) {

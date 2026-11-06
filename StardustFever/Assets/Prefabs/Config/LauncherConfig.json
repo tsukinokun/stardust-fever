@@ -8,6 +8,12 @@
         "autoFireJitter": 0.08,
         "maxBallsOnBoard": 30,
         "killPlaneY": -20.0,
+        "mouseChargeArea": {
+            "x": 440.0,
+            "y": 60.0,
+            "z": 720.0,
+            "w": 880.0
+        },
         "stuckSeconds": 2.5,
         "stuckDistance": 0.3,
         "stuckNudge": 40.0,

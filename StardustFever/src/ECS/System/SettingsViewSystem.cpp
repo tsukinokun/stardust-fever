@@ -11,6 +11,7 @@
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
 #include <StardustFever/ECS/Utility/HudUi.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
+#include <StardustFever/ECS/Utility/UiParts.hpp>
 
 #include <Tsukino/BuiltIn/ECS/Component/FontComponent.hpp>
 #include <Tsukino/BuiltIn/ECS/Component/PointerTargetComponent.hpp>
@@ -40,8 +41,11 @@ namespace StardustFever::ECS {
         using Tsukino::BuiltIn::ECS::TransformComponent;
         using Tsukino::BuiltIn::ECS::UIRectComponent;
 
-        constexpr float kPillBorder = 16.0f;    //!< pill.png の9スライスの幅
-        constexpr float kCardBorder = 24.0f;    //!< panel_fill.png・panel_frame.png の9スライスの幅
+        using UiParts::AddImage;
+        using UiParts::AddLabel;
+        using UiParts::kCardBorder;
+        using UiParts::kPillBorder;
+        using UiParts::SetSlice;
 
         //-------------------------------------------------------------
         //! @brief  部品のエンティティを作る（位置は親からのずれ）
@@ -63,58 +67,6 @@ namespace StardustFever::ECS {
             element.kind                      = kind;
             element.index                     = index;
             return entity;
-        }
-
-        //-------------------------------------------------------------
-        //! @brief  画像を四角いっぱいに付ける（位置が四角の中心になる）
-        //-------------------------------------------------------------
-        SpriteComponent& AddImage(Tsukino::ECS::Registry&     registry,
-                                  entt::entity                entity,
-                                  Tsukino::Asset::AssetHandle texture,
-                                  float                       width,
-                                  float                       height,
-                                  int                         sortOrder,
-                                  const hlslpp::float4&       color) {
-            SpriteComponent& sprite                             = registry.AddComponent<SpriteComponent>(entity);
-            sprite.textureHandle                                = texture;
-            sprite.space                                        = Tsukino::BuiltIn::ECS::SpriteSpace::Screen;
-            sprite.sortOrder                                    = sortOrder;
-            sprite.tintColor                                    = color;
-            sprite.raycastTarget                                = false;
-            registry.AddComponent<UIRectComponent>(entity).size = hlslpp::float2(width, height);
-            return sprite;
-        }
-
-        //-------------------------------------------------------------
-        //! @brief  9スライスの境界を設定する
-        //! @param  sprite [in,out] スプライト
-        //! @param  border [in] 画像の中の境界の幅
-        //! @param  scale  [in] 画面での境界の倍率（小さな部品では角を小さくする）
-        //-------------------------------------------------------------
-        void SetSlice(SpriteComponent& sprite, float border, float scale = 1.0f) {
-            sprite.sliceBorder = hlslpp::float4(border, border, border, border);
-            sprite.sliceScale  = scale;
-        }
-
-        //-------------------------------------------------------------
-        //! @brief  文字を付ける（HUD の文字と同じ縁取りにする）
-        //-------------------------------------------------------------
-        void AddLabel(Tsukino::ECS::Registry& registry,
-                      entt::entity            entity,
-                      const std::string&      text,
-                      float                   scale,
-                      int                     sortOrder,
-                      const hlslpp::float4&   color,
-                      bool                    centered) {
-            FontComponent& font  = registry.AddComponent<FontComponent>(entity);
-            font.scale           = scale;
-            font.sortOrder       = sortOrder;
-            font.color           = color;
-            font.outlineColor    = hlslpp::float4(0.0f, 0.0f, 0.06f, 0.9f);
-            font.outlineWidth    = 1.8f;
-            font.horizontalAlign = centered ? Tsukino::BuiltIn::ECS::HorizontalAlign::Center : Tsukino::BuiltIn::ECS::HorizontalAlign::Left;
-            font.verticalAlign   = Tsukino::BuiltIn::ECS::VerticalAlign::Middle;
-            HudUi::SetText(registry, entity, text);
         }
     }    // namespace
 
@@ -166,6 +118,7 @@ namespace StardustFever::ECS {
         SetSlice(pill, kPillBorder, 0.8f);
         pill.raycastTarget = true;
         registry.AddComponent<PointerTargetComponent>(m_openButton);
+        registry.AddComponent<Tsukino::BuiltIn::ECS::UIButtonFeedbackComponent>(m_openButton);
 
         const float        half = config->openButtonWidth * 0.5f;
         const entt::entity star = MakeElement(*m_scene, registry, m_openButton, -half + 18.0f, 0.0f);
@@ -330,6 +283,7 @@ namespace StardustFever::ECS {
         SetSlice(button, kPillBorder);
         button.raycastTarget = true;
         registry.AddComponent<PointerTargetComponent>(close);
+        registry.AddComponent<Tsukino::BuiltIn::ECS::UIButtonFeedbackComponent>(close);
         AddLabel(registry, MakeElement(*m_scene, registry, close, 0.0f, 0.0f), "閉じる", config->textScale, order + 6, config->textColor, true);
 
         // 開いたときに小さく弾ませる

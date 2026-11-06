@@ -10,6 +10,7 @@
 
 #include <cereal/types/string.hpp>
 #include <Tsukino/Core/IO/CerealOptional.hpp>
+#include <Tsukino/Core/Math/Serialization/HlslppSerialization.hpp>
 
 #include <cereal/cereal.hpp>
 
@@ -30,6 +31,7 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("stuckDistance", component.stuckDistance));
         archive(cereal::make_nvp("stuckNudge", component.stuckNudge));
         archive(cereal::make_nvp("stuckMaxNudges", component.stuckMaxNudges));
+        archive(cereal::make_nvp("mouseChargeArea", component.mouseChargeArea));
         archive(cereal::make_nvp("ballPrefab", component.ballPrefab));
     }
 
@@ -47,6 +49,7 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "stuckDistance", component.stuckDistance);
         Tsukino::IO::LoadOptional(archive, "stuckNudge", component.stuckNudge);
         Tsukino::IO::LoadOptional(archive, "stuckMaxNudges", component.stuckMaxNudges);
+        Tsukino::IO::LoadOptional(archive, "mouseChargeArea", component.mouseChargeArea);
         Tsukino::IO::LoadOptional(archive, "ballPrefab", component.ballPrefab);
     }
 

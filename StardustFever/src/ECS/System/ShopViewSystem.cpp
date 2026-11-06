@@ -13,6 +13,8 @@
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
 #include <StardustFever/ECS/Utility/HudUi.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
+#include <StardustFever/ECS/Utility/UiParts.hpp>
+#include <StardustFever/ECS/Utility/UpgradeText.hpp>
 
 #include <Tsukino/BuiltIn/ECS/Transform/TransformUtility.hpp>
 #include <Tsukino/BuiltIn/ECS/UI/UITweenUtility.hpp>
@@ -34,35 +36,6 @@ namespace StardustFever::ECS {
             Affordable   = 1,
             Maxed        = 2,
         };
-
-        //-------------------------------------------------------------
-        //! @brief  強化の効果量を短い文字にする（"×1.95" / "+3%" / "+10秒"）
-        //-------------------------------------------------------------
-        std::string FormatEffect(const Data::UpgradeDef& upgrade, int level) {
-            const double value = upgrade.EffectAt(level);
-            char         buffer[48];
-            if(upgrade.Stacking() == Core::UpgradeFormula::Stacking::Multiply)
-                std::snprintf(buffer, sizeof(buffer), "×%.2f", value);
-            else if(upgrade.displayUnit == "%")
-                std::snprintf(buffer, sizeof(buffer), "+%g%%", value * 100.0);
-            else
-                std::snprintf(buffer, sizeof(buffer), "+%g%s", value, upgrade.displayUnit.c_str());
-            return buffer;
-        }
-
-        //-------------------------------------------------------------
-        //! @brief  自動発射の今の間隔の文字を作る
-        //! @param  registry [in] レジストリ
-        //! @param  upgrade  [in] 自動発射の強化
-        //! @param  level    [in] 今のレベル
-        //! @return 「発射間隔 2.0秒」のような文字
-        //-------------------------------------------------------------
-        std::string AutoFireText(Tsukino::ECS::Registry& registry, const Data::UpgradeDef& upgrade, int level) {
-            const LauncherConfigComponent* config = FindSingleton<LauncherConfigComponent>(registry);
-            char                           text[48];
-            std::snprintf(text, sizeof(text), "発射間隔 %.1f秒", (config ? config->autoFireInterval : 0.0f) * upgrade.EffectAt(level));
-            return text;
-        }
     }    // namespace
 
     ShopViewSystem::ShopViewSystem(Tsukino::ECS::EventBus& eventBus)
@@ -102,6 +75,13 @@ namespace StardustFever::ECS {
             HudUi::SetText(registry, HudUi::FindPart(registry, card, "Key"), std::to_string(i + 1));
             HudUi::SetText(registry, HudUi::FindPart(registry, card, "Name"), upgrades[i].name);
 
+            // カードは押して買える。乗ると少し大きくなる
+            UiParts::MakeClickable(registry, card, UiAction::BuyUpgrade, static_cast<int>(i));
+            Tsukino::BuiltIn::ECS::UIButtonFeedbackComponent& feedback = registry.AddComponent<Tsukino::BuiltIn::ECS::UIButtonFeedbackComponent>(card);
+            feedback.hoverScale                                        = 1.025f;
+            feedback.pressScale                                        = 0.97f;
+            feedback.clickPunch                                        = 0.05f;
+
             //-------------------------------------------------------------
             // 上から順に少しずつ遅れて滑り込ませる。傾きもカードごとにわずかに変え、
             // 定規で引いたように揃いすぎて見えないようにする
@@ -122,8 +102,9 @@ namespace StardustFever::ECS {
         if(!layout || !wallet || !levels)
             return;
 
-        const auto& upgrades  = Data::GetUpgradeTable().upgrades;
-        size_t      cardCount = 0;
+        const LauncherConfigComponent* launcher  = FindSingleton<LauncherConfigComponent>(registry);
+        const auto&                    upgrades  = Data::GetUpgradeTable().upgrades;
+        size_t                         cardCount = 0;
         for([[maybe_unused]] const auto entity : registry.View<ShopCardComponent>()) {
             ++cardCount;
         }
@@ -145,10 +126,12 @@ namespace StardustFever::ECS {
             const Tsukino::ECS::Entity costText = HudUi::FindPart(registry, card, "Cost");
             HudUi::SetText(registry, HudUi::FindPart(registry, card, "Level"), "Lv" + std::to_string(level));
             HudUi::SetText(registry, costText, maxed ? "MAX" : cost.ToJapaneseString());
-            HudUi::SetText(registry,
-                           HudUi::FindPart(registry, card, "Effect"),
-                           upgrade.effect == "autoFire" ? (level > 0 ? AutoFireText(registry, upgrade, level) : upgrade.description)
-                                                        : (level > 0 ? upgrade.description + " " + FormatEffect(upgrade, level) : upgrade.description));
+            HudUi::SetText(
+                registry,
+                HudUi::FindPart(registry, card, "Effect"),
+                upgrade.effect == "autoFire"
+                    ? (level > 0 ? "発射間隔 " + UpgradeText::Interval(upgrade, level, launcher ? launcher->autoFireInterval : 0.0f) : upgrade.description)
+                    : (level > 0 ? upgrade.description + " " + UpgradeText::Effect(upgrade, level) : upgrade.description));
 
             if(static_cast<int>(state) == component.state)
                 continue;

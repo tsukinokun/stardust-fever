@@ -3,6 +3,9 @@
 //! @brief  ハンドル操作を発射台へ反映する System
 //-------------------------------------------------------------
 #pragma once
+#include <StardustFever/ECS/Event/UiActionEvent.hpp>
+#include <StardustFever/ECS/Utility/EventQueue.hpp>
+
 #include <Tsukino/Core/ECS/System/ISystem.hpp>
 
 namespace Tsukino::ECS {
@@ -32,6 +35,8 @@ namespace StardustFever::ECS {
         void Update(Tsukino::ECS::Registry& registry, float deltaTime) override;
 
     private:
-        Tsukino::ECS::EventBus* m_eventBus = nullptr;
+        Tsukino::ECS::EventBus*   m_eventBus = nullptr;
+        EventQueue<UiActionEvent> m_actions;
+        bool                      m_mouseCharging = false;    //!< 盤面の長押しで溜めているか
     };
 }    // namespace StardustFever::ECS

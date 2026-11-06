@@ -97,6 +97,14 @@
             "y": 0.92,
             "z": 0.68,
             "w": 1.0
-        }
+        },
+        "actionBarX": 87.0,
+        "actionBarY": 936.0,
+        "actionButtonWidth": 124.0,
+        "actionButtonHeight": 40.0,
+        "actionButtonGap": 10.0,
+        "tooltipX": 590.0,
+        "tooltipWidth": 340.0,
+        "tooltipHeight": 108.0
     }
 }

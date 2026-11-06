@@ -20,7 +20,6 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("threshold", component.threshold));
         archive(cereal::make_nvp("exponent", component.exponent));
         archive(cereal::make_nvp("bonusPerConstant", component.bonusPerConstant));
-        archive(cereal::make_nvp("confirmWindow", component.confirmWindow));
     }
 
     template <class Archive>
@@ -28,7 +27,6 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "threshold", component.threshold);
         Tsukino::IO::LoadOptional(archive, "exponent", component.exponent);
         Tsukino::IO::LoadOptional(archive, "bonusPerConstant", component.bonusPerConstant);
-        Tsukino::IO::LoadOptional(archive, "confirmWindow", component.confirmWindow);
     }
 
 }    // namespace StardustFever::ECS

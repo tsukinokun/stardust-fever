@@ -3,6 +3,7 @@
 //! @brief  遊び（物理・発射・抽選・時間）を止めているかを調べる
 //-------------------------------------------------------------
 #pragma once
+#include <StardustFever/ECS/Component/PrestigeStateComponent.hpp>
 #include <StardustFever/ECS/Component/SettingsStateComponent.hpp>
 #include <StardustFever/ECS/Component/StarMapStateComponent.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
@@ -13,13 +14,14 @@ namespace StardustFever::ECS {
     //-------------------------------------------------------------
     //! @brief  遊びを止めているか
     //! @param  registry [in] レジストリ
-    //! @return 星図か設定の画面を開いていれば true
+    //! @return 星図・設定・ビッグバンの確認の画面を開いていれば true
     //! @note   止めている間は、物理・発射・抽選・フィーバーと星ゲットチャンスの残り時間が進まない
     //-------------------------------------------------------------
     inline bool IsPlayPaused(Tsukino::ECS::Registry& registry) {
         const StarMapStateComponent*  map      = FindSingleton<StarMapStateComponent>(registry);
         const SettingsStateComponent* settings = FindSingleton<SettingsStateComponent>(registry);
-        return (map && map->open) || (settings && settings->open);
+        const PrestigeStateComponent* prestige = FindSingleton<PrestigeStateComponent>(registry);
+        return (map && map->open) || (settings && settings->open) || (prestige && prestige->confirmOpen);
     }
 
 }    // namespace StardustFever::ECS

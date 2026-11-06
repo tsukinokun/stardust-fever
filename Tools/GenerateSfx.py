@@ -168,6 +168,8 @@ def main():
     save("MapOpen", sweep(500.0, 1400.0, 0.25, 0.5), 0.4)
     save("MapClose", sweep(1400.0, 500.0, 0.25, 0.5), 0.4)
     save("VolumeTick", tone(note("E6"), 0.08, 40.0, GLASS), 0.4)
+    save("UiHover", tone(note("A6"), 0.05, 60.0, GLASS), 0.3)
+    save("UiClick", arpeggio(["E6", "A6"], 0.03, 0.12, 30.0, GLASS), 0.5)
 
     print(f"wrote {len(os.listdir(OUTPUT_DIR))} files to {OUTPUT_DIR}")
 

@@ -29,25 +29,45 @@
 namespace StardustFever::ECS {
 
     BigBangSystem::BigBangSystem(Tsukino::ECS::EventBus& eventBus)
-        : m_eventBus(&eventBus) {
+        : m_eventBus(&eventBus)
+        , m_actions(eventBus) {
     }
 
     //-------------------------------------------------------------
     // 入力を見てビッグバンを行う
     //-------------------------------------------------------------
     void BigBangSystem::Update(Tsukino::ECS::Registry& registry, float deltaTime) {
-        // 星図の画面を開いている間は止める
-        if(IsPlayPaused(registry))
-            return;
-        PrestigeStateComponent*        prestige = FindSingleton<PrestigeStateComponent>(registry);
-        const PrestigeConfigComponent* config   = FindSingleton<PrestigeConfigComponent>(registry);
-        if(!prestige || !config)
+        const auto                                 actions  = m_actions.Drain();
+        PrestigeStateComponent*                    prestige = FindSingleton<PrestigeStateComponent>(registry);
+        const PrestigeConfigComponent*             config   = FindSingleton<PrestigeConfigComponent>(registry);
+        Tsukino::EngineIntegration::EngineContext* context  = GetEngineContext(registry);
+        if(!prestige || !config || !context || !context->inputSystem)
             return;
 
-        prestige->confirmTimer = std::max(0.0f, prestige->confirmTimer - deltaTime);
+        using Tsukino::Input::KeyCode;
+        const bool keyPressed = context->inputSystem->IsKeyPressed(KeyCode::B);
+        bool       open       = keyPressed;
+        bool       confirm    = keyPressed;
+        bool       cancel     = context->inputSystem->IsKeyPressed(KeyCode::Escape);
+        for(const UiActionEvent& action : actions) {
+            open    = open || action.action == UiAction::BigBang;
+            confirm = confirm || action.action == UiAction::BigBangConfirm;
+            cancel  = cancel || action.action == UiAction::BigBangCancel;
+        }
 
-        Tsukino::EngineIntegration::EngineContext* context = GetEngineContext(registry);
-        if(!context || !context->inputSystem || !context->inputSystem->IsKeyPressed(Tsukino::Input::KeyCode::B))
+        //-------------------------------------------------------------
+        // 確認画面を開いている間は、実行かやめるかだけを受ける
+        //-------------------------------------------------------------
+        if(prestige->confirmOpen) {
+            if(confirm)
+                Execute(registry);
+            else if(cancel)
+                prestige->confirmOpen = false;
+            return;
+        }
+
+        // 星図や設定の画面を開いている間は止める
+        if(IsPlayPaused(registry) || !open)
             return;
 
         const Core::BigNumber gain = Core::PrestigeFormula::GainOnBigBang(prestige->universeEarned, config->threshold, config->exponent);
@@ -68,17 +88,24 @@ namespace StardustFever::ECS {
             return;
         }
 
-        if(prestige->confirmTimer <= 0.0f) {
-            prestige->confirmTimer = config->confirmWindow;
-            m_eventBus->Publish(HudMessageEvent{"ビッグバン？  宇宙定数 +" + gain.ToJapaneseString() + "\n星屑と強化は消えます。もう一度 B で実行"});
+        prestige->confirmOpen = true;
+    }
+
+    //-------------------------------------------------------------
+    // ビッグバンを行う
+    //-------------------------------------------------------------
+    void BigBangSystem::Execute(Tsukino::ECS::Registry& registry) {
+        PrestigeStateComponent*        prestige = FindSingleton<PrestigeStateComponent>(registry);
+        const PrestigeConfigComponent* config   = FindSingleton<PrestigeConfigComponent>(registry);
+        if(!prestige || !config)
             return;
-        }
+        const Core::BigNumber gain = Core::PrestigeFormula::GainOnBigBang(prestige->universeEarned, config->threshold, config->exponent);
 
         //-------------------------------------------------------------
         // 実行。星屑・強化・この宇宙の累計・抽選の保留・盤面の玉を捨てる。
         // 星のレベルと星座の完成回数（星図）は図鑑として残す
         //-------------------------------------------------------------
-        prestige->confirmTimer     = 0.0f;
+        prestige->confirmOpen      = false;
         prestige->cosmicConstants += gain;
         prestige->universeEarned   = Core::BigNumber(0.0);
         ++prestige->bigBangCount;

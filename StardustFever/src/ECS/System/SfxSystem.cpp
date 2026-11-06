@@ -15,6 +15,7 @@
 #include <StardustFever/ECS/Utility/Singleton.hpp>
 
 #include <Tsukino/Audio/AudioManager.hpp>
+#include <Tsukino/BuiltIn/ECS/Component/PointerTargetComponent.hpp>
 #include <Tsukino/Core/Log.hpp>
 #include <Tsukino/Engine/Asset/AssetManager.hpp>
 #include <Tsukino/Engine/Asset/Audio/AudioAsset.hpp>
@@ -190,6 +191,17 @@ namespace StardustFever::ECS {
             Play(registry, *config, "constellation");
         else if(!draws.empty())
             Play(registry, *config, "starGet");
+
+        //-------------------------------------------------------------
+        // 押せる部品。乗ったときと押したとき
+        //-------------------------------------------------------------
+        for(const auto entity : registry.View<Tsukino::BuiltIn::ECS::PointerTargetComponent>()) {
+            const auto& pointer = registry.GetComponent<Tsukino::BuiltIn::ECS::PointerTargetComponent>(entity);
+            if(pointer.clicked)
+                Play(registry, *config, "uiClick");
+            else if(pointer.hoverEntered)
+                Play(registry, *config, "uiHover");
+        }
 
         //-------------------------------------------------------------
         // 操作

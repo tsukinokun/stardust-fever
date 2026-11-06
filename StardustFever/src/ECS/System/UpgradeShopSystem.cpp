@@ -29,14 +29,16 @@ namespace StardustFever::ECS {
     }    // namespace
 
     UpgradeShopSystem::UpgradeShopSystem(Tsukino::ECS::EventBus& eventBus)
-        : m_eventBus(&eventBus) {
+        : m_eventBus(&eventBus)
+        , m_actions(eventBus) {
     }
 
     //-------------------------------------------------------------
     // 購入の入力を処理する
     //-------------------------------------------------------------
     void UpgradeShopSystem::Update(Tsukino::ECS::Registry& registry, float) {
-        // 星図の画面を開いている間は止める
+        const auto actions = m_actions.Drain();
+        // 星図や設定の画面を開いている間は止める
         if(IsPlayPaused(registry))
             return;
         Tsukino::EngineIntegration::EngineContext* context = GetEngineContext(registry);
@@ -53,6 +55,11 @@ namespace StardustFever::ECS {
                 pressedIndex = i;
                 break;
             }
+        }
+        // カードのクリックも数字キーと同じ処理へつなぐ
+        for(const UiActionEvent& action : actions) {
+            if(action.action == UiAction::BuyUpgrade)
+                pressedIndex = action.index;
         }
         if(pressedIndex < 0)
             return;

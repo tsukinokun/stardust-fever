@@ -3,6 +3,9 @@
 //! @brief  88星座の星図の画面を開け閉めし、動かし・拡大し・星座を選ぶ System
 //-------------------------------------------------------------
 #pragma once
+#include <StardustFever/ECS/Event/UiActionEvent.hpp>
+#include <StardustFever/ECS/Utility/EventQueue.hpp>
+
 #include <Tsukino/Core/ECS/System/ISystem.hpp>
 
 // 名前空間 : StardustFever::ECS
@@ -19,10 +22,19 @@ namespace StardustFever::ECS {
     class StarMapInputSystem final : public Tsukino::ECS::ISystem {
     public:
         //-------------------------------------------------------------
+        //! @brief  コンストラクタ
+        //! @param  eventBus [in] ボタンの知らせの購読元
+        //-------------------------------------------------------------
+        explicit StarMapInputSystem(Tsukino::ECS::EventBus& eventBus);
+
+        //-------------------------------------------------------------
         //! @brief  入力を読んで星図の状態を書き換える
         //! @param  registry  [in] レジストリ
         //! @param  deltaTime [in] 経過時間（秒）
         //-------------------------------------------------------------
         void Update(Tsukino::ECS::Registry& registry, float deltaTime) override;
+
+    private:
+        EventQueue<UiActionEvent> m_actions;
     };
 }    // namespace StardustFever::ECS

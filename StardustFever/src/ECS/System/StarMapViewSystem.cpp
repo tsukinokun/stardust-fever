@@ -9,6 +9,7 @@
 #include <StardustFever/ECS/Component/CollectionModifiersComponent.hpp>
 #include <StardustFever/ECS/Component/HudLayoutConfigComponent.hpp>
 #include <StardustFever/ECS/Component/StarChanceConfigComponent.hpp>
+#include <StardustFever/ECS/Component/SettingsConfigComponent.hpp>
 #include <StardustFever/ECS/Component/StarCollectionComponent.hpp>
 #include <StardustFever/ECS/Component/StarMapConfigComponent.hpp>
 #include <StardustFever/ECS/Component/StarMapElementComponent.hpp>
@@ -17,6 +18,7 @@
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
 #include <StardustFever/ECS/Utility/HudUi.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
+#include <StardustFever/ECS/Utility/UiParts.hpp>
 #include <StardustFever/ECS/Utility/StarMapGeometry.hpp>
 
 #include <Tsukino/BuiltIn/ECS/Component/AmbientParticleComponent.hpp>
@@ -383,6 +385,7 @@ namespace StardustFever::ECS {
             Tsukino::BuiltIn::ECS::TransformUtility::DestroyHierarchy(registry, m_root);
         m_root           = entt::null;
         m_tooltip        = entt::null;
+        m_groupButton    = entt::null;
         m_appliedVersion = -1;
 
         using Tsukino::BuiltIn::ECS::UIVisibilityComponent;
@@ -599,6 +602,33 @@ namespace StardustFever::ECS {
         for(int row = 0; row < config->maxRows; ++row) {
             panelText(StarMapElementKind::Row, row, config->rowScale, config->rowSpacing);
         }
+
+        //-------------------------------------------------------------
+        // 操作のボタン。スタイルは設定の画面と共通
+        //-------------------------------------------------------------
+        if(const SettingsConfigComponent* style = FindSingleton<SettingsConfigComponent>(registry)) {
+            const float buttonY = config->mapY + config->mapHeight - 26.0f;
+            const float left    = config->panelX + 20.0f;
+            const auto  button  = [&](float x, float width, const char* text, UiAction action) {
+                return UiParts::MakeButton(
+                    *m_scene, registry, *context->assetManager, *style, m_root, left + x + width * 0.5f, buttonY, width, 36.0f, order + 6, text, action);
+            };
+            button(0.0f, 52.0f, "◀", UiAction::MapPrevious);
+            button(60.0f, 52.0f, "▶", UiAction::MapNext);
+            m_groupButton = button(120.0f, 130.0f, "グループ", UiAction::MapToggleGroups);
+            button(258.0f, 112.0f, "閉じる", UiAction::MapClose);
+
+            // グループの一覧の行の当たり。文字の行に重ねる
+            const int   groupCount = static_cast<int>(Data::GetConstellationGroupTable().groups.size());
+            const float firstRow   = config->mapY + 18.0f + 52.0f + 30.0f + 40.0f;
+            for(int i = 0; i < std::min(groupCount, config->maxRows); ++i) {
+                const float        rowY = firstRow + config->rowSpacing * (static_cast<float>(i) + 0.5f);
+                const entt::entity hit  = UiParts::MakeNode(*m_scene, registry, m_root, config->panelX + config->panelWidth * 0.5f, rowY);
+                UiParts::AddImage(registry, hit, white, config->panelWidth - 24.0f, config->rowSpacing, order + 4, hlslpp::float4(0.0f, 0.0f, 0.0f, 0.0f));
+                UiParts::MakeClickable(registry, hit, UiAction::MapSelectGroup, i);
+                registry.AddComponent<Tsukino::BuiltIn::ECS::UIVisibilityComponent>(hit).visible = false;
+            }
+        }
     }
 
     //-------------------------------------------------------------
@@ -637,6 +667,14 @@ namespace StardustFever::ECS {
             else
                 highlighted[c] = selected == &constellation;
         }
+
+        // グループの行は一覧の間だけ押せる。切り替えのボタンの文字も合わせる
+        for(const auto entity : registry.View<UiActionComponent>()) {
+            if(registry.GetComponent<UiActionComponent>(entity).action == UiAction::MapSelectGroup)
+                registry.GetComponent<Tsukino::BuiltIn::ECS::UIVisibilityComponent>(entity).visible = state->groupMode;
+        }
+        if(m_groupButton != entt::null)
+            HudUi::SetText(registry, registry.GetComponent<UiActionComponent>(m_groupButton).label, state->groupMode ? "星座へ" : "グループ");
 
         //-------------------------------------------------------------
         // 選んだ星座の、名前を添える星。固有名のある星を先に、その中は明るい順に選ぶ

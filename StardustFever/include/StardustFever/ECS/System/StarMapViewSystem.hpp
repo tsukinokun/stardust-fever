@@ -98,6 +98,7 @@ namespace StardustFever::ECS {
         entt::entity              m_root           = entt::null;                              //!< 空の部品（空を見ている間だけある）
         entt::entity              m_veil           = entt::null;                              //!< 暗転の幕（開け閉めの間だけある）
         int                       m_appliedVersion = -1;                                      //!< 最後に並べたときの状態の version
+        entt::entity              m_groupButton    = entt::null;                              //!< 星座とグループの切り替えのボタン
         entt::entity              m_tooltip        = entt::null;                              //!< 吹き出しの板
         entt::entity              m_tooltipText[3] = {entt::null, entt::null, entt::null};    //!< 吹き出しの文字
         int                       m_tooltipStar    = -1;                                      //!< 吹き出しに書いてある星
