@@ -5,6 +5,7 @@
 #pragma once
 #include <StardustFever/Data/ConstellationData.hpp>
 #include <StardustFever/Data/ConstellationGroupData.hpp>
+#include <StardustFever/Data/SkyObjectData.hpp>
 #include <StardustFever/Data/StarData.hpp>
 #include <StardustFever/Data/UpgradeData.hpp>
 
@@ -41,5 +42,12 @@ namespace StardustFever::Data {
     //! @note   GetStarTable と同じく、要素への参照をフレームをまたいで持たないこと
     //-------------------------------------------------------------
     const UpgradeTable& GetUpgradeTable();
+
+    //-------------------------------------------------------------
+    //! @brief  ビッグバンで手に入る天体のマスターデータを取得する
+    //! @return 天体の一覧
+    //! @note   GetStarTable と同じく、要素への参照をフレームをまたいで持たないこと
+    //-------------------------------------------------------------
+    const SkyObjectTable& GetSkyObjectTable();
 
 }    // namespace StardustFever::Data

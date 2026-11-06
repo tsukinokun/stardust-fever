@@ -8,6 +8,8 @@
 
 #include <Tsukino/Core/ECS/System/ISystem.hpp>
 
+#include <random>
+
 namespace Tsukino::ECS {
     class EventBus;
 }
@@ -43,7 +45,15 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         void Execute(Tsukino::ECS::Registry& registry);
 
+        //-------------------------------------------------------------
+        //! @brief  天体を1つ引いて持ち物へ加える
+        //! @param  registry [in] レジストリ
+        //! @note   確率がこの宇宙の累計で変わるので、累計を消す前に呼ぶ
+        //-------------------------------------------------------------
+        void DrawSkyObject(Tsukino::ECS::Registry& registry);
+
         Tsukino::ECS::EventBus*   m_eventBus = nullptr;
         EventQueue<UiActionEvent> m_actions;
+        std::mt19937              m_random;
     };
 }    // namespace StardustFever::ECS

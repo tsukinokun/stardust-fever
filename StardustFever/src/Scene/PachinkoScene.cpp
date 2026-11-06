@@ -15,6 +15,7 @@
 #include <StardustFever/ECS/System/AudioSettingsSystem.hpp>
 #include <StardustFever/ECS/System/BigBangDialogSystem.hpp>
 #include <StardustFever/ECS/System/BigBangGuideSystem.hpp>
+#include <StardustFever/ECS/System/SkyObjectGetFxSystem.hpp>
 #include <StardustFever/ECS/System/UiButtonSystem.hpp>
 #include <StardustFever/ECS/System/UpgradeTooltipSystem.hpp>
 #include <StardustFever/ECS/System/BgmSystem.hpp>
@@ -147,6 +148,7 @@ namespace StardustFever::Scene {
             BigBangGuide,      // ビッグバンができることの案内
             UpgradeTooltip,    // 強化のカードの吹き出し
             BigBangDialog,     // ビッグバンの確認画面
+            SkyObjectGetFx,    // ビッグバンで手に入れた天体のカード
             LotteryView,
             HudGauge,
             RollingNumber,
@@ -237,6 +239,7 @@ namespace StardustFever::Scene {
         m_scene.AddSystem(std::make_shared<ECS::BigBangGuideSystem>(eventBus), Order(SystemOrder::BigBangGuide));
         m_scene.AddSystem(std::make_shared<ECS::UpgradeTooltipSystem>(m_scene), Order(SystemOrder::UpgradeTooltip));
         m_scene.AddSystem(std::make_shared<ECS::BigBangDialogSystem>(m_scene), Order(SystemOrder::BigBangDialog));
+        m_scene.AddSystem(std::make_shared<ECS::SkyObjectGetFxSystem>(m_scene, eventBus), Order(SystemOrder::SkyObjectGetFx));
         m_scene.AddSystem(std::make_shared<ECS::LotteryViewSystem>(eventBus), Order(SystemOrder::LotteryView));
         m_scene.AddSystem(std::make_shared<ECS::HudGaugeSystem>(), Order(SystemOrder::HudGauge));
         m_scene.AddSystem(std::make_shared<ECS::RollingNumberSystem>(), Order(SystemOrder::RollingNumber));

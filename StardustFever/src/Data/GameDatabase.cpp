@@ -21,6 +21,7 @@ namespace StardustFever::Data {
         constexpr const char* kConstellationTablePath = "StardustFever/Assets/Data/Constellations.json";
         constexpr const char* kUpgradeTablePath       = "StardustFever/Assets/Data/Upgrades.json";
         constexpr const char* kGroupTablePath         = "StardustFever/Assets/Data/ConstellationGroups.json";
+        constexpr const char* kSkyObjectTablePath     = "StardustFever/Assets/Data/SkyObjects.json";
 
         //-------------------------------------------------------------
         //! @brief  ルートキー付きのJSONを1つ読む
@@ -84,6 +85,15 @@ namespace StardustFever::Data {
     const UpgradeTable& GetUpgradeTable() {
         static Tsukino::IO::HotReloadable<UpgradeTable> s_Table(Tsukino::Core::Path(kUpgradeTablePath),
                                                                 [](UpgradeTable& out) { return LoadJson(kUpgradeTablePath, "UpgradeTable", out); });
+        return s_Table.Get();
+    }
+
+    //-------------------------------------------------------------
+    // ビッグバンで手に入る天体のマスターデータ
+    //-------------------------------------------------------------
+    const SkyObjectTable& GetSkyObjectTable() {
+        static Tsukino::IO::HotReloadable<SkyObjectTable> s_Table(Tsukino::Core::Path(kSkyObjectTablePath),
+                                                                  [](SkyObjectTable& out) { return LoadJson(kSkyObjectTablePath, "SkyObjectTable", out); });
         return s_Table.Get();
     }
 

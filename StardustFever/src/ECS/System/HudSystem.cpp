@@ -19,6 +19,7 @@
 #include <StardustFever/ECS/Component/ScoreMultiplierComponent.hpp>
 #include <StardustFever/ECS/Component/StarChanceStateComponent.hpp>
 #include <StardustFever/ECS/Component/WalletComponent.hpp>
+#include <StardustFever/ECS/Utility/CollectionText.hpp>
 #include <StardustFever/ECS/Utility/HudUi.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
 
@@ -31,21 +32,6 @@
 namespace StardustFever::ECS {
 
     namespace {
-        //-------------------------------------------------------------
-        //! @brief  倍率を表示用にする
-        //! @param  value [in] 倍率
-        //! @return 桁が増えるほど小数を減らす（"×1.35"、"×106.8"、"×1068"）。1万以上は和風の単位（"×12.3万"）
-        //! @note   BigNumber::ToJapaneseString は1万未満を整数にするため、倍率の小数が消えてしまう
-        //-------------------------------------------------------------
-        std::string FormatMultiplier(const Core::BigNumber& value) {
-            if(value.Exponent() >= 4)
-                return "×" + value.ToJapaneseString();
-            char         buffer[32];
-            const double number = value.ToDouble();
-            std::snprintf(buffer, sizeof(buffer), number < 100.0 ? "×%.2f" : (number < 1000.0 ? "×%.1f" : "×%.0f"), number);
-            return buffer;
-        }
-
         std::string BuildPrestigeHint(Tsukino::ECS::Registry& registry) {
             const PrestigeStateComponent*  prestige = FindSingleton<PrestigeStateComponent>(registry);
             const PrestigeConfigComponent* config   = FindSingleton<PrestigeConfigComponent>(registry);
@@ -69,10 +55,9 @@ namespace StardustFever::ECS {
             // 得を数字で見せる。実行後の倍率は、宇宙定数の分だけを置き換えて求める
             std::string hint = "ビッグバンで Λ+" + gain.ToJapaneseString();
             if(const ScoreMultiplierComponent* multiplier = FindSingleton<ScoreMultiplierComponent>(registry)) {
-                namespace Prestige         = Core::PrestigeFormula;
-                const Core::BigNumber next = multiplier->total * Prestige::Multiplier(prestige->cosmicConstants + gain, config->bonusPerConstant)
-                                             / Prestige::Multiplier(prestige->cosmicConstants, config->bonusPerConstant);
-                hint += "  全体倍率 " + FormatMultiplier(multiplier->total) + " → " + FormatMultiplier(next);
+                const Core::BigNumber next =
+                    Core::PrestigeFormula::MultiplierAfter(multiplier->total, prestige->cosmicConstants, gain, config->bonusPerConstant);
+                hint += "  全体倍率 " + CollectionText::Multiplier(multiplier->total) + " → " + CollectionText::Multiplier(next);
             }
             return hint;
         }
@@ -120,7 +105,7 @@ namespace StardustFever::ECS {
             case HudTextKind::Multiplier:
                 {
                     const ScoreMultiplierComponent* multiplier = FindSingleton<ScoreMultiplierComponent>(registry);
-                    return multiplier ? FormatMultiplier(multiplier->total) : std::string("-");
+                    return multiplier ? CollectionText::Multiplier(multiplier->total) : std::string("-");
                 }
             case HudTextKind::Constants:
                 {
@@ -133,7 +118,7 @@ namespace StardustFever::ECS {
                     const PrestigeConfigComponent* config   = FindSingleton<PrestigeConfigComponent>(registry);
                     if(!prestige || !config)
                         return {};
-                    return FormatMultiplier(Core::PrestigeFormula::Multiplier(prestige->cosmicConstants, config->bonusPerConstant));
+                    return CollectionText::Multiplier(Core::PrestigeFormula::Multiplier(prestige->cosmicConstants, config->bonusPerConstant));
                 }
             case HudTextKind::PrestigeHint:
                 return BuildPrestigeHint(registry);

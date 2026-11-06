@@ -27,5 +27,7 @@ namespace StardustFever::ECS {
         bool   allComplete             = false;    //!< 全ての星座をそろえたか
         int    collectedGroups         = 0;        //!< 星座を全部そろえたグループの数
         int    totalGroups             = 0;        //!< グループの総数
+        int    ownedObjects            = 0;        //!< 持っている天体の数
+        int    totalObjects            = 0;        //!< 天体の総数
     };
 }    // namespace StardustFever::ECS

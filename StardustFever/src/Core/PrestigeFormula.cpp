@@ -59,4 +59,11 @@ namespace StardustFever::Core::PrestigeFormula {
         return BigNumber(1.0) + constants * BigNumber(bonusPerConstant);
     }
 
+    //-------------------------------------------------------------
+    // ビッグバンの後の全体倍率
+    //-------------------------------------------------------------
+    BigNumber MultiplierAfter(const BigNumber& total, const BigNumber& constants, const BigNumber& gain, double bonusPerConstant) {
+        return total * Multiplier(constants + gain, bonusPerConstant) / Multiplier(constants, bonusPerConstant);
+    }
+
 }    // namespace StardustFever::Core::PrestigeFormula

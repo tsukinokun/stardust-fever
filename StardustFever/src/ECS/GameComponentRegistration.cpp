@@ -52,6 +52,7 @@
 #include <StardustFever/ECS/Serialization/PocketComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/PocketLabelComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/PrestigeConfigComponentSerialization.hpp>
+#include <StardustFever/ECS/Serialization/SkyObjectConfigComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/RimGlowComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/RollingNumberComponentSerialization.hpp>
 #include <StardustFever/ECS/Serialization/SaveConfigComponentSerialization.hpp>
@@ -133,6 +134,7 @@ namespace StardustFever::ECS {
         factory.RegisterComponent<HudLayoutConfigComponent>("HudLayoutConfigComponent");
         factory.RegisterComponent<PhysicsConfigComponent>("PhysicsConfigComponent");
         factory.RegisterComponent<PrestigeConfigComponent>("PrestigeConfigComponent");
+        factory.RegisterComponent<SkyObjectConfigComponent>("SkyObjectConfigComponent");
         factory.RegisterComponent<SaveConfigComponent>("SaveConfigComponent");
         factory.RegisterComponent<CosmicFxConfigComponent>("CosmicFxConfigComponent");
         factory.RegisterComponent<AudioConfigComponent>("AudioConfigComponent");
@@ -155,6 +157,7 @@ namespace StardustFever::ECS {
         reloadSystem.RegisterType<HudLayoutConfigComponent>("HudLayoutConfigComponent");
         reloadSystem.RegisterType<PhysicsConfigComponent>("PhysicsConfigComponent");
         reloadSystem.RegisterType<PrestigeConfigComponent>("PrestigeConfigComponent");
+        reloadSystem.RegisterType<SkyObjectConfigComponent>("SkyObjectConfigComponent");
         reloadSystem.RegisterType<SaveConfigComponent>("SaveConfigComponent");
         reloadSystem.RegisterType<CosmicFxConfigComponent>("CosmicFxConfigComponent");
         reloadSystem.RegisterType<AudioConfigComponent>("AudioConfigComponent");

@@ -15,18 +15,20 @@ namespace StardustFever::ECS {
     //-------------------------------------------------------------
     enum class UiAction : int {
         None,
-        BuyUpgrade,         //!< 強化を買う（index は強化の並び順）
-        ToggleAutoFire,     //!< 自動発射の入切
-        OpenMap,            //!< 星図を開く
-        OpenGroups,         //!< グループの一覧を開く
-        BigBang,            //!< ビッグバンの確認を開く
-        BigBangConfirm,     //!< ビッグバンを実行する
-        BigBangCancel,      //!< ビッグバンをやめる
-        MapPrevious,        //!< 前の星座・グループへ
-        MapNext,            //!< 次の星座・グループへ
-        MapToggleGroups,    //!< 星座とグループの一覧を切り替える
-        MapClose,           //!< 星図を閉じる
-        MapSelectGroup,     //!< グループを選ぶ（index はグループの並び順）
+        BuyUpgrade,          //!< 強化を買う（index は強化の並び順）
+        ToggleAutoFire,      //!< 自動発射の入切
+        OpenMap,             //!< 星図を開く
+        OpenGroups,          //!< グループの一覧を開く
+        BigBang,             //!< ビッグバンの確認を開く
+        BigBangConfirm,      //!< ビッグバンを実行する
+        BigBangCancel,       //!< ビッグバンをやめる
+        SkyObjectClose,      //!< 手に入れた天体のカードを閉じる
+        MapPrevious,         //!< 前の星座・グループへ
+        MapNext,             //!< 次の星座・グループへ
+        MapToggleObjects,    //!< 星座と天体の図鑑を切り替える
+        MapToggleGroups,     //!< 星座とグループの一覧を切り替える
+        MapClose,            //!< 星図を閉じる
+        MapSelectGroup,      //!< グループを選ぶ（index はグループの並び順）
     };
 
     //-------------------------------------------------------------

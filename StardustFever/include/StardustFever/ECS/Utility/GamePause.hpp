@@ -21,7 +21,7 @@ namespace StardustFever::ECS {
         const StarMapStateComponent*  map      = FindSingleton<StarMapStateComponent>(registry);
         const SettingsStateComponent* settings = FindSingleton<SettingsStateComponent>(registry);
         const PrestigeStateComponent* prestige = FindSingleton<PrestigeStateComponent>(registry);
-        return (map && map->open) || (settings && settings->open) || (prestige && prestige->confirmOpen);
+        return (map && map->open) || (settings && settings->open) || (prestige && (prestige->confirmOpen || prestige->rewardOpen));
     }
 
 }    // namespace StardustFever::ECS

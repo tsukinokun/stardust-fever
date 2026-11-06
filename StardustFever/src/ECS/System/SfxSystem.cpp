@@ -40,6 +40,7 @@ namespace StardustFever::ECS {
         , m_constellations(eventBus)
         , m_bigBangs(eventBus)
         , m_bigBangReadies(eventBus)
+        , m_skyObjects(eventBus)
         , m_purchases(eventBus)
         , m_denials(eventBus)
         , m_starFx(eventBus)
@@ -117,6 +118,7 @@ namespace StardustFever::ECS {
         const auto constellations = m_constellations.Drain();
         const auto bigBangs       = m_bigBangs.Drain();
         const auto bigBangReadies = m_bigBangReadies.Drain();
+        const auto skyObjects     = m_skyObjects.Drain();
         const auto purchases      = m_purchases.Drain();
         const auto denials        = m_denials.Drain();
         const auto starFx         = m_starFx.Drain();
@@ -225,6 +227,9 @@ namespace StardustFever::ECS {
         //-------------------------------------------------------------
         // 操作
         //-------------------------------------------------------------
+        for(const SkyObjectShownEvent& shown : skyObjects) {
+            Play(registry, *config, shown.rarity >= 2 ? "constellation" : "starGet");
+        }
         if(!bigBangReadies.empty())
             Play(registry, *config, "bigBangReady");
         if(!bigBangs.empty())

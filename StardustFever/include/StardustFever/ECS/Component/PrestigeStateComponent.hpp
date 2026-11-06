@@ -16,6 +16,7 @@ namespace StardustFever::ECS {
         StardustFever::Core::BigNumber cosmicConstants;        //!< 持っている宇宙定数（全体倍率を永続で上げる）
         int                            bigBangCount = 0;       //!< ビッグバンの回数
         StardustFever::Core::BigNumber universeEarned;         //!< この宇宙で稼いだ星屑の累計（使っても減らない。ビッグバンで 0 に戻る）
+        bool                           rewardOpen  = false;    //!< 手に入れた天体のカードを出している
         bool                           confirmOpen = false;    //!< 確認画面を開いているか
     };
 }    // namespace StardustFever::ECS

@@ -44,8 +44,10 @@ namespace StardustFever::ECS {
             if(const UpgradeLevelsComponent* upgrades = FindSingleton<UpgradeLevelsComponent>(registry))
                 data.upgradeLevels = upgrades->levels;
             if(const StarCollectionComponent* collection = FindSingleton<StarCollectionComponent>(registry)) {
-                data.starLevels  = collection->starLevels;
-                data.unseenStars = collection->unseenStars;
+                data.starLevels    = collection->starLevels;
+                data.unseenStars   = collection->unseenStars;
+                data.skyObjects    = collection->skyObjects;
+                data.unseenObjects = collection->unseenObjects;
             }
             if(const PrestigeStateComponent* prestige = FindSingleton<PrestigeStateComponent>(registry)) {
                 data.cosmicConstants = prestige->cosmicConstants;
@@ -76,8 +78,10 @@ namespace StardustFever::ECS {
             if(UpgradeLevelsComponent* upgrades = FindSingleton<UpgradeLevelsComponent>(registry))
                 upgrades->levels = data.upgradeLevels;
             if(StarCollectionComponent* collection = FindSingleton<StarCollectionComponent>(registry)) {
-                collection->starLevels  = data.starLevels;
-                collection->unseenStars = data.unseenStars;
+                collection->starLevels    = data.starLevels;
+                collection->unseenStars   = data.unseenStars;
+                collection->skyObjects    = data.skyObjects;
+                collection->unseenObjects = data.unseenObjects;
             }
             if(PrestigeStateComponent* prestige = FindSingleton<PrestigeStateComponent>(registry)) {
                 prestige->cosmicConstants = data.cosmicConstants;

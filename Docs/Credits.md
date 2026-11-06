@@ -14,6 +14,7 @@
 - 2つの CC BY-SA 4.0 のデータから作ったので、`Stars.json` と `Constellations.json` も **CC BY-SA 4.0** で扱う（ゲームのコードには及ばない）
 - 星座の和名は学術用語（文部科学省『学術用語集 天文学編』）、星の固有名のカタカナ表記は日本でよく使われる表記に合わせた（`Tools/SkyNames.py`）
 - 盤面の位置（`board`）と星座の効果（`effect`）はゲームのために加えたもの
+- `SkyObjects.json` の恒星の位置と等級は HYG Database v4.1 から `Tools/BuildSkyObjects.py` で作った（**CC BY-SA 4.0**）。星団・星雲・銀河の位置は天文の一般的な値を手で書いた。図鑑の文章はゲームのために書き下ろしたもの
 
 ## 音楽
 

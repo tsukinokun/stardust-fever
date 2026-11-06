@@ -104,6 +104,19 @@ namespace StardustFever::ECS {
             ApplyEffect(result, group.effect.type, group.effect.value, group.id);
         }
 
+        //-------------------------------------------------------------
+        // 天体: 持っているだけで、それぞれの効果を足す
+        //-------------------------------------------------------------
+        const Data::SkyObjectTable& objects = Data::GetSkyObjectTable();
+        result.totalObjects                 = static_cast<int>(objects.objects.size());
+        for(const std::string& id : collection->skyObjects) {
+            const Data::SkyObjectDef* object = objects.Find(id);
+            if(!object)
+                continue;
+            ++result.ownedObjects;
+            ApplyEffect(result, object->effect.type, object->effect.value, object->id);
+        }
+
         result.allComplete = result.totalConstellations > 0 && result.collectedConstellations == result.totalConstellations;
         if(result.allComplete && config)
             result.globalMultiplier *= config->allCompleteMultiplier;

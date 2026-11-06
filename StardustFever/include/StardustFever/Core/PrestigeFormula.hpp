@@ -37,4 +37,14 @@ namespace StardustFever::Core::PrestigeFormula {
     //-------------------------------------------------------------
     BigNumber Multiplier(const BigNumber& constants, double bonusPerConstant);
 
+    //-------------------------------------------------------------
+    //! @brief  ビッグバンの後の全体倍率を計算する
+    //! @param  total            [in] 今の全体倍率
+    //! @param  constants        [in] 持っている宇宙定数
+    //! @param  gain             [in] ビッグバンで得る宇宙定数
+    //! @param  bonusPerConstant [in] 宇宙定数1つあたりに足す倍率
+    //! @return 宇宙定数の分だけを置き換えた全体倍率
+    //-------------------------------------------------------------
+    BigNumber MultiplierAfter(const BigNumber& total, const BigNumber& constants, const BigNumber& gain, double bonusPerConstant);
+
 }    // namespace StardustFever::Core::PrestigeFormula

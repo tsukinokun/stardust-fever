@@ -29,6 +29,10 @@
             "value": "StardustFever/Assets/Prefabs/Config/PhysicsConfig.json"
         },
         {
+            "key": "SkyObjectConfigComponent",
+            "value": "StardustFever/Assets/Prefabs/Config/SkyObjectConfig.json"
+        },
+        {
             "key": "PrestigeConfigComponent",
             "value": "StardustFever/Assets/Prefabs/Config/PrestigeConfig.json"
         },

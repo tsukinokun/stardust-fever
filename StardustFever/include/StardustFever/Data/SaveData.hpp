@@ -41,6 +41,8 @@ namespace StardustFever::Data {
         bool                                 audioMuted      = false;    //!< 消音しているか
         bool                                 showKeyHints    = true;     //!< キー操作の表示を出すか
         std::vector<std::string>             unseenStars;                //!< 星図でまだ見ていない星
+        std::vector<std::string>             skyObjects;                 //!< 手に入れた天体
+        std::vector<std::string>             unseenObjects;              //!< 星図でまだ見ていない天体
     };
 
     //! 今の形式の版。項目の意味を変えたときに上げ、読み込み側で古い版を変換する
@@ -83,6 +85,8 @@ namespace StardustFever::Data {
         Tsukino::IO::LoadOptional(archive, "audioMuted", data.audioMuted);
         Tsukino::IO::LoadOptional(archive, "showKeyHints", data.showKeyHints);
         Tsukino::IO::LoadOptional(archive, "unseenStars", data.unseenStars);
+        Tsukino::IO::LoadOptional(archive, "skyObjects", data.skyObjects);
+        Tsukino::IO::LoadOptional(archive, "unseenObjects", data.unseenObjects);
     }
 
 }    // namespace StardustFever::Data

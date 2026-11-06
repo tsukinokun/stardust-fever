@@ -3,6 +3,7 @@
 //! @brief  星と星座の効果や性質を、画面に出す文に直す
 //-------------------------------------------------------------
 #pragma once
+#include <StardustFever/Core/BigNumber.hpp>
 #include <StardustFever/Data/ConstellationData.hpp>
 #include <StardustFever/Data/StarData.hpp>
 
@@ -33,6 +34,38 @@ namespace StardustFever::ECS::CollectionText {
         else
             std::snprintf(buffer, sizeof(buffer), "全体倍率 ×%.2f", 1.0 + value);
         return buffer;
+    }
+
+    //-------------------------------------------------------------
+    //! @brief  倍率を文にする
+    //! @param  value [in] 倍率
+    //! @return 桁が増えるほど小数を減らす（"×1.35"、"×106.8"、"×1068"）。1万以上は和風の単位（"×12.3万"）
+    //! @note   BigNumber::ToJapaneseString は1万未満を整数にするため、倍率の小数が消えてしまう
+    //-------------------------------------------------------------
+    inline std::string Multiplier(const Core::BigNumber& value) {
+        if(value.Exponent() >= 4)
+            return "×" + value.ToJapaneseString();
+        char         buffer[32];
+        const double number = value.ToDouble();
+        std::snprintf(buffer, sizeof(buffer), number < 100.0 ? "×%.2f" : (number < 1000.0 ? "×%.1f" : "×%.0f"), number);
+        return buffer;
+    }
+
+    //-------------------------------------------------------------
+    //! @brief  天体の種類を言葉にする
+    //! @param  kind [in] star / cluster / nebula / galaxy / other
+    //! @return 例: "星雲"
+    //-------------------------------------------------------------
+    inline const char* SkyObjectKind(const std::string& kind) {
+        if(kind == "cluster")
+            return "星団";
+        if(kind == "nebula")
+            return "星雲";
+        if(kind == "galaxy")
+            return "銀河";
+        if(kind == "other")
+            return "ブラックホール";
+        return "恒星";
     }
 
     //-------------------------------------------------------------

@@ -5,6 +5,7 @@
 #include <StardustFever/ECS/System/BigBangSystem.hpp>
 
 #include <StardustFever/Core/PrestigeFormula.hpp>
+#include <StardustFever/Core/StarDraw.hpp>
 #include <StardustFever/ECS/Component/BallComponent.hpp>
 #include <StardustFever/ECS/Component/FeverStateComponent.hpp>
 #include <StardustFever/ECS/Component/LotteryStateComponent.hpp>
@@ -14,10 +15,12 @@
 #include <StardustFever/ECS/Component/UpgradeLevelsComponent.hpp>
 #include <StardustFever/ECS/Component/WalletComponent.hpp>
 #include <StardustFever/ECS/Event/BigBangEvent.hpp>
+#include <StardustFever/ECS/Event/SkyObjectDrawnEvent.hpp>
 #include <StardustFever/ECS/Event/HudMessageEvent.hpp>
 #include <StardustFever/ECS/Utility/GamePause.hpp>
 #include <StardustFever/ECS/Utility/EngineAccess.hpp>
 #include <StardustFever/ECS/Utility/Singleton.hpp>
+#include <StardustFever/ECS/Utility/SkyObjectOdds.hpp>
 
 #include <Tsukino/Core/ECS/Event/EventBus.hpp>
 #include <Tsukino/Core/Input/InputSystem.hpp>
@@ -30,7 +33,8 @@ namespace StardustFever::ECS {
 
     BigBangSystem::BigBangSystem(Tsukino::ECS::EventBus& eventBus)
         : m_eventBus(&eventBus)
-        , m_actions(eventBus) {
+        , m_actions(eventBus)
+        , m_random(std::random_device{}()) {
     }
 
     //-------------------------------------------------------------
@@ -101,6 +105,8 @@ namespace StardustFever::ECS {
             return;
         const Core::BigNumber gain = Core::PrestigeFormula::GainOnBigBang(prestige->universeEarned, config->threshold, config->exponent);
 
+        DrawSkyObject(registry);
+
         //-------------------------------------------------------------
         // 実行。星屑・強化・この宇宙の累計・抽選の保留・盤面の玉を捨てる。
         // 星のレベルと星座の完成回数（星図）は図鑑として残す
@@ -127,6 +133,38 @@ namespace StardustFever::ECS {
         m_eventBus->Publish(
             HudMessageEvent{"★ ビッグバン ★\n宇宙定数 +" + gain.ToJapaneseString() + "（合計 " + prestige->cosmicConstants.ToJapaneseString() + "）",
                             HudMessageImportance::Headline});
+    }
+
+    //-------------------------------------------------------------
+    // 天体を1つ引いて持ち物へ加える
+    //-------------------------------------------------------------
+    void BigBangSystem::DrawSkyObject(Tsukino::ECS::Registry& registry) {
+        const PrestigeStateComponent*   prestige   = FindSingleton<PrestigeStateComponent>(registry);
+        const PrestigeConfigComponent*  config     = FindSingleton<PrestigeConfigComponent>(registry);
+        const SkyObjectConfigComponent* objects    = FindSingleton<SkyObjectConfigComponent>(registry);
+        StarCollectionComponent*        collection = FindSingleton<StarCollectionComponent>(registry);
+        if(!prestige || !config || !objects || !collection)
+            return;
+
+        // レア度を引いてから、その中の未入手を等確率で選ぶ。全部持っていれば何も出ない
+        std::uniform_real_distribution<double> unit(0.0, 1.0);
+        const SkyObjectOdds                    odds = ComputeSkyObjectOdds(*objects, *collection, prestige->universeEarned, config->threshold);
+        const size_t                           tier = Core::StarDraw::PickIndex(odds.rates, unit(m_random));
+        if(tier >= odds.rates.size())
+            return;
+
+        std::vector<const Data::SkyObjectDef*> candidates;
+        for(const Data::SkyObjectDef& object : Data::GetSkyObjectTable().objects) {
+            if(object.rarity == static_cast<int>(tier) && !OwnsSkyObject(*collection, object.id))
+                candidates.push_back(&object);
+        }
+        if(candidates.empty())
+            return;
+
+        const Data::SkyObjectDef& drawn = *candidates[std::uniform_int_distribution<size_t>(0, candidates.size() - 1)(m_random)];
+        collection->skyObjects.push_back(drawn.id);
+        collection->unseenObjects.push_back(drawn.id);
+        m_eventBus->Publish(SkyObjectDrawnEvent{drawn.id});
     }
 
 }    // namespace StardustFever::ECS

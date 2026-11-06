@@ -112,7 +112,7 @@ namespace StardustFever::ECS {
         // まだ見ていない星の数。増えたら弾ませる
         //-------------------------------------------------------------
         if(const StarCollectionComponent* collection = FindSingleton<StarCollectionComponent>(registry)) {
-            const int count = static_cast<int>(collection->unseenStars.size());
+            const int count = static_cast<int>(collection->unseenStars.size() + collection->unseenObjects.size());
             if(count != m_badgeCount) {
                 registry.GetComponent<Tsukino::BuiltIn::ECS::UIVisibilityComponent>(m_badge).visible = count > 0;
                 HudUi::SetText(registry, m_badgeText, count > 9 ? "9+" : std::to_string(count));
@@ -120,6 +120,9 @@ namespace StardustFever::ECS {
                     Tsukino::BuiltIn::ECS::UITweenUtility::Punch(registry, m_badge, 0.5f, 0.4f);
                 m_badgeCount = count;
             }
+            // 星図を閉じると HUD の表示がまとめて戻るので、数が無ければ毎回隠し直す
+            if(count == 0)
+                registry.GetComponent<Tsukino::BuiltIn::ECS::UIVisibilityComponent>(m_badge).visible = false;
         }
 
         //-------------------------------------------------------------

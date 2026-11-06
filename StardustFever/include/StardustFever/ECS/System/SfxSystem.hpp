@@ -8,6 +8,7 @@
 #include <StardustFever/ECS/Event/BallLaunchedEvent.hpp>
 #include <StardustFever/ECS/Event/BigBangEvent.hpp>
 #include <StardustFever/ECS/Event/BigBangReadyEvent.hpp>
+#include <StardustFever/ECS/Event/SkyObjectDrawnEvent.hpp>
 #include <StardustFever/ECS/Event/ConstellationCollectedEvent.hpp>
 #include <StardustFever/ECS/Event/FeverEndedEvent.hpp>
 #include <StardustFever/ECS/Event/LotteryResultEvent.hpp>
@@ -86,6 +87,7 @@ namespace StardustFever::ECS {
         EventQueue<ConstellationCollectedEvent> m_constellations;
         EventQueue<BigBangEvent>                m_bigBangs;
         EventQueue<BigBangReadyEvent>           m_bigBangReadies;
+        EventQueue<SkyObjectShownEvent>         m_skyObjects;
         EventQueue<UpgradePurchasedEvent>       m_purchases;
         EventQueue<UpgradeDeniedEvent>          m_denials;
         EventQueue<StarGetFxEvent>              m_starFx;
