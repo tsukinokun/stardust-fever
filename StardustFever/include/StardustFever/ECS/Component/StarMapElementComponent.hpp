@@ -12,7 +12,7 @@ namespace StardustFever::ECS {
     //-------------------------------------------------------------
     enum class StarMapElementKind : int {
         Root,        //!< 画面全体（閉じるときにこの下をまとめて消す）
-        MapRoot,     //!< 星図の枠（切り取り枠。星・線・名前はこの子）
+        Veil,        //!< 開け閉めの暗転の幕
         Star,        //!< 星の点（index は StarTable::stars の添字）
         Line,        //!< 星座の線（index は星座の添字、subIndex は線の添字）
         Label,       //!< 星座名（index は星座の添字）

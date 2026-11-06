@@ -17,13 +17,24 @@ namespace StardustFever::Core::SkyMath {
     double Wrap180(double degrees);
 
     //-------------------------------------------------------------
-    //! @struct View
-    //! @brief  星図の見え方
+    //! @struct Direction
+    //! @brief  天球の中心から見た向き（長さ1。x は右、y は上、z は前が正の左手系）
     //-------------------------------------------------------------
-    struct View {
-        double raCenter        = 180.0;    //!< 画面の中央に来る赤経（度）
-        double decCenter       = 0.0;      //!< 画面の中央に来る赤緯（度）
-        double pixelsPerDegree = 3.0;      //!< 1度が何ピクセルか（拡大率を掛けた後）
+    struct Direction {
+        double x = 0.0;
+        double y = 0.0;
+        double z = 1.0;
+    };
+
+    //-------------------------------------------------------------
+    //! @struct Rotation
+    //! @brief  回転を表す四元数
+    //-------------------------------------------------------------
+    struct Rotation {
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        double w = 1.0;
     };
 
     //-------------------------------------------------------------
@@ -36,27 +47,42 @@ namespace StardustFever::Core::SkyMath {
     };
 
     //-------------------------------------------------------------
-    //! @brief  空の座標を画面へ写す（正距円筒図法）
-    //! @param  view   [in] 見え方
+    //! @brief  赤経・赤緯を、天球の中心から見た向きにする
     //! @param  raDeg  [in] 赤経（度）
     //! @param  decDeg [in] 赤緯（度）
-    //! @return 画面の中央からのずれ
-    //! @note   空を見上げた向きにするため、赤経が大きいほど左へ置く。
-    //!         赤経は中央からの差を -180〜180 に回し込むので、0時をまたいでも左右が続く
+    //! @return 向き
+    //! @note   内側から空を見上げるので、北を上にしたとき赤経が大きいほど左へ置く
     //-------------------------------------------------------------
-    Point Project(const View& view, double raDeg, double decDeg);
+    Direction ToDirection(double raDeg, double decDeg);
 
     //-------------------------------------------------------------
-    //! @brief  線のもう片方の端を、近い向きで写す
-    //! @param  view   [in] 見え方
-    //! @param  from   [in] 片方の端を写した位置
-    //! @param  raFrom [in] 片方の端の赤経（度）
-    //! @param  raTo   [in] もう片方の端の赤経（度）
-    //! @param  decTo  [in] もう片方の端の赤緯（度）
-    //! @return もう片方の端の位置
-    //! @note   両端を別々に回し込むと、画面の端をまたぐ線が画面を横切ってしまうため、片方の端からの差で求める
+    //! @brief  向きを赤経・赤緯へ戻す
+    //! @param  direction [in] 向き（長さは問わない）
+    //! @param  raDeg     [out] 赤経（0〜360度）
+    //! @param  decDeg    [out] 赤緯（度）
     //-------------------------------------------------------------
-    Point ProjectFrom(const View& view, const Point& from, double raFrom, double raTo, double decTo);
+    void ToRaDec(const Direction& direction, double& raDeg, double& decDeg);
+
+    //-------------------------------------------------------------
+    //! @brief  +X を指定の向きへ回す回転を求める
+    //! @param  to [in] 向かせる先（長さは問わない）
+    //! @return 回転
+    //! @note   星座の線のモデルは X 方向に長いので、2つの星の間へ向けるのに使う
+    //-------------------------------------------------------------
+    Rotation ArcFromXAxis(const Direction& to);
+
+    //-------------------------------------------------------------
+    //! @brief  空の座標を、見ている向きの画面へ写す
+    //! @param  raCenter   [in] 画面の中央の赤経（度）
+    //! @param  decCenter  [in] 画面の中央の赤緯（度）
+    //! @param  fovDeg     [in] 縦の視野（度）
+    //! @param  halfHeight [in] 画面の高さの半分（ピクセル）
+    //! @param  raDeg      [in] 写す赤経（度）
+    //! @param  decDeg     [in] 写す赤緯（度）
+    //! @param  point      [out] 画面の中央からのずれ
+    //! @return 視線より前にあれば true。後ろなら false で point は書かない
+    //-------------------------------------------------------------
+    bool ProjectToScreen(double raCenter, double decCenter, double fovDeg, double halfHeight, double raDeg, double decDeg, Point& point);
 
     //-------------------------------------------------------------
     //! @brief  角度の平均（0度と360度をまたいでも正しく求める）

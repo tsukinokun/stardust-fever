@@ -9,6 +9,7 @@
 #include <StardustFever/ECS/Component/StarMapConfigComponent.hpp>
 
 #include <cereal/types/string.hpp>
+#include <cereal/types/vector.hpp>
 #include <Tsukino/Core/Math/Serialization/HlslppSerialization.hpp>
 #include <Tsukino/Core/IO/CerealOptional.hpp>
 
@@ -23,14 +24,11 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("backgroundPixels", component.backgroundPixels));
         archive(cereal::make_nvp("starTexture", component.starTexture));
         archive(cereal::make_nvp("starPixels", component.starPixels));
-        archive(cereal::make_nvp("backgroundColor", component.backgroundColor));
-        archive(cereal::make_nvp("mapColor", component.mapColor));
         archive(cereal::make_nvp("panelColor", component.panelColor));
         archive(cereal::make_nvp("mapX", component.mapX));
         archive(cereal::make_nvp("mapY", component.mapY));
         archive(cereal::make_nvp("mapWidth", component.mapWidth));
         archive(cereal::make_nvp("mapHeight", component.mapHeight));
-        archive(cereal::make_nvp("pixelsPerDegree", component.pixelsPerDegree));
         archive(cereal::make_nvp("minZoom", component.minZoom));
         archive(cereal::make_nvp("maxZoom", component.maxZoom));
         archive(cereal::make_nvp("zoomStep", component.zoomStep));
@@ -39,7 +37,6 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("maxDec", component.maxDec));
         archive(cereal::make_nvp("brightStarSize", component.brightStarSize));
         archive(cereal::make_nvp("faintStarSize", component.faintStarSize));
-        archive(cereal::make_nvp("starZoomGrowth", component.starZoomGrowth));
         archive(cereal::make_nvp("missingStarColor", component.missingStarColor));
         archive(cereal::make_nvp("lineColor", component.lineColor));
         archive(cereal::make_nvp("selectedLineColor", component.selectedLineColor));
@@ -61,6 +58,24 @@ namespace StardustFever::ECS {
         archive(cereal::make_nvp("clickRadius", component.clickRadius));
         archive(cereal::make_nvp("dragThreshold", component.dragThreshold));
         archive(cereal::make_nvp("sortOrder", component.sortOrder));
+        archive(cereal::make_nvp("skyOffsetZ", component.skyOffsetZ));
+        archive(cereal::make_nvp("skyRadius", component.skyRadius));
+        archive(cereal::make_nvp("baseFov", component.baseFov));
+        archive(cereal::make_nvp("worldUnitsPerPixel", component.worldUnitsPerPixel));
+        archive(cereal::make_nvp("ownedStarGlow", component.ownedStarGlow));
+        archive(cereal::make_nvp("lineGlow", component.lineGlow));
+        archive(cereal::make_nvp("lineOpacity", component.lineOpacity));
+        archive(cereal::make_nvp("lineModel", component.lineModel));
+        archive(cereal::make_nvp("nebulaTextures", component.nebulaTextures));
+        archive(cereal::make_nvp("nebulaCount", component.nebulaCount));
+        archive(cereal::make_nvp("nebulaScale", component.nebulaScale));
+        archive(cereal::make_nvp("nebulaColor", component.nebulaColor));
+        archive(cereal::make_nvp("skyClearColor", component.skyClearColor));
+        archive(cereal::make_nvp("fadeOutSeconds", component.fadeOutSeconds));
+        archive(cereal::make_nvp("revealSeconds", component.revealSeconds));
+        archive(cereal::make_nvp("revealLookDegrees", component.revealLookDegrees));
+        archive(cereal::make_nvp("inertiaFriction", component.inertiaFriction));
+        archive(cereal::make_nvp("focusSpeed", component.focusSpeed));
     }
 
     template <class Archive>
@@ -69,14 +84,11 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "backgroundPixels", component.backgroundPixels);
         Tsukino::IO::LoadOptional(archive, "starTexture", component.starTexture);
         Tsukino::IO::LoadOptional(archive, "starPixels", component.starPixels);
-        Tsukino::IO::LoadOptional(archive, "backgroundColor", component.backgroundColor);
-        Tsukino::IO::LoadOptional(archive, "mapColor", component.mapColor);
         Tsukino::IO::LoadOptional(archive, "panelColor", component.panelColor);
         Tsukino::IO::LoadOptional(archive, "mapX", component.mapX);
         Tsukino::IO::LoadOptional(archive, "mapY", component.mapY);
         Tsukino::IO::LoadOptional(archive, "mapWidth", component.mapWidth);
         Tsukino::IO::LoadOptional(archive, "mapHeight", component.mapHeight);
-        Tsukino::IO::LoadOptional(archive, "pixelsPerDegree", component.pixelsPerDegree);
         Tsukino::IO::LoadOptional(archive, "minZoom", component.minZoom);
         Tsukino::IO::LoadOptional(archive, "maxZoom", component.maxZoom);
         Tsukino::IO::LoadOptional(archive, "zoomStep", component.zoomStep);
@@ -85,7 +97,6 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "maxDec", component.maxDec);
         Tsukino::IO::LoadOptional(archive, "brightStarSize", component.brightStarSize);
         Tsukino::IO::LoadOptional(archive, "faintStarSize", component.faintStarSize);
-        Tsukino::IO::LoadOptional(archive, "starZoomGrowth", component.starZoomGrowth);
         Tsukino::IO::LoadOptional(archive, "missingStarColor", component.missingStarColor);
         Tsukino::IO::LoadOptional(archive, "lineColor", component.lineColor);
         Tsukino::IO::LoadOptional(archive, "selectedLineColor", component.selectedLineColor);
@@ -107,6 +118,24 @@ namespace StardustFever::ECS {
         Tsukino::IO::LoadOptional(archive, "clickRadius", component.clickRadius);
         Tsukino::IO::LoadOptional(archive, "dragThreshold", component.dragThreshold);
         Tsukino::IO::LoadOptional(archive, "sortOrder", component.sortOrder);
+        Tsukino::IO::LoadOptional(archive, "skyOffsetZ", component.skyOffsetZ);
+        Tsukino::IO::LoadOptional(archive, "skyRadius", component.skyRadius);
+        Tsukino::IO::LoadOptional(archive, "baseFov", component.baseFov);
+        Tsukino::IO::LoadOptional(archive, "worldUnitsPerPixel", component.worldUnitsPerPixel);
+        Tsukino::IO::LoadOptional(archive, "ownedStarGlow", component.ownedStarGlow);
+        Tsukino::IO::LoadOptional(archive, "lineGlow", component.lineGlow);
+        Tsukino::IO::LoadOptional(archive, "lineOpacity", component.lineOpacity);
+        Tsukino::IO::LoadOptional(archive, "lineModel", component.lineModel);
+        Tsukino::IO::LoadOptional(archive, "nebulaTextures", component.nebulaTextures);
+        Tsukino::IO::LoadOptional(archive, "nebulaCount", component.nebulaCount);
+        Tsukino::IO::LoadOptional(archive, "nebulaScale", component.nebulaScale);
+        Tsukino::IO::LoadOptional(archive, "nebulaColor", component.nebulaColor);
+        Tsukino::IO::LoadOptional(archive, "skyClearColor", component.skyClearColor);
+        Tsukino::IO::LoadOptional(archive, "fadeOutSeconds", component.fadeOutSeconds);
+        Tsukino::IO::LoadOptional(archive, "revealSeconds", component.revealSeconds);
+        Tsukino::IO::LoadOptional(archive, "revealLookDegrees", component.revealLookDegrees);
+        Tsukino::IO::LoadOptional(archive, "inertiaFriction", component.inertiaFriction);
+        Tsukino::IO::LoadOptional(archive, "focusSpeed", component.focusSpeed);
     }
 
 }    // namespace StardustFever::ECS

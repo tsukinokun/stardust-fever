@@ -18,14 +18,20 @@
 #include <StardustFever/ECS/Utility/Singleton.hpp>
 #include <StardustFever/ECS/Utility/StarMapGeometry.hpp>
 
+#include <Tsukino/BuiltIn/ECS/Component/AmbientParticleComponent.hpp>
+#include <Tsukino/BuiltIn/ECS/Component/CameraComponent.hpp>
 #include <Tsukino/BuiltIn/ECS/Component/FontComponent.hpp>
+#include <Tsukino/BuiltIn/ECS/Component/MaterialPropertyBlockComponent.hpp>
+#include <Tsukino/BuiltIn/ECS/Component/ModelComponent.hpp>
 #include <Tsukino/BuiltIn/ECS/Component/SpriteComponent.hpp>
 #include <Tsukino/BuiltIn/ECS/Component/TransformComponent.hpp>
-#include <Tsukino/BuiltIn/ECS/Component/UIClipComponent.hpp>
+#include <Tsukino/BuiltIn/ECS/Component/WorldAnchorComponent.hpp>
+#include <Tsukino/BuiltIn/ECS/Component/UIVisibilityComponent.hpp>
 #include <Tsukino/BuiltIn/ECS/Transform/TransformUtility.hpp>
 #include <Tsukino/Engine/Asset/AssetManager.hpp>
 #include <Tsukino/Engine/ECS/Scene.hpp>
 #include <Tsukino/Core/Path.hpp>
+#include <Tsukino/Renderer/Renderer.hpp>
 
 #include <algorithm>
 #include <cmath>
@@ -93,12 +99,17 @@ namespace StardustFever::ECS {
         }
 
         //-------------------------------------------------------------
-        //! @brief  画面空間のスプライトを付ける
+        //! @brief  スプライトを付ける
         //-------------------------------------------------------------
-        SpriteComponent& AddSprite(Tsukino::ECS::Registry& registry, entt::entity entity, Tsukino::Asset::AssetHandle texture, int sortOrder, bool additive) {
+        SpriteComponent& AddSprite(Tsukino::ECS::Registry&            registry,
+                                   entt::entity                       entity,
+                                   Tsukino::Asset::AssetHandle        texture,
+                                   int                                sortOrder,
+                                   bool                               additive,
+                                   Tsukino::BuiltIn::ECS::SpriteSpace space = Tsukino::BuiltIn::ECS::SpriteSpace::Screen) {
             SpriteComponent& sprite = registry.AddComponent<SpriteComponent>(entity);
             sprite.textureHandle    = texture;
-            sprite.space            = Tsukino::BuiltIn::ECS::SpriteSpace::Screen;
+            sprite.space            = space;
             sprite.blendMode        = additive ? Tsukino::BuiltIn::ECS::SpriteBlendMode::Additive : Tsukino::BuiltIn::ECS::SpriteBlendMode::Alpha;
             sprite.raycastTarget    = false;
             sprite.sortOrder        = sortOrder;
@@ -120,14 +131,40 @@ namespace StardustFever::ECS {
         }
 
         //-------------------------------------------------------------
-        //! @brief  位置と大きさと向きを書く
+        //! @brief  位置と大きさを書く
         //-------------------------------------------------------------
-        void Place(Tsukino::ECS::Registry& registry, entt::entity entity, float x, float y, float scaleX, float scaleY, float angle = 0.0f) {
+        void Place(Tsukino::ECS::Registry& registry, entt::entity entity, float x, float y, float scaleX, float scaleY) {
             TransformComponent& transform = registry.GetComponent<TransformComponent>(entity);
             transform.position            = hlslpp::float3(x, y, 0.0f);
             transform.scale               = hlslpp::float3(scaleX, scaleY, 1.0f);
-            transform.rotation            = hlslpp::quaternion::rotation_z(angle);
             transform.dirty               = true;
+        }
+
+        //-------------------------------------------------------------
+        //! @brief  天球の中心を求める
+        //-------------------------------------------------------------
+        hlslpp::float3 SkyCenter(const StarMapConfigComponent& config) {
+            return hlslpp::float3(0.0f, 0.0f, config.skyOffsetZ);
+        }
+
+        //-------------------------------------------------------------
+        //! @brief  向きを天球の上の位置にする
+        //-------------------------------------------------------------
+        hlslpp::float3 SkyPoint(const StarMapConfigComponent& config, const Core::SkyMath::Direction& direction, float radius) {
+            return SkyCenter(config)
+                   + hlslpp::float3(static_cast<float>(direction.x), static_cast<float>(direction.y), static_cast<float>(direction.z)) * radius;
+        }
+
+        //-------------------------------------------------------------
+        //! @brief  主カメラを探す
+        //-------------------------------------------------------------
+        entt::entity FindMainCamera(Tsukino::ECS::Registry& registry) {
+            using Tsukino::BuiltIn::ECS::CameraComponent;
+            for(const auto entity : registry.View<CameraComponent, TransformComponent>()) {
+                if(registry.GetComponent<CameraComponent>(entity).isPrimary)
+                    return entity;
+            }
+            return entt::null;
         }
     }    // namespace
 
@@ -136,30 +173,217 @@ namespace StardustFever::ECS {
     }
 
     //-------------------------------------------------------------
-    // 開け閉めに合わせて作り・片付け、見え方が変わったら並べ直す
+    // 開け閉めの段階を進め、空を見ている間はカメラと色を合わせる
     //-------------------------------------------------------------
-    void StarMapViewSystem::Update(Tsukino::ECS::Registry& registry, float) {
-        const StarMapStateComponent* state = FindSingleton<StarMapStateComponent>(registry);
-        const bool                   open  = state && state->open;
-
-        if(!open) {
-            if(m_root != entt::null) {
-                if(registry.IsValid(m_root))
-                    Tsukino::BuiltIn::ECS::TransformUtility::DestroyHierarchy(registry, m_root);
-                m_root           = entt::null;
-                m_appliedVersion = -1;
-            }
+    void StarMapViewSystem::Update(Tsukino::ECS::Registry& registry, float deltaTime) {
+        const StarMapStateComponent*  state  = FindSingleton<StarMapStateComponent>(registry);
+        const StarMapConfigComponent* config = FindSingleton<StarMapConfigComponent>(registry);
+        if(!state || !config)
             return;
+        const bool open = state->open;
+
+        //-------------------------------------------------------------
+        // 幕を動かす。空を作ったフレームは長いので、1フレームで明けてしまわないよう経過時間を抑える
+        //-------------------------------------------------------------
+        const float step      = std::min(deltaTime, 1.0f / 30.0f);
+        const bool  darkening = m_phase == Phase::Darkening || m_phase == Phase::Hiding;
+        if(darkening)
+            m_veilAlpha = std::min(1.0f, m_veilAlpha + step / std::max(config->fadeOutSeconds, 0.01f));
+        else if(m_phase != Phase::Closed)
+            m_veilAlpha = std::max(0.0f, m_veilAlpha - step / std::max(config->revealSeconds, 0.01f));
+
+        switch(m_phase) {
+        case Phase::Closed:
+            if(open) {
+                MakeVeil(registry);
+                m_phase = Phase::Darkening;
+            }
+            break;
+        case Phase::Darkening:
+            if(!open) {
+                m_phase = Phase::Returning;
+            } else if(m_veilAlpha >= 1.0f) {
+                EnterSky(registry);
+                m_phase = Phase::Revealing;
+            }
+            break;
+        case Phase::Revealing:
+            if(!open)
+                m_phase = Phase::Hiding;
+            else if(m_veilAlpha <= 0.0f)
+                m_phase = Phase::Shown;
+            break;
+        case Phase::Shown:
+            if(!open)
+                m_phase = Phase::Hiding;
+            break;
+        case Phase::Hiding:
+            if(open) {
+                m_phase = Phase::Revealing;
+            } else if(m_veilAlpha >= 1.0f) {
+                ExitSky(registry);
+                m_phase = Phase::Returning;
+            }
+            break;
+        case Phase::Returning:
+            if(open) {
+                m_phase = Phase::Darkening;
+            } else if(m_veilAlpha <= 0.0f) {
+                if(m_veil != entt::null && registry.IsValid(m_veil))
+                    registry.QueueDestroy(m_veil);
+                m_veil  = entt::null;
+                m_phase = Phase::Closed;
+            }
+            break;
         }
 
-        if(m_root == entt::null || !registry.IsValid(m_root)) {
-            Build(registry);
-            m_appliedVersion = -1;
+        if(m_veil != entt::null && registry.IsValid(m_veil)) {
+            if(SpriteComponent* sprite = registry.try_get<SpriteComponent>(m_veil))
+                sprite->tintColor = hlslpp::float4(0.0f, 0.0f, 0.0f, m_veilAlpha);
         }
-        if(m_root != entt::null && state->version != m_appliedVersion) {
+
+        if(m_root == entt::null || !registry.IsValid(m_root))
+            return;
+        ApplyCamera(registry);
+        if(state->version != m_appliedVersion) {
             Layout(registry);
             m_appliedVersion = state->version;
         }
+    }
+
+    //-------------------------------------------------------------
+    // 暗転の幕を作る
+    //-------------------------------------------------------------
+    void StarMapViewSystem::MakeVeil(Tsukino::ECS::Registry& registry) {
+        const StarMapConfigComponent*              config  = FindSingleton<StarMapConfigComponent>(registry);
+        Tsukino::EngineIntegration::EngineContext* context = GetEngineContext(registry);
+        if(!config || !context || !context->assetManager || m_veil != entt::null)
+            return;
+        const Tsukino::Asset::AssetHandle white = context->assetManager->Load(Tsukino::Core::Path(config->backgroundTexture));
+        const float                       px    = std::max(config->backgroundPixels, 1.0f);
+        m_veil                                  = MakeElement(*m_scene, registry, entt::null, StarMapElementKind::Veil, 0);
+        // 文字より手前に置く
+        AddSprite(registry, m_veil, white, config->sortOrder + 20, false).tintColor = hlslpp::float4(0.0f, 0.0f, 0.0f, 0.0f);
+        Place(registry, m_veil, 800.0f, 500.0f, 1600.0f / px, 1000.0f / px);
+    }
+
+    //-------------------------------------------------------------
+    // 空へ切り替える
+    //-------------------------------------------------------------
+    void StarMapViewSystem::EnterSky(Tsukino::ECS::Registry& registry) {
+        const StarMapConfigComponent*              config  = FindSingleton<StarMapConfigComponent>(registry);
+        Tsukino::EngineIntegration::EngineContext* context = GetEngineContext(registry);
+        if(!config || !context)
+            return;
+
+        //-------------------------------------------------------------
+        // 画面の文字と絵は 3D の手前に描かれるので、空を見ている間は隠す。幕だけは残す
+        //-------------------------------------------------------------
+        using Tsukino::BuiltIn::ECS::UIVisibilityComponent;
+        std::vector<entt::entity> hud;
+        for(const auto entity : registry.View<SpriteComponent>()) {
+            if(entity != m_veil && registry.GetComponent<SpriteComponent>(entity).space == Tsukino::BuiltIn::ECS::SpriteSpace::Screen)
+                hud.push_back(entity);
+        }
+        for(const auto entity : registry.View<FontComponent>()) {
+            hud.push_back(entity);
+        }
+        m_hiddenHud.clear();
+        for(const entt::entity entity : hud) {
+            UIVisibilityComponent& visibility = registry.HasComponent<UIVisibilityComponent>(entity) ? registry.GetComponent<UIVisibilityComponent>(entity)
+                                                                                                     : registry.AddComponent<UIVisibilityComponent>(entity);
+            if(visibility.visible) {
+                visibility.visible = false;
+                m_hiddenHud.push_back(entity);
+            }
+        }
+
+        //-------------------------------------------------------------
+        // カメラは1つしか持てないので、盤面の見え方を覚えて、遠く離れた天球の中心へ動かす。
+        // 盤面はカメラの遠い面より外へ出るので、隠さなくても描かれない
+        //-------------------------------------------------------------
+        using Tsukino::BuiltIn::ECS::CameraComponent;
+        const entt::entity camera = FindMainCamera(registry);
+        if(camera != entt::null) {
+            m_boardCameraPosition = registry.GetComponent<TransformComponent>(camera).position;
+            m_boardCameraTarget   = registry.GetComponent<CameraComponent>(camera).lookAtTarget;
+            m_boardCameraFov      = registry.GetComponent<CameraComponent>(camera).fov;
+        }
+
+        // 漂う粒子はカメラの周りに湧くので、空の手前に混ざらないよう止める
+        using Tsukino::BuiltIn::ECS::AmbientParticleComponent;
+        for(const auto entity : registry.View<AmbientParticleComponent>()) {
+            AmbientParticleComponent& particles = registry.GetComponent<AmbientParticleComponent>(entity);
+            m_particlesEnabled                  = particles.enabled;
+            particles.enabled                   = false;
+        }
+
+        // 盤面は背景のモデルが画面を覆うので、地の色は戻さなくてよい
+        if(context->renderer) {
+            const hlslpp::float4& clear = config->skyClearColor;
+            context->renderer->SetClearColor(clear.x, clear.y, clear.z, clear.w);
+        }
+
+        Build(registry);
+        m_appliedVersion = -1;
+    }
+
+    //-------------------------------------------------------------
+    // 盤面へ戻す
+    //-------------------------------------------------------------
+    void StarMapViewSystem::ExitSky(Tsukino::ECS::Registry& registry) {
+        if(m_root != entt::null && registry.IsValid(m_root))
+            Tsukino::BuiltIn::ECS::TransformUtility::DestroyHierarchy(registry, m_root);
+        m_root           = entt::null;
+        m_appliedVersion = -1;
+
+        using Tsukino::BuiltIn::ECS::UIVisibilityComponent;
+        for(const entt::entity entity : m_hiddenHud) {
+            if(registry.IsValid(entity) && registry.HasComponent<UIVisibilityComponent>(entity))
+                registry.GetComponent<UIVisibilityComponent>(entity).visible = true;
+        }
+        m_hiddenHud.clear();
+
+        using Tsukino::BuiltIn::ECS::CameraComponent;
+        const entt::entity camera = FindMainCamera(registry);
+        if(camera != entt::null) {
+            TransformComponent& transform = registry.GetComponent<TransformComponent>(camera);
+            CameraComponent&    component = registry.GetComponent<CameraComponent>(camera);
+            transform.position            = m_boardCameraPosition;
+            transform.dirty               = true;
+            component.lookAtTarget        = m_boardCameraTarget;
+            component.fov                 = m_boardCameraFov;
+            component.dirty               = true;
+        }
+
+        using Tsukino::BuiltIn::ECS::AmbientParticleComponent;
+        for(const auto entity : registry.View<AmbientParticleComponent>()) {
+            registry.GetComponent<AmbientParticleComponent>(entity).enabled = m_particlesEnabled;
+        }
+    }
+
+    //-------------------------------------------------------------
+    // カメラを今の向きへ合わせる
+    //-------------------------------------------------------------
+    void StarMapViewSystem::ApplyCamera(Tsukino::ECS::Registry& registry) {
+        const StarMapStateComponent*  state  = FindSingleton<StarMapStateComponent>(registry);
+        const StarMapConfigComponent* config = FindSingleton<StarMapConfigComponent>(registry);
+        const entt::entity            camera = FindMainCamera(registry);
+        if(!state || !config || camera == entt::null)
+            return;
+
+        // 開いた直後は少し下を向いていて、幕が明けるのに合わせて空を見上げる
+        const double look = static_cast<double>(config->revealLookDegrees) * m_veilAlpha;
+        const double dec  = std::clamp(state->decCenter - look, -static_cast<double>(config->maxDec), static_cast<double>(config->maxDec));
+
+        using Tsukino::BuiltIn::ECS::CameraComponent;
+        TransformComponent& transform = registry.GetComponent<TransformComponent>(camera);
+        CameraComponent&    component = registry.GetComponent<CameraComponent>(camera);
+        transform.position            = SkyCenter(*config);
+        transform.dirty               = true;
+        component.lookAtTarget        = SkyPoint(*config, Core::SkyMath::ToDirection(state->raCenter, dec), 100.0f);
+        component.fov                 = config->baseFov / static_cast<float>(std::max(state->zoom, 0.1));
+        component.dirty               = true;    // Transform の dirty は先に消えるので、行列を作り直すにはこれが要る
     }
 
     //-------------------------------------------------------------
@@ -171,55 +395,103 @@ namespace StardustFever::ECS {
         if(!config || !context || !context->assetManager)
             return;
 
-        const Tsukino::Asset::AssetHandle white = context->assetManager->Load(Tsukino::Core::Path(config->backgroundTexture));
-        const Tsukino::Asset::AssetHandle dot   = context->assetManager->Load(Tsukino::Core::Path(config->starTexture));
-        const float                       px    = std::max(config->backgroundPixels, 1.0f);
-        const int                         order = config->sortOrder;
+        using Tsukino::BuiltIn::ECS::SpriteSpace;
+        const Tsukino::Asset::AssetHandle white  = context->assetManager->Load(Tsukino::Core::Path(config->backgroundTexture));
+        const Tsukino::Asset::AssetHandle dot    = context->assetManager->Load(Tsukino::Core::Path(config->starTexture));
+        const Tsukino::Asset::AssetHandle line   = context->assetManager->Load(Tsukino::Core::Path(config->lineModel));
+        const float                       px     = std::max(config->backgroundPixels, 1.0f);
+        const float                       starPx = std::max(config->starPixels, 1.0f);
+        const int                         order  = config->sortOrder;
 
-        //-------------------------------------------------------------
-        // 画面全体の背景と、星図の枠・右のパネルの板
-        //-------------------------------------------------------------
         m_root = MakeElement(*m_scene, registry, entt::null, StarMapElementKind::Root, 0);
         Place(registry, m_root, 0.0f, 0.0f, 1.0f, 1.0f);
 
-        const entt::entity background                                  = MakeElement(*m_scene, registry, m_root, StarMapElementKind::Root, 1);
-        AddSprite(registry, background, white, order, false).tintColor = config->backgroundColor;
-        Place(registry, background, 800.0f, 500.0f, 1600.0f / px, 1000.0f / px);
-
-        const float        mapCenterX                                    = config->mapX + config->mapWidth * 0.5f;
-        const float        mapCenterY                                    = config->mapY + config->mapHeight * 0.5f;
-        const entt::entity mapBoard                                      = MakeElement(*m_scene, registry, m_root, StarMapElementKind::Root, 2);
-        AddSprite(registry, mapBoard, white, order + 1, false).tintColor = config->mapColor;
-        Place(registry, mapBoard, mapCenterX, mapCenterY, config->mapWidth / px, config->mapHeight / px);
-
-        const float        panelHeight                                = config->mapHeight;
+        //-------------------------------------------------------------
+        // 右のパネルの板。空の上に半透明で重ねる
+        //-------------------------------------------------------------
+        const float        mapCenterY                                 = config->mapY + config->mapHeight * 0.5f;
         const entt::entity panel                                      = MakeElement(*m_scene, registry, m_root, StarMapElementKind::Root, 3);
         AddSprite(registry, panel, white, order + 1, false).tintColor = config->panelColor;
-        Place(registry, panel, config->panelX + config->panelWidth * 0.5f, mapCenterY, config->panelWidth / px, panelHeight / px);
+        Place(registry, panel, config->panelX + config->panelWidth * 0.5f, mapCenterY, config->panelWidth / px, config->mapHeight / px);
 
         //-------------------------------------------------------------
-        // 星図の枠。星・線・名前はこの子にして、枠の外を切り取る
+        // 星雲: 星より奥に、向きを黄金角で散らして置く
         //-------------------------------------------------------------
-        const entt::entity mapRoot = MakeElement(*m_scene, registry, m_root, StarMapElementKind::MapRoot, 0);
-        Place(registry, mapRoot, mapCenterX, mapCenterY, 1.0f, 1.0f);
-        registry.AddComponent<Tsukino::BuiltIn::ECS::UIClipComponent>(mapRoot).size = hlslpp::float2(config->mapWidth, config->mapHeight);
+        if(!config->nebulaTextures.empty()) {
+            for(int i = 0; i < config->nebulaCount; ++i) {
+                const double dec = std::asin(1.0 - 2.0 * (i + 0.5) / config->nebulaCount) * 57.29577951308232;
+                const double ra  = std::fmod(i * 137.50776405003785, 360.0);
+                const auto   texture =
+                    context->assetManager->Load(Tsukino::Core::Path(config->nebulaTextures[static_cast<size_t>(i) % config->nebulaTextures.size()]));
+                const entt::entity nebula = MakeElement(*m_scene, registry, m_root, StarMapElementKind::Root, 5 + i);
+                AddSprite(registry, nebula, texture, 0, true, SpriteSpace::World).tintColor = config->nebulaColor;
+                TransformComponent& transform                                               = registry.GetComponent<TransformComponent>(nebula);
+                transform.position = SkyPoint(*config, Core::SkyMath::ToDirection(ra, dec), config->skyRadius * 1.5f);
+                transform.scale    = hlslpp::float3(config->nebulaScale, config->nebulaScale, 1.0f);
+            }
+        }
 
+        //-------------------------------------------------------------
+        // 線: 2つの星の間に細い箱を渡す。天球の上の点は動かないので、ここで一度だけ置く
+        //-------------------------------------------------------------
         const Data::StarTable&          stars = Data::GetStarTable();
         const Data::ConstellationTable& table = Data::GetConstellationTable();
         for(size_t c = 0; c < table.constellations.size(); ++c) {
-            for(size_t l = 0; l < table.constellations[c].lines.size(); ++l) {
-                const entt::entity line = MakeElement(*m_scene, registry, mapRoot, StarMapElementKind::Line, static_cast<int>(c), static_cast<int>(l));
-                AddSprite(registry, line, white, order + 2, true);
+            const Data::ConstellationDef& constellation = table.constellations[c];
+            const int                     count         = static_cast<int>(constellation.stars.size());
+            for(size_t l = 0; l < constellation.lines.size(); ++l) {
+                const Data::ConstellationLineDef& def  = constellation.lines[l];
+                const Data::StarDef*              from = def.from >= 0 && def.from < count ? stars.Find(constellation.stars[def.from].starId) : nullptr;
+                const Data::StarDef*              to   = def.to >= 0 && def.to < count ? stars.Find(constellation.stars[def.to].starId) : nullptr;
+                if(!from || !to)
+                    continue;
+                const hlslpp::float3          a  = SkyPoint(*config, Core::SkyMath::ToDirection(from->ra * 15.0, from->dec), config->skyRadius);
+                const hlslpp::float3          b  = SkyPoint(*config, Core::SkyMath::ToDirection(to->ra * 15.0, to->dec), config->skyRadius);
+                const hlslpp::float3          d  = b - a;
+                const float                   dx = d.x;
+                const float                   dy = d.y;
+                const float                   dz = d.z;
+                const Core::SkyMath::Rotation q  = Core::SkyMath::ArcFromXAxis(Core::SkyMath::Direction{dx, dy, dz});
+
+                const entt::entity  entity    = MakeElement(*m_scene, registry, m_root, StarMapElementKind::Line, static_cast<int>(c), static_cast<int>(l));
+                TransformComponent& transform = registry.GetComponent<TransformComponent>(entity);
+                transform.position            = (a + b) * 0.5f;
+                transform.rotation = hlslpp::quaternion(static_cast<float>(q.x), static_cast<float>(q.y), static_cast<float>(q.z), static_cast<float>(q.w));
+                transform.scale    = hlslpp::float3(std::sqrt(dx * dx + dy * dy + dz * dz) * 0.5f, config->lineThickness, config->lineThickness);
+                Tsukino::BuiltIn::ECS::ModelComponent& model = registry.AddComponent<Tsukino::BuiltIn::ECS::ModelComponent>(entity);
+                model.modelHandle                            = line;
+                model.opacity                                = config->lineOpacity;
+                // 照明を反射すると線の途中に光の筋が出るので、基本色を黒にして、発光だけで見せる
+                auto& block     = registry.AddComponent<Tsukino::BuiltIn::ECS::MaterialPropertyBlockComponent>(entity);
+                block.baseColor = hlslpp::float4(0.0f, 0.0f, 0.0f, 1.0f);
+                block.metallic  = 0.0f;
+                block.roughness = 1.0f;
             }
         }
+
+        //-------------------------------------------------------------
+        // 星: カメラを向く板。大きさは色と一緒に Layout が決める
+        //-------------------------------------------------------------
         for(size_t i = 0; i < stars.stars.size(); ++i) {
-            const entt::entity star = MakeElement(*m_scene, registry, mapRoot, StarMapElementKind::Star, static_cast<int>(i));
-            AddSprite(registry, star, dot, order + 3, true);
+            const entt::entity star = MakeElement(*m_scene, registry, m_root, StarMapElementKind::Star, static_cast<int>(i));
+            AddSprite(registry, star, dot, 1, true, SpriteSpace::World);
+            TransformComponent& transform = registry.GetComponent<TransformComponent>(star);
+            transform.position            = SkyPoint(*config, Core::SkyMath::ToDirection(stars.stars[i].ra * 15.0, stars.stars[i].dec), config->skyRadius);
         }
+
+        //-------------------------------------------------------------
+        // 星座名: 画面の文字を天球の一点に貼り付ける。後ろへ回ると隠れる
+        //-------------------------------------------------------------
         for(size_t c = 0; c < table.constellations.size(); ++c) {
-            const entt::entity label = MakeElement(*m_scene, registry, mapRoot, StarMapElementKind::Label, static_cast<int>(c));
-            AddText(registry, label, config->labelScale, order + 4, true);
+            const entt::entity label = MakeElement(*m_scene, registry, m_root, StarMapElementKind::Label, static_cast<int>(c));
+            AddText(registry, label, config->labelScale, order, true);
             HudUi::SetText(registry, label, table.constellations[c].name);
+            double ra  = 0.0;
+            double dec = 0.0;
+            StarMapGeometry::Centroid(table.constellations[c], stars, ra, dec);
+            Tsukino::BuiltIn::ECS::WorldAnchorComponent& anchor = registry.AddComponent<Tsukino::BuiltIn::ECS::WorldAnchorComponent>(label);
+            anchor.useFixedWorldPosition                        = true;
+            anchor.fixedWorldPosition                           = SkyPoint(*config, Core::SkyMath::ToDirection(ra, dec), config->skyRadius);
         }
 
         //-------------------------------------------------------------
@@ -234,7 +506,7 @@ namespace StardustFever::ECS {
         HudUi::SetText(
             registry,
             hint,
-            "ドラッグ・矢印 動かす   ホイール・Q/E 拡大   クリック 星座を選ぶ   Z/X 前後   G グループの一覧   Tab・Esc 閉じる（遊びは止まっています）");
+            "ドラッグ・矢印 見回す   ホイール・Q/E 拡大   クリック 星座を選ぶ   Z/X 前後   G グループの一覧   Tab・Esc 閉じる（遊びは止まっています）");
 
         float y         = config->mapY + 18.0f;
         auto  panelText = [&](StarMapElementKind kind, int index, float scale, float spacing) {
@@ -252,7 +524,7 @@ namespace StardustFever::ECS {
     }
 
     //-------------------------------------------------------------
-    // 星・線・名前を今の見え方で並べ、詳しいパネルの中身を書く
+    // 星・線・名前の色を今の状態にし、詳しいパネルの中身を書く
     //-------------------------------------------------------------
     void StarMapViewSystem::Layout(Tsukino::ECS::Registry& registry) {
         const StarMapStateComponent*        state      = FindSingleton<StarMapStateComponent>(registry);
@@ -266,10 +538,7 @@ namespace StardustFever::ECS {
 
         const Data::StarTable&          stars    = Data::GetStarTable();
         const Data::ConstellationTable& table    = Data::GetConstellationTable();
-        const Core::SkyMath::View       view     = StarMapGeometry::MakeView(state->raCenter, state->decCenter, config->pixelsPerDegree, state->zoom);
-        const float                     linePx   = std::max(config->backgroundPixels, 1.0f);
         const float                     starPx   = std::max(config->starPixels, 1.0f);
-        const float                     growth   = 1.0f + config->starZoomGrowth * static_cast<float>(state->zoom - 1.0);
         const Data::ConstellationDef*   selected = table.Find(state->selectedId);
 
         //-------------------------------------------------------------
@@ -295,23 +564,27 @@ namespace StardustFever::ECS {
             const StarMapElementComponent& element = registry.GetComponent<StarMapElementComponent>(entity);
             switch(element.kind) {
             //-------------------------------------------------------------
-            // 星: 明るいほど大きく。持っていればスペクトル型の色、無ければ淡い点
+            // 星: 明るいほど大きく。持っていればスペクトル型の色で強く光り、無ければ淡い点
             //-------------------------------------------------------------
             case StarMapElementKind::Star:
                 {
                     if(element.index < 0 || element.index >= static_cast<int>(stars.stars.size()))
                         break;
-                    const Data::StarDef&       star   = stars.stars[element.index];
-                    const Core::SkyMath::Point point  = Core::SkyMath::Project(view, star.ra * 15.0, star.dec);
-                    const float                bright = std::clamp(static_cast<float>((5.0 - star.magnitude) / 5.0), 0.0f, 1.3f);
-                    const bool                 owned  = collection->starLevels.contains(star.id);
-                    float                      size   = (config->faintStarSize + (config->brightStarSize - config->faintStarSize) * bright) * growth;
+                    const Data::StarDef& star   = stars.stars[element.index];
+                    const float          bright = std::clamp(static_cast<float>((5.0 - star.magnitude) / 5.0), 0.0f, 1.3f);
+                    const bool           owned  = collection->starLevels.contains(star.id);
+                    float                size   = config->faintStarSize + (config->brightStarSize - config->faintStarSize) * bright;
                     if(!owned)
                         size *= 0.7f;
-                    Place(registry, entity, static_cast<float>(point.x), static_cast<float>(point.y), size / starPx, size / starPx);
-                    if(SpriteComponent* sprite = registry.try_get<SpriteComponent>(entity))
+                    const float         scale     = size * config->worldUnitsPerPixel / starPx;
+                    TransformComponent& transform = registry.GetComponent<TransformComponent>(entity);
+                    transform.scale               = hlslpp::float3(scale, scale, 1.0f);
+                    transform.dirty               = true;
+                    if(SpriteComponent* sprite = registry.try_get<SpriteComponent>(entity)) {
+                        const float glow = config->ownedStarGlow;
                         sprite->tintColor =
-                            owned ? SpectralColor(layout, star.spectralType) * hlslpp::float4(1.6f, 1.6f, 1.6f, 1.0f) : config->missingStarColor;
+                            owned ? SpectralColor(layout, star.spectralType) * hlslpp::float4(glow, glow, glow, 1.0f) : config->missingStarColor;
+                    }
                     break;
                 }
             //-------------------------------------------------------------
@@ -321,49 +594,29 @@ namespace StardustFever::ECS {
                 {
                     if(element.index < 0 || element.index >= static_cast<int>(table.constellations.size()))
                         break;
-                    const Data::ConstellationDef& constellation = table.constellations[element.index];
-                    if(element.subIndex < 0 || element.subIndex >= static_cast<int>(constellation.lines.size()))
-                        break;
-                    const Data::ConstellationLineDef& line  = constellation.lines[element.subIndex];
-                    const int                         count = static_cast<int>(constellation.stars.size());
-                    const Data::StarDef*              from  = line.from >= 0 && line.from < count ? stars.Find(constellation.stars[line.from].starId) : nullptr;
-                    const Data::StarDef*              to    = line.to >= 0 && line.to < count ? stars.Find(constellation.stars[line.to].starId) : nullptr;
-                    if(!from || !to)
-                        break;
-                    const Core::SkyMath::Point a         = Core::SkyMath::Project(view, from->ra * 15.0, from->dec);
-                    const Core::SkyMath::Point b         = Core::SkyMath::ProjectFrom(view, a, from->ra * 15.0, to->ra * 15.0, to->dec);
-                    const float                dx        = static_cast<float>(b.x - a.x);
-                    const float                dy        = static_cast<float>(b.y - a.y);
-                    const bool                 isDone    = collected[element.index];
-                    const bool                 isSel     = highlighted[element.index];
-                    const float                thickness = (isDone || isSel) ? config->collectedLineThickness : config->lineThickness;
-                    Place(registry,
-                          entity,
-                          static_cast<float>(a.x) + dx * 0.5f,
-                          static_cast<float>(a.y) + dy * 0.5f,
-                          std::sqrt(dx * dx + dy * dy) / linePx,
-                          thickness / linePx,
-                          std::atan2(dy, dx));
-                    if(SpriteComponent* sprite = registry.try_get<SpriteComponent>(entity))
-                        sprite->tintColor = isDone ? config->collectedLineColor : (isSel ? config->selectedLineColor : config->lineColor);
+                    const bool            isDone    = collected[element.index];
+                    const bool            isSel     = highlighted[element.index];
+                    const float           thickness = (isDone || isSel) ? config->collectedLineThickness : config->lineThickness;
+                    const hlslpp::float4& color     = isDone ? config->collectedLineColor : (isSel ? config->selectedLineColor : config->lineColor);
+                    const float           power     = static_cast<float>(color.w) * config->lineGlow;
+                    TransformComponent&   transform = registry.GetComponent<TransformComponent>(entity);
+                    transform.scale                 = hlslpp::float3(static_cast<float>(transform.scale.x), thickness, thickness);
+                    transform.dirty                 = true;
+                    if(auto* block = registry.try_get<Tsukino::BuiltIn::ECS::MaterialPropertyBlockComponent>(entity))
+                        block->emissive =
+                            hlslpp::float3(static_cast<float>(color.x) * power, static_cast<float>(color.y) * power, static_cast<float>(color.z) * power);
                     break;
                 }
             //-------------------------------------------------------------
-            // 星座名: 星の平均の位置に。縮小しているときは、そろった星座と選んだ星座だけ出す
+            // 星座名: 縮小しているときは、そろった星座と選んだ星座だけ出す
             //-------------------------------------------------------------
             case StarMapElementKind::Label:
                 {
                     if(element.index < 0 || element.index >= static_cast<int>(table.constellations.size()))
                         break;
-                    const Data::ConstellationDef& constellation = table.constellations[element.index];
-                    double                        ra            = 0.0;
-                    double                        dec           = 0.0;
-                    StarMapGeometry::Centroid(constellation, stars, ra, dec);
-                    const Core::SkyMath::Point point  = Core::SkyMath::Project(view, ra, dec);
-                    const bool                 isDone = collected[element.index];
-                    const bool                 isSel  = highlighted[element.index];
-                    const bool                 shown  = isDone || isSel || state->zoom >= config->labelMinZoom;
-                    Place(registry, entity, static_cast<float>(point.x), static_cast<float>(point.y), 1.0f, 1.0f);
+                    const bool isDone = collected[element.index];
+                    const bool isSel  = highlighted[element.index];
+                    const bool shown  = isDone || isSel || state->zoom >= config->labelMinZoom;
                     HudUi::SetTextColor(registry,
                                         entity,
                                         !shown ? hlslpp::float4(0.0f, 0.0f, 0.0f, 0.0f)

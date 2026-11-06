@@ -15,33 +15,55 @@ SF_TEST(Wrap180KeepsAnglesInRange) {
     SF_EXPECT_NEAR(SkyMath::Wrap180(725.0), 5.0, 1e-9);
 }
 
-SF_TEST(ProjectPutsLargerRightAscensionToTheLeft) {
-    SkyMath::View view;
-    view.raCenter             = 90.0;
-    view.decCenter            = 0.0;
-    view.pixelsPerDegree      = 2.0;
-    const SkyMath::Point east = SkyMath::Project(view, 100.0, 10.0);
-    SF_EXPECT_NEAR(east.x, -20.0, 1e-9);
-    // 北（赤緯が大きい）は画面の上（y が負）
-    SF_EXPECT_NEAR(east.y, -20.0, 1e-9);
+SF_TEST(DirectionRoundTrips) {
+    double ra  = 0.0;
+    double dec = 0.0;
+    SkyMath::ToRaDec(SkyMath::ToDirection(123.0, -45.0), ra, dec);
+    SF_EXPECT_NEAR(ra, 123.0, 1e-9);
+    SF_EXPECT_NEAR(dec, -45.0, 1e-9);
 }
 
-SF_TEST(ProjectWrapsAcrossZeroHours) {
-    SkyMath::View view;
-    view.raCenter        = 2.0;
-    view.pixelsPerDegree = 1.0;
-    // 赤経 358 度は中央（2 度）の 4 度西（右）にある。356 度東（左）に飛ばない
-    SF_EXPECT_NEAR(SkyMath::Project(view, 358.0, 0.0).x, 4.0, 1e-9);
+SF_TEST(NorthPoleIsUp) {
+    const SkyMath::Direction pole = SkyMath::ToDirection(10.0, 90.0);
+    SF_EXPECT_NEAR(pole.y, 1.0, 1e-9);
 }
 
-SF_TEST(ProjectFromKeepsLinesShort) {
-    SkyMath::View view;
-    view.raCenter        = 180.0;
-    view.pixelsPerDegree = 1.0;
-    // 中央から 179 度離れた所で 0 時をまたぐ線は、画面を横切らず短いまま
-    const SkyMath::Point from = SkyMath::Project(view, 359.0, 0.0);
-    const SkyMath::Point to   = SkyMath::ProjectFrom(view, from, 359.0, 3.0, 0.0);
-    SF_EXPECT_NEAR(to.x - from.x, -4.0, 1e-9);
+SF_TEST(LargerRightAscensionIsToTheLeftSeenFromInside) {
+    SkyMath::Point point;
+    SF_EXPECT(SkyMath::ProjectToScreen(100.0, 0.0, 60.0, 500.0, 110.0, 0.0, point));
+    SF_EXPECT(point.x < 0.0);
+    SF_EXPECT_NEAR(point.y, 0.0, 1e-9);
+}
+
+SF_TEST(HigherDeclinationIsUpOnScreen) {
+    SkyMath::Point point;
+    SF_EXPECT(SkyMath::ProjectToScreen(100.0, 20.0, 60.0, 500.0, 100.0, 30.0, point));
+    SF_EXPECT(point.y < 0.0);
+    SF_EXPECT_NEAR(point.x, 0.0, 1e-9);
+}
+
+SF_TEST(ViewCentreProjectsToTheMiddle) {
+    SkyMath::Point point;
+    SF_EXPECT(SkyMath::ProjectToScreen(250.0, -30.0, 60.0, 500.0, 250.0, -30.0, point));
+    SF_EXPECT_NEAR(point.x, 0.0, 1e-9);
+    SF_EXPECT_NEAR(point.y, 0.0, 1e-9);
+}
+
+SF_TEST(StarsBehindTheViewAreNotProjected) {
+    SkyMath::Point point;
+    SF_EXPECT(!SkyMath::ProjectToScreen(0.0, 0.0, 60.0, 500.0, 180.0, 0.0, point));
+}
+
+SF_TEST(ArcTurnsXAxisOntoTheTarget) {
+    const SkyMath::Direction to = SkyMath::ToDirection(70.0, 25.0);
+    const SkyMath::Rotation  q  = SkyMath::ArcFromXAxis(to);
+    // 四元数で (1,0,0) を回した結果の式
+    const double x = 1.0 - 2.0 * (q.y * q.y + q.z * q.z);
+    const double y = 2.0 * (q.x * q.y + q.w * q.z);
+    const double z = 2.0 * (q.x * q.z - q.w * q.y);
+    SF_EXPECT_NEAR(x, to.x, 1e-9);
+    SF_EXPECT_NEAR(y, to.y, 1e-9);
+    SF_EXPECT_NEAR(z, to.z, 1e-9);
 }
 
 SF_TEST(CircularMeanHandlesWrap) {

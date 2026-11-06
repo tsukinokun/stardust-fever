@@ -13,10 +13,15 @@ namespace StardustFever::ECS {
     //! @note   ゲーム状態エンティティに1つだけ付く。開いている間は遊びを止める（GamePause.hpp）
     //-------------------------------------------------------------
     struct StarMapStateComponent {
-        bool        open      = false;        //!< 開いているか
-        double      raCenter  = 84.0;         //!< 画面の中央の赤経（度。初めはオリオン座のあたり）
-        double      decCenter = 0.0;          //!< 画面の中央の赤緯（度）
-        double      zoom      = 1.0;          //!< 拡大率
+        bool        open        = false;      //!< 開いているか
+        double      raCenter    = 84.0;       //!< 見ている向きの赤経（度。初めはオリオン座のあたり）
+        double      decCenter   = 0.0;        //!< 見ている向きの赤緯（度）
+        double      raVelocity  = 0.0;        //!< 手を離した後に回り続ける速さ（度/秒）
+        double      decVelocity = 0.0;        //!< 同上
+        bool        focusing    = false;      //!< 選んだ星座へ向かって回っているか
+        double      focusRa     = 0.0;        //!< 向かう先の赤経（度）
+        double      focusDec    = 0.0;        //!< 向かう先の赤緯（度）
+        double      zoom        = 1.0;        //!< 拡大率
         std::string selectedId;               //!< 選んでいる星座（空なら選んでいない）
         bool        groupMode     = false;    //!< グループの一覧を出しているか（G で切り替える）
         int         selectedGroup = 0;        //!< グループの一覧で選んでいるグループの添字

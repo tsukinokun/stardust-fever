@@ -4,38 +4,24 @@
         "backgroundPixels": 8.0,
         "starTexture": "StardustFever/Assets/Textures/UI/glow.png",
         "starPixels": 64.0,
-        "backgroundColor": {
-            "x": 0.002,
-            "y": 0.002,
-            "z": 0.008,
-            "w": 0.97
-        },
-        "mapColor": {
-            "x": 0.003,
-            "y": 0.004,
-            "z": 0.014,
-            "w": 1.0
-        },
         "panelColor": {
             "x": 0.008,
             "y": 0.01,
             "z": 0.03,
-            "w": 0.96
+            "w": 0.72
         },
         "mapX": 20.0,
         "mapY": 70.0,
         "mapWidth": 1130.0,
         "mapHeight": 880.0,
-        "pixelsPerDegree": 3.0,
         "minZoom": 1.0,
-        "maxZoom": 7.0,
+        "maxZoom": 5.0,
         "zoomStep": 1.2,
         "keyZoomSpeed": 2.0,
         "keyPanSpeed": 90.0,
-        "maxDec": 80.0,
+        "maxDec": 85.0,
         "brightStarSize": 20.0,
         "faintStarSize": 5.0,
-        "starZoomGrowth": 0.18,
         "missingStarColor": {
             "x": 0.32,
             "y": 0.36,
@@ -60,8 +46,8 @@
             "z": 0.42,
             "w": 0.9
         },
-        "lineThickness": 1.2,
-        "collectedLineThickness": 2.2,
+        "lineThickness": 0.7,
+        "collectedLineThickness": 1.1,
         "labelColor": {
             "x": 0.55,
             "y": 0.6,
@@ -91,6 +77,37 @@
         "maxRows": 30,
         "clickRadius": 36.0,
         "dragThreshold": 6.0,
-        "sortOrder": 40
+        "sortOrder": 40,
+        "skyOffsetZ": -20000.0,
+        "skyRadius": 1000.0,
+        "baseFov": 70.0,
+        "worldUnitsPerPixel": 1.2,
+        "ownedStarGlow": 3.0,
+        "lineGlow": 2.0,
+        "lineOpacity": 0.9,
+        "lineModel": "StardustFever/Assets/Models/Line.obj",
+        "nebulaTextures": [
+            "StardustFever/Assets/Textures/Space/nebula_blue.png",
+            "StardustFever/Assets/Textures/Space/nebula_violet.png"
+        ],
+        "nebulaCount": 10,
+        "nebulaScale": 2.0,
+        "nebulaColor": {
+            "x": 0.25,
+            "y": 0.25,
+            "z": 0.35,
+            "w": 1.0
+        },
+        "skyClearColor": {
+            "x": 0.002,
+            "y": 0.003,
+            "z": 0.01,
+            "w": 1.0
+        },
+        "fadeOutSeconds": 0.3,
+        "revealSeconds": 1.1,
+        "revealLookDegrees": 25.0,
+        "inertiaFriction": 3.5,
+        "focusSpeed": 4.0
     }
 }

@@ -5,7 +5,11 @@
 #pragma once
 #include <Tsukino/Core/ECS/System/ISystem.hpp>
 
+#include <Tsukino/BuiltIn/ECS/Component/TransformComponent.hpp>
+
 #include <entt/entt.hpp>
+
+#include <vector>
 
 // 名前空間 : Tsukino::ECS
 namespace Tsukino::ECS {
@@ -38,6 +42,40 @@ namespace StardustFever::ECS {
         void Update(Tsukino::ECS::Registry& registry, float deltaTime) override;
 
     private:
+        //! 開け閉めの段階
+        enum class Phase {
+            Closed,       //!< 遊んでいる画面
+            Darkening,    //!< 盤面から暗転している
+            Revealing,    //!< 空が浮かび上がっている
+            Shown,        //!< 空を見ている
+            Hiding,       //!< 空から暗転している
+            Returning,    //!< 盤面へ明けていく
+        };
+
+        //-------------------------------------------------------------
+        //! @brief  暗転の幕を作る
+        //! @param  registry [in] レジストリ
+        //-------------------------------------------------------------
+        void MakeVeil(Tsukino::ECS::Registry& registry);
+
+        //-------------------------------------------------------------
+        //! @brief  空へ切り替える（幕で隠れている間に呼ぶ）
+        //! @param  registry [in] レジストリ
+        //-------------------------------------------------------------
+        void EnterSky(Tsukino::ECS::Registry& registry);
+
+        //-------------------------------------------------------------
+        //! @brief  盤面へ戻す（幕で隠れている間に呼ぶ）
+        //! @param  registry [in] レジストリ
+        //-------------------------------------------------------------
+        void ExitSky(Tsukino::ECS::Registry& registry);
+
+        //-------------------------------------------------------------
+        //! @brief  カメラを今の向きへ合わせる
+        //! @param  registry [in] レジストリ
+        //-------------------------------------------------------------
+        void ApplyCamera(Tsukino::ECS::Registry& registry);
+
         //-------------------------------------------------------------
         //! @brief  画面の部品を全て作る
         //! @param  registry [in] レジストリ
@@ -45,13 +83,21 @@ namespace StardustFever::ECS {
         void Build(Tsukino::ECS::Registry& registry);
 
         //-------------------------------------------------------------
-        //! @brief  星・線・名前を今の見え方で並べ、詳しいパネルの中身を書く
+        //! @brief  星・線・名前の色を今の状態にし、詳しいパネルの中身を書く
         //! @param  registry [in] レジストリ
         //-------------------------------------------------------------
         void Layout(Tsukino::ECS::Registry& registry);
 
-        Tsukino::ECS::Scene* m_scene          = nullptr;
-        entt::entity         m_root           = entt::null;    //!< 画面全体の部品（開いている間だけある）
-        int                  m_appliedVersion = -1;            //!< 最後に並べたときの状態の version
+        Tsukino::ECS::Scene*      m_scene          = nullptr;
+        entt::entity              m_root           = entt::null;    //!< 空の部品（空を見ている間だけある）
+        entt::entity              m_veil           = entt::null;    //!< 暗転の幕（開け閉めの間だけある）
+        int                       m_appliedVersion = -1;            //!< 最後に並べたときの状態の version
+        Phase                     m_phase          = Phase::Closed;
+        float                     m_veilAlpha      = 0.0f;       //!< 幕の濃さ
+        std::vector<entt::entity> m_hiddenHud;                   //!< 空を見ている間だけ隠した HUD
+        hlslpp::float3            m_boardCameraPosition;         //!< 戻す先のカメラの位置
+        hlslpp::float3            m_boardCameraTarget;           //!< 戻す先のカメラの注視点
+        float                     m_boardCameraFov   = 60.0f;    //!< 戻す先のカメラの視野
+        bool                      m_particlesEnabled = false;    //!< 戻す先の漂う粒子の有効・無効
     };
 }    // namespace StardustFever::ECS
